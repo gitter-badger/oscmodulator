@@ -1,0 +1,83 @@
+<div class="treeItem">
+    <!-- Header -->
+    <div class="container3Col midiInputHeader">
+        <div class="leftCol">
+            <i class="icon-resize-vertical"></i>
+            <button class="btn collapseButton" type="button" rel="collapse" data-toggle="collapse" data-target=""><i class="icon-chevron-down"></i></button>
+        </div>
+        <div class="rightCol midiInputConfig">
+            <div class="inline-input-append midiInput">
+                <input class="input-mini" type="text" name="midiInNote" placeholder="Midi">
+                <div class="btn-group">
+                    <button class="btn dropdown-toggle midiNoteType" data-toggle="dropdown">
+                        <span class="midiNoteType">on</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="midiNoteTypeOption" href="#midiNoteOn">on</a></li>
+                        <li><a class="midiNoteTypeOption" href="#midiNoteOff">off</a></li>
+                        <li><a class="midiNoteTypeOption" href="#midiNoteHold">hold</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn solo" type="button" data-toggle="button"
+                        rel="popover" data-placement="bottom" data-trigger="hover"
+                        data-title="Solo" data-content="When activated, all other Midi Imputs with this midi note will be ignored.">S</button>
+                <button class="btn mute" type="button" data-toggle="button"
+                        rel="popover" data-placement="bottom" data-trigger="hover"
+                        data-title="Mute" data-content="When activated, this Midi Input will be ignored.">M</button>
+            </div>
+            <button class="btn duplicate" type="button" rel="popover" data-placement="bottom" data-trigger="hover"
+                    data-title="Duplicate" data-content="Create a new Midi Input using these settings.">D</button>
+            <button class="btn removeMidiInput" type="button"><i class="icon-remove"></i></button>
+        </div>
+        <div class="centerCol">
+            <input class="treeItemName" type="text" name="name" placeholder="Name" ng-model="config.name"/>
+        </div>
+    </div>
+    <!-- Tree Item OSC Command -->
+    <div class="treeItemContent">
+        <div class="oscCollapsor collapse in">
+            <div class="oscList">
+                <div class="oscOutputItem">
+                    <!-- path row -->
+                    <div class="container3Col oscPathRow">
+                        <div class="leftCol oscHostConfig">
+                            <div class="btn-group">
+                                <button class="btn dropdown-toggle oscHost" data-toggle="dropdown">
+                                    <span class="oscHost">OSC Host</span> <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="oscHost" href="#">Live</a></li>
+                                    <li><a class="oscHost" href="#">Resolume</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="rightCol">
+                            <button class="btn removeOSCOutput" type="button"><i class="icon-remove"></i></button>
+                        </div>
+                        <div class="centerCol">
+                            <input class="oscOutputPath" type="text" name="oscPath" placeholder="OSC Path"/>
+                        </div>
+                    </div>
+                    <!-- parameter row -->
+                    <div class="oscParameterList">
+                        <div class="oscParameters">
+                            <div class="inline-input-append oscParam">
+                                <input class="input-mini oscParamInput" type="text" name="param1" placeholder="Param 1">
+                                <button class="btn oscParamRemove" type="button"><i class="icon-remove"></i></button>
+                            </div>
+                        </div>
+                        <button class="btn addOSCParam" type="button"><i class="icon-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="newOSCOutput">
+                <a href="#newOSCOutput"><i class="icon-plus"></i> OSC Output</a>
+            </div>
+        </div>
+    </div>
+    <!-- Tree Item Footer -->
+    <div class="treeItemFooter">
+    </div>
+</div>
