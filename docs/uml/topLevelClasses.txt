@@ -4,25 +4,24 @@
 //
 // Container Class
 [Container|-storage;-ui;-model;-midiProxy;-oscProxy|+loadProject();+saveProject();+updateUI();+updateModel()]
-[Container]++-storage>[Storage]
+[Container]-storage>[Storage]
 [Container]-ui>[MainCtrl]
-[Container]++-model>[BackendModel]
-[Container]++-midiProxy>[MidiProxy]
-[Container]++-oscProxy>[OSCProxy]
-//[Container]-[note: Midi and OSC messages are funneled through Container{bg:cornsilk}]
+[Container]-model>[BackendModel]
+[Container]-midiProxy>[MidiProxy]
+[Container]-oscProxy>[OSCProxy]
 // MainCtrl Class
 [MainCtrl|-scope;-backend|+updateModel()]
 [MainCtrl]-backend>[Container]
 [MainCtrl]-scope>[ViewModel]
 // Backend Model
 [BackendModel|-inputs]
-[BackendModel]1-0..*[Input]
+[BackendModel]++1-0..*[Input]
 // Input
 [Input|-outputs]
-[Input]1-0..*[Output]
+[Input]++1-0..*[Output]
 // MidiService
 [MidiProxy|-server;-listeners]
-[MidiProxy]++-server>[MidiServer]
+[MidiProxy]-server>[MidiServer]
 //[MidiProxy]-.-midiEvent>[Input]
 // MidiServer
 [MidiServer]
@@ -31,6 +30,6 @@
 //[Output]-.-oscEvent>[OSCProxy]
 // OSCService
 [OSCProxy|-server|+addMessage()]
-[OSCProxy]++-server>[OSCServer]
+[OSCProxy]-server>[OSCServer]
 // OSCServer
 [OSCServer]
