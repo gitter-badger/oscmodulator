@@ -1,13 +1,30 @@
 'use strict';
 
-describe('Directive: nestedSortable', function() {
-  beforeEach(module('oscmodulatorUIApp'));
+describe('Directive: nestedSortable', function ()
+{
+    var element;
 
-  var element;
+    beforeEach(module('oscmodulatorUIApp'));
 
-  it('should make hidden element visible', inject(function($rootScope, $compile) {
-    element = angular.element('<nested-sortable></nested-sortable>');
-    element = $compile(element)($rootScope);
-    expect(element.text()).toBe('this is the nestedSortable directive');
-  }));
+    beforeEach(module('views/nested-sortable.html', 'views/midi-input.html'));
+
+    beforeEach(inject(function (_$rootScope_, _$compile_, $templateCache)
+    {
+//        scope = _$rootScope_;
+//        $compile = _$compile_;
+        element = angular.element('<div data-nested-sortable></div>');
+        element = _$compile_(element)(_$rootScope_);
+        _$rootScope_.$digest();
+//        $templateCache.put('views/nested-sortable.html', '.<template-goes-here />');
+    }));
+
+    it('should have one midi input to start', inject(function ($rootScope, $compile)
+    {
+
+    }));
+
+    it('should expand and collapse', inject( function( $rootScope, $compile )
+    {
+
+    }));
 });
