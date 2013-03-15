@@ -6,6 +6,7 @@ oscmodulatorUIApp.controller('MainCtrl', ['$scope', '$document', function ($scop
     {
 
     };
+
 }]);
 
 

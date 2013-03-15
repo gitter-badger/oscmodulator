@@ -12,7 +12,7 @@
  * @name angular.mock
  * @description
  *
- * Namespace from 'angular-mocks.js' which contains testing related code.
+ * Namespace from 'angular-mock.js' which contains testing related code.
  */
 angular.mock = {};
 
@@ -1356,7 +1356,7 @@ angular.mock.$RootElementProvider = function() {
  * @description
  *
  * The `ngMock` is an angular module which is used with `ng` module and adds unit-test configuration as well as useful
- * mocks to the {@link AUTO.$injector $injector}.
+ * mock to the {@link AUTO.$injector $injector}.
  */
 angular.module('ngMock', ['ng']).provider({
   $browser: angular.mock.$BrowserProvider,
@@ -1379,7 +1379,7 @@ angular.module('ngMock', ['ng']).provider({
  * @name ngMockE2E
  * @description
  *
- * The `ngMockE2E` is an angular module which contains mocks suitable for end-to-end testing.
+ * The `ngMockE2E` is an angular module which contains mock suitable for end-to-end testing.
  * Currently there is only one mock present in this module -
  * the {@link ngMockE2E.$httpBackend e2e $httpBackend} mock.
  */
