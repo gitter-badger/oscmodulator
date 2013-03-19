@@ -39,27 +39,6 @@ oscmodulatorUIApp.directive('nestedSortable', function ()
                             "foo"
                         ]
                     }
-                },
-                {
-                    id:'midi-input-2',
-                    name:'Button 2',
-                    type:'midi-to-osc',
-                    mute:false,
-                    solo:false,
-                    midi:
-                    {
-                        note:'c1',
-                        type:'on'
-                    },
-                    osc:
-                    {
-                        host:"live",
-                        path:"/osc/server/path",
-                        parameters:[
-                            10,
-                            "foo"
-                        ]
-                    }
                 }
             ];
 

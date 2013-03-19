@@ -1,26 +1,45 @@
 // Testacular configuration
 
 
-// base path, that will be used to resolve files and exclude
-basePath = '';
+// Base path, that will be used to resolve files and excludes.
+// Had to set this to the app folder so that template files
+// could be loaded from within tests using the html2js preprocessor
+// using the same path as the angular application.
+basePath = 'src/client/';
 
 
-// list of files / patterns to load in the browser
+// List of files / patterns to load in the browser.
+// Had to list these in the same order as the index file
+// so dependencies could be loaded correctly. Hopefully
+// using require.js will help remove the need for this.
 files = [
-  JASMINE,
-  JASMINE_ADAPTER,
-  'app/scripts/vendor/angular.js',
-  'test/vendor/angular-mocks.js',
-  'app/scripts/*.js',
-  'app/scripts/**/*.js',
-  'test/mock/**/*.js',
-  'test/spec/**/*.js'
+    JASMINE,
+    JASMINE_ADAPTER,
+    'scripts/vendor/angular.js',
+    '../../test/vendor/angular-mocks.js',
+    'scripts/vendor/jquery-1.7.2.min.js',
+    'scripts/vendor/jquery-ui-1.8.16.custom.min.js',
+    'scripts/vendor/jquery.ui.touch-punch.js',
+    'scripts/vendor/jquery.mjs.nestedSortable.js',
+    'scripts/vendor/bootstrap.js',
+    'scripts/app.js',
+    'scripts/controllers/main.js',
+    'scripts/directives/midi-input.js',
+    'scripts/directives/nested-sortable.js',
+    '../../test/mock/**/*.js',
+    '../../test/spec/**/*.js',
+    'views/*.html'
 ];
 
+// The html2js preprossessor is used to load template files
+// during testing so directives can be unit tested.
+preprocessors = {
+    '**/*.html': 'html2js'
+};
 
 // list of files to exclude
 exclude = [
-  
+    'scripts/vendor/otherVersions/*.js'
 ];
 
 
@@ -43,7 +62,7 @@ colors = true;
 
 // level of logging
 // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-logLevel = LOG_INFO;
+logLevel = LOG_DEBUG;
 
 
 // enable / disable watching file and executing tests whenever any file changes
