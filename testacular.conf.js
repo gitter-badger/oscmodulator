@@ -13,22 +13,22 @@ basePath = 'src/client/';
 // so dependencies could be loaded correctly. Hopefully
 // using require.js will help remove the need for this.
 files = [
-    JASMINE,
-    JASMINE_ADAPTER,
-    'scripts/vendor/angular.js',
-    '../../test/vendor/angular-mocks.js',
-    'scripts/vendor/jquery-1.7.2.min.js',
-    'scripts/vendor/jquery-ui-1.8.16.custom.min.js',
-    'scripts/vendor/jquery.ui.touch-punch.js',
-    'scripts/vendor/jquery.mjs.nestedSortable.js',
-    'scripts/vendor/bootstrap.js',
-    'scripts/app.js',
-    'scripts/controllers/main.js',
-    'scripts/directives/midi-input.js',
-    'scripts/directives/nested-sortable.js',
-    '../../test/mock/**/*.js',
-    '../../test/spec/**/*.js',
-    'views/*.html'
+  JASMINE,
+  JASMINE_ADAPTER,
+  'app/components/angular/angular.js',
+  'app/components/angular-mocks/angular-mocks.js',
+  'scripts/vendor/jquery-1.7.2.min.js',
+  'scripts/vendor/jquery-ui-1.8.16.custom.min.js',
+  'scripts/vendor/jquery.ui.touch-punch.js',
+  'scripts/vendor/jquery.mjs.nestedSortable.js',
+  'scripts/vendor/bootstrap.js',
+  'scripts/app.js',
+  'scripts/controllers/main.js',
+  'scripts/directives/midi-input.js',
+  'scripts/directives/nested-sortable.js',
+  '../../test/mock/**/*.js',
+  '../../test/spec/**/*.js',
+  'views/*.html'
 ];
 
 // The html2js preprossessor is used to load template files
@@ -42,32 +42,25 @@ exclude = [
     'scripts/vendor/otherVersions/*.js'
 ];
 
-
 // test results reporter to use
 // possible values: dots || progress
 reporter = 'progress';
 
-
 // web server port
 port = 8080;
-
 
 // cli runner port
 runnerPort = 9100;
 
-
 // enable / disable colors in the output (reporters and logs)
 colors = true;
 
-
 // level of logging
 // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-logLevel = LOG_DEBUG;
-
+logLevel = LOG_INFO;
 
 // enable / disable watching file and executing tests whenever any file changes
 autoWatch = false;
-
 
 // Start these browsers, currently available:
 // - Chrome
@@ -77,7 +70,6 @@ autoWatch = false;
 // - Safari
 // - PhantomJS
 browsers = ['PhantomJS'];
-
 
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit
