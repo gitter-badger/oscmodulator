@@ -1,6 +1,6 @@
 'use strict';
 
-var oscmodulatorUIApp = angular.module('oscmodulatorUIApp', [])
+angular.module('oscmodulatorApp', [])
     .config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider)
 {
     $routeProvider
@@ -11,6 +11,4 @@ var oscmodulatorUIApp = angular.module('oscmodulatorUIApp', [])
         .otherwise({
             redirectTo:'/'
         });
-
-    //delete $httpProvider.defaults.headers.common["X-Requested-With"];
-}]);
+  });
