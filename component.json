@@ -1,6 +1,6 @@
 {
   "name": "oscmodulator",
-  "version": "0.0.0",
+  "version": "2.0.0-alpa",
   "dependencies": {
     "angular": "~1.0.5",
     "json3": "~3.2.4",

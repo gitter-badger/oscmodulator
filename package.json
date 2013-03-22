@@ -1,7 +1,7 @@
 {
   "author": "OSC Modulator",
-  "name": "OSC Modulator",
-  "version": "2.0-SNAPSHOT",
+  "name": "oscmodulator",
+  "version": "2.0.0-alpha",
   "dependencies": {},
   "devDependencies": {
     "grunt": "0.4.0rc7",

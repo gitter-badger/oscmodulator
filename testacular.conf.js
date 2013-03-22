@@ -5,7 +5,7 @@
 // Had to set this to the app folder so that template files
 // could be loaded from within tests using the html2js preprocessor
 // using the same path as the angular application.
-basePath = 'src/client/';
+basePath = 'app';
 
 
 // List of files / patterns to load in the browser.
@@ -15,8 +15,8 @@ basePath = 'src/client/';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'app/components/angular/angular.js',
-  'app/components/angular-mocks/angular-mocks.js',
+  'components/angular/angular.js',
+  'components/angular-mocks/angular-mocks.js',
   'scripts/vendor/jquery-1.7.2.min.js',
   'scripts/vendor/jquery-ui-1.8.16.custom.min.js',
   'scripts/vendor/jquery.ui.touch-punch.js',
@@ -26,8 +26,8 @@ files = [
   'scripts/controllers/main.js',
   'scripts/directives/midi-input.js',
   'scripts/directives/nested-sortable.js',
-  '../../test/mock/**/*.js',
-  '../../test/spec/**/*.js',
+  '../test/mock/**/*.js',
+  '../test/spec/**/*.js',
   'views/*.html'
 ];
 

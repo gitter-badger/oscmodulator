@@ -4,7 +4,7 @@ describe('Directive: nestedSortable', function ()
 {
     var element;
 
-    beforeEach(module('oscmodulatorUIApp'));
+    beforeEach(module('oscmodulatorApp'));
 
     beforeEach(module('views/nested-sortable.html', 'views/midi-input.html'));
 
