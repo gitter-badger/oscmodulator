@@ -21,7 +21,7 @@ files = [
   'scripts/vendor/jquery-ui-1.8.16.custom.min.js',
   'scripts/vendor/jquery.ui.touch-punch.js',
   'scripts/vendor/jquery.mjs.nestedSortable.js',
-  'scripts/vendor/bootstrap.js',
+  'components/bootstrap/docs/assets/js/bootstrap.js',
   'scripts/app.js',
   'scripts/controllers/main.js',
   'scripts/directives/midi-input.js',
