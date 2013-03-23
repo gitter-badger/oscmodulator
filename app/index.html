@@ -6,22 +6,19 @@
         <title>OSC Modulator</title>
         <meta name="description" content=""/>
         <meta name="viewport" content="width=device-width"/>
-        <link rel="stylesheet" href="styles/bootstrap.css"/>
-        <link rel="stylesheet" href="styles/main.css"/>
+        <link rel="stylesheet" href="components/bootstrap/docs/assets/css/bootstrap.css"/>
+        <link rel="stylesheet" href="styles/main.css">
 
     </head>
-    <body data-ng-app="oscmodulatorUIApp">
+    <body data-ng-app="oscmodulatorApp">
 
         <!-- Add your site or application content here -->
-        <div data-ng-view></div>
+        <div class="container" ng-view></div>
 
         <!-- vendor frameworks -->
-        <script src="scripts/vendor/angular.js"></script>
-        <script src="scripts/vendor/jquery-1.7.2.min.js"></script>
-        <script src="scripts/vendor/jquery-ui-1.8.16.custom.min.js"></script>
-        <script src="scripts/vendor/jquery.ui.touch-punch.js"></script>
-        <script src="scripts/vendor/jquery.mjs.nestedSortable.js"></script>
-        <script src="scripts/vendor/bootstrap.js"></script>
+        <script src="components/angular/angular.js"></script>
+        <script src="components/jquery/jquery.js"></script>
+        <script src="components/bootstrap/docs/assets/js/bootstrap.js"></script>
 
         <!-- build:js scripts/scripts.js -->
         <script src="scripts/app.js"></script>

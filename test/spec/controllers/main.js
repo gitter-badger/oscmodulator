@@ -1,9 +1,9 @@
 'use strict';
 
-describe('Controller: MainCtrl', function() {
+describe('Controller: MainCtrl', function () {
 /*
   // load the controller's module
-  beforeEach(module('oscmodulatorUIApp'));
+  beforeEach(module('oscmodulatorApp'));
 
   var MainCtrl,
     scope;
