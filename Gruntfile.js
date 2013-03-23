@@ -79,6 +79,11 @@ module.exports = function (grunt) {
       dist: ['.tmp', '<%= yeoman.dist %>/*'],
       server: '.tmp'
     },
+    bower: {
+      install: {
+        //just run 'grunt bower:install' and you'll see files from your Bower packages in lib directory
+      }
+    },
     jshint: {
       options: {
         jshintrc: '.jshintrc'
@@ -269,6 +274,10 @@ module.exports = function (grunt) {
     'usemin',
     'ngmin',
     'uglify'
+  ]);
+
+  grunt.registerTask('travis', [
+    'bower:install'
   ]);
 
   grunt.registerTask('default', ['build']);
