@@ -4,6 +4,7 @@
   "version": "2.0.0-alpha",
   "dependencies": {},
   "devDependencies": {
+    "bower": "0.8.5",
     "grunt": "0.4.0rc7",
     "grunt-contrib-copy": "0.4.0rc7",
     "grunt-contrib-concat": "0.1.2rc6",
