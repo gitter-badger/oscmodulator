@@ -277,7 +277,8 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('travis', [
-    'bower:install'
+    'bower:install',
+    'build'
   ]);
 
   grunt.registerTask('default', ['build']);
