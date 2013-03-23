@@ -1,4 +1,8 @@
 language: node_js
 node_js:
   - 0.8
-script: "grunt travis"
+
+before_script:
+  - bower install
+
+script: grunt build
