@@ -1,0 +1,14 @@
+{
+  "name": "OSC Modulator",
+  "main": "../index.html",
+  "description": "OSC Modulator",
+  "version": "2.0-SNAPSHOT",
+  "keywords": [ "Midi", "OSC" ],
+  "window": {
+    "icon": "link.png",
+    "toolbar": true,
+    "width": 800,
+    "height": 500,
+    "position": "center"
+  }
+}

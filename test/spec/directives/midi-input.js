@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Directive: midiInput', function() {
-  beforeEach(module('oscmodulatorUIApp'));
+  beforeEach(module('oscmodulatorApp'));
 
   var element;
 /*

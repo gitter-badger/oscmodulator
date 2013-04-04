@@ -4,7 +4,7 @@ describe('Directive: nestedSortable', function ()
 {
     var element;
 
-    beforeEach(module('oscmodulatorUIApp'));
+    beforeEach(module('oscmodulatorApp'));
 
     beforeEach(module('views/nested-sortable.html', 'views/midi-input.html'));
 
@@ -17,7 +17,7 @@ describe('Directive: nestedSortable', function ()
         _$rootScope_.$digest();
 //        $templateCache.put('views/nested-sortable.html', '.<template-goes-here />');
     }));
-
+/*
     it('should have one midi input to start', inject(function ($rootScope, $compile)
     {
 
@@ -27,4 +27,5 @@ describe('Directive: nestedSortable', function ()
     {
 
     }));
+*/
 });
