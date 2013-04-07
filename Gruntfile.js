@@ -19,6 +19,14 @@ module.exports = function (grunt) {
   } catch (e) {}
 
   grunt.initConfig({
+    env: {
+      options: {
+        //Shared Options Hash
+      },
+      build: {
+        PHANTOMJS_BIN: './node_modules/phantomjs/bin/phantomjs'
+      }
+    },
     yeoman: yeomanConfig,
     watch: {
       coffee: {
@@ -28,10 +36,6 @@ module.exports = function (grunt) {
       coffeeTest: {
         files: ['test/spec/{,*/}*.coffee'],
         tasks: ['coffee:test']
-      },
-      compass: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass']
       },
       livereload: {
         files: [
@@ -112,23 +116,6 @@ module.exports = function (grunt) {
           src: '*.coffee',
           dest: 'test/spec'
         }]
-      }
-    },
-    compass: {
-      options: {
-        sassDir: '<%= yeoman.app %>/styles',
-        cssDir: '.tmp/styles',
-        imagesDir: '<%= yeoman.app %>/images',
-        javascriptsDir: '<%= yeoman.app %>/scripts',
-        fontsDir: '<%= yeoman.app %>/styles/fonts',
-        importPath: '<%= yeoman.app %>/components',
-        relativeAssets: true
-      },
-      dist: {},
-      server: {
-        options: {
-          debugInfo: true
-        }
       }
     },
     concat: {
@@ -236,6 +223,8 @@ module.exports = function (grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-env');
+
   grunt.renameTask('regarde', 'watch');
   // remove when mincss task is renamed
   grunt.renameTask('mincss', 'cssmin');
@@ -243,7 +232,6 @@ module.exports = function (grunt) {
   grunt.registerTask('server', [
     'clean:server',
     'coffee:dist',
-    'compass:server',
     'livereload-start',
     'connect:livereload',
     'open',
@@ -253,17 +241,16 @@ module.exports = function (grunt) {
   grunt.registerTask('test', [
     'clean:server',
     'coffee',
-    'compass',
     'connect:test',
     'testacular'
   ]);
 
   grunt.registerTask('build', [
+    'env:build',
     'clean:dist',
     'jshint',
     'test',
     'coffee',
-    'compass:dist',
     'useminPrepare',
     'imagemin',
     'cssmin',
