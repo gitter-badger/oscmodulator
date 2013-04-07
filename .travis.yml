@@ -1,4 +1,11 @@
 language: node_js
 node_js:
   - 0.8
-script: "grunt travis"
+
+before_install:
+  - gem update --system && gem install compass
+  
+before_script:
+  - bower install
+
+script: grunt build
