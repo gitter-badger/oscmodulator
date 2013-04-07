@@ -39,17 +39,6 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
 
       // Set the container that will collapse.
       vCollapseButton.attr('data-target', vTargetSelector);
-
-      // Initiaize the collapse plugin for this item.
-      //jqElement.collapse();
-      jqElement.collapse({ toggle : false });
-
-      // Handle toggling of the button state.
-      var toggleCollapseButtonState = function () {
-        vCollapseButtonIcon.toggleClass(selectors.expandedIconClass).toggleClass(selectors.collapsedIconClass);
-      };
-      jqElement.on('hide', toggleCollapseButtonState);
-      jqElement.on('show', toggleCollapseButtonState);
     }
   };
 });
