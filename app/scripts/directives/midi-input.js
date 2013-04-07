@@ -32,7 +32,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       };
       var vCollapseTarget = selectors.headerSelector + ' ' + selectors.collapseButtonSelector;
       var vCollapseButton = jqElement.find(vCollapseTarget);
-      var vCollapseButtonIcon = jqElement.find(selectors.collapseIconSelector);
+      //var vCollapseButtonIcon = jqElement.find(selectors.collapseIconSelector);
 
       var vId = scope.config.id;
       var vTargetSelector = '#' + vId + ' ' + selectors.oscCollapsorSelector;

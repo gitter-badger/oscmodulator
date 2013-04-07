@@ -19,14 +19,14 @@ module.exports = function (grunt) {
   } catch (e) {}
 
   grunt.initConfig({
-	env: {
-	  options: {
-		//Shared Options Hash
-	  },
-	  build: {
-		PHANTOMJS_BIN: './node_modules/phantomjs/bin/phantomjs'
-	  }
-	},
+    env: {
+      options: {
+        //Shared Options Hash
+      },
+      build: {
+        PHANTOMJS_BIN: './node_modules/phantomjs/bin/phantomjs'
+      }
+    },
     yeoman: yeomanConfig,
     watch: {
       coffee: {
@@ -246,7 +246,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
-	'env:build',
+    'env:build',
     'clean:dist',
     'jshint',
     'test',
