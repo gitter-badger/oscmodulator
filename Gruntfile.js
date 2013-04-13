@@ -10,14 +10,17 @@ module.exports = function (grunt) {
    * Determines the build type which is later used to load the correct node-webkit build.
    */
   var buildType = (function () {
-    var buildType = "unknown";
+    var buildType = 'unknown';
     var platform = process.platform;
-    if (platform === "darwin")
-        buildType = "osx";
-    else if (platform === "linux")
-        buildType = "linux";
-    else if (platform.match(/^win/))
-        buildType = "windows";
+    if (platform === 'darwin') {
+      buildType = 'osx';
+    }
+    else if (platform === 'linux') {
+      buildType = 'linux';
+    }
+    else if (platform.match(/^win/)) {
+      buildType = 'windows';
+    }
     return buildType;
   })();
 
@@ -40,7 +43,7 @@ module.exports = function (grunt) {
         //Shared Options Hash
       },
       build: {
-        PHANTOMJS_BIN: './node_modules/phantomjs/bin/phantomjs'
+        PHANTOMJS_BIN: './node_modules/phantomjs/lib/phantom/bin/phantomjs'
       }
     },
     yeoman: yeomanConfig,
@@ -269,6 +272,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test', [
+    'env:build',
     'clean:server',
     'coffee',
     'connect:test',
