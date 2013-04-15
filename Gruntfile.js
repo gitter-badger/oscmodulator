@@ -6,7 +6,20 @@ var mountFolder = function (connect, dir) {
 
 module.exports = function (grunt) {
   // load all grunt tasks
-  require('matchdep').filterDev('grunt-*').concat(['gruntacular']).forEach(grunt.loadNpmTasks);
+  var matchdep = require('matchdep');
+  var allGruntTasks = matchdep.filterDev('grunt-*');
+  var blacklist = ['grunt-cli'];
+  // Remove anything in the blacklist.
+  for (var i = 0; i < blacklist.length; i++) {
+    for (var j = allGruntTasks.length - 1; j >= 0; j--) {
+      if (blacklist[i] === allGruntTasks[j]) {
+        allGruntTasks.splice(j, 1);
+        break;
+      }
+    }
+  }
+  allGruntTasks = allGruntTasks.concat(['gruntacular']);
+  allGruntTasks.forEach(grunt.loadNpmTasks);
 
   // configurable paths
   var yeomanConfig = {
