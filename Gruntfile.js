@@ -5,6 +5,25 @@ var mountFolder = function (connect, dir) {
 };
 
 module.exports = function (grunt) {
+
+  /**
+   * Determines the build type which is later used to load the correct node-webkit build.
+   */
+  var buildType = (function () {
+    var buildType = 'unknown';
+    var platform = process.platform;
+    if (platform === 'darwin') {
+      buildType = 'osx';
+    }
+    else if (platform === 'linux') {
+      buildType = 'linux';
+    }
+    else if (platform.match(/^win/)) {
+      buildType = 'windows';
+    }
+    return buildType;
+  })();
+
   // load all grunt tasks
   var matchdep = require('matchdep');
   var allGruntTasks = matchdep.filterDev('grunt-*');
@@ -37,7 +56,7 @@ module.exports = function (grunt) {
         //Shared Options Hash
       },
       build: {
-        PHANTOMJS_BIN: './node_modules/phantomjs/bin/phantomjs'
+        PHANTOMJS_BIN: './node_modules/phantomjs/lib/phantom/bin/phantomjs'
       }
     },
     yeoman: yeomanConfig,
@@ -233,12 +252,27 @@ module.exports = function (grunt) {
           ]
         }]
       }
+    },
+    shell: {
+      run: {
+        command: 'build/' + buildType + '/run.sh',
+        options: {
+          stderr: true,
+          stdout: true
+        }
+      }
     }
   });
+
+  grunt.loadNpmTasks('grunt-shell');
 
   grunt.renameTask('regarde', 'watch');
   // remove when mincss task is renamed
   grunt.renameTask('mincss', 'cssmin');
+
+  grunt.registerTask('run-node-webkit', [
+    'shell:run'
+  ]);
 
   grunt.registerTask('server', [
     'clean:server',
@@ -250,6 +284,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('test', [
+    'env:build',
     'clean:server',
     'coffee',
     'connect:test',

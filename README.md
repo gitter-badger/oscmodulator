@@ -26,3 +26,5 @@ Once you have those installed, you can build the project as follows:
     grunt test
     // or run the project UI in a browser
     grunt server
+    // or run the full node-webkit application
+    grunt run-node-webkit

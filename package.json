@@ -31,6 +31,7 @@
     "grunt-env": "~0.2.1",
     "generator-testacular": "~0.1.1",
     "generator-angular": "~0.2.0"
+    "grunt-shell": "~0.2.2"
   },
   "engines": {
     "node": ">=0.8.0"
