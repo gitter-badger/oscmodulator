@@ -30,15 +30,28 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         // The selector used to find the collapse/expand icon inside the collapse button.
         collapseIconSelector : '.collapseButton i'
       };
+      /*
       var vCollapseTarget = selectors.headerSelector + ' ' + selectors.collapseButtonSelector;
       var vCollapseButton = jqElement.find(vCollapseTarget);
-      //var vCollapseButtonIcon = jqElement.find(selectors.collapseIconSelector);
+      var vCollapseButtonIcon = jqElement.find(selectors.collapseIconSelector);
 
       var vId = scope.config.id;
       var vTargetSelector = '#' + vId + ' ' + selectors.oscCollapsorSelector;
 
       // Set the container that will collapse.
       vCollapseButton.attr('data-target', vTargetSelector);
+
+      // Initiaize the collapse plugin for this item.
+      //jqElement.collapse();
+      jqElement.collapse({ toggle : false });
+
+      // Handle toggling of the button state.
+      var toggleCollapseButtonState = function () {
+        vCollapseButtonIcon.toggleClass(selectors.expandedIconClass).toggleClass(selectors.collapsedIconClass);
+      };
+      jqElement.on('hide', toggleCollapseButtonState);
+      jqElement.on('show', toggleCollapseButtonState);
+      */
     }
   };
 });

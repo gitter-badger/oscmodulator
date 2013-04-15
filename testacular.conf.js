@@ -15,14 +15,12 @@ basePath = 'app';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
+  'components/jquery/jquery.js',
   'components/angular/angular.js',
   'components/angular-mocks/angular-mocks.js',
-  'components/jquery/jquery.js',
-  'components/bootstrap/docs/assets/js/bootstrap.js',
+  'components/angular-bootstrap/ui-bootstrap-tpls.js',
   'scripts/app.js',
-  'scripts/controllers/main.js',
-  'scripts/directives/midi-input.js',
-  'scripts/directives/nested-sortable.js',
+  'scripts/**/*.js',
   '../test/mock/**/*.js',
   '../test/spec/**/*.js',
   'views/*.html'
@@ -36,7 +34,6 @@ preprocessors = {
 
 // list of files to exclude
 exclude = [
-    'scripts/vendor/otherVersions/*.js'
 ];
 
 // test results reporter to use

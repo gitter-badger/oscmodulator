@@ -223,8 +223,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-env');
-
   grunt.renameTask('regarde', 'watch');
   // remove when mincss task is renamed
   grunt.renameTask('mincss', 'cssmin');
