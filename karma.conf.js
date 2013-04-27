@@ -1,4 +1,4 @@
-// Testacular configuration
+// Kamra configuration
 
 
 // Base path, that will be used to resolve files and excludes.
