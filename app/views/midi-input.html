@@ -1,9 +1,9 @@
-<div class="treeItem" ng-controller="CollapseCtrl">
+<div class="midiInput" ng-controller="CollapseCtrl">
     <!-- Header -->
     <div class="container3Col midiInputHeader">
         <div class="leftCol">
             <i class="icon-resize-vertical"></i>
-            <button class="btn collapseButton" type="button" ng-click="isCollapsed = !isCollapsed">
+            <button class="btn collapseButton" type="button" ng-click="toggleCollapsed()">
                 <div ng-switch="isCollapsed">
                     <i ng-switch-when="false" class="icon-chevron-down"></i>
                     <i ng-switch-when="true" class="icon-chevron-right"></i>
@@ -11,7 +11,7 @@
             </button>
         </div>
         <div class="rightCol midiInputConfig">
-            <div class="inline-input-append midiInput">
+            <div class="inline-input-append midiNoteConfig">
                 <input class="input-mini" type="text" name="midiInNote" placeholder="Midi">
                 <div class="btn-group">
                     <button class="btn dropdown-toggle midiNoteType" data-toggle="dropdown">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <!-- Tree Item OSC Command -->
-    <div class="treeItemContent">
+    <div class="midiInputContent">
         <div class="oscCollapsor" collapse="isCollapsed">
             <div class="oscList">
                 <div class="oscOutputItem">
@@ -83,6 +83,6 @@
         </div>
     </div>
     <!-- Tree Item Footer -->
-    <div class="treeItemFooter">
+    <div class="midiInputFooter">
     </div>
 </div>
