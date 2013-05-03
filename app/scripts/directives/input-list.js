@@ -1,22 +1,22 @@
-'use strict';
+angular.module('oscmodulatorApp').directive('inputList', function () {
+  'use strict';
 
-angular.module('oscmodulatorApp').directive('nestedSortable', function () {
   return {
-    templateUrl : 'views/nested-sortable.html',
+    templateUrl : 'views/input-list.html',
     restrict : 'A',
     replace : true,
     //require:"^MainCtrl",
     controller : function nestedSortableCtrl($scope, $element /*, $attrs*/) {
       var jqElement = angular.element($element);
+
       var templates = {
         // The template used to create a new midi input.
         midiInput : '<div x-midi-input id="midi-input-1"></div>',
         // The template used to create a new leaf node in the Nested Sortable.
         leafNode : '<li class="leaf">'
       };
-      // TODO Should this model be on the nested sortable scope, passed through the HTML
-      // or stored on the MainCtrl?
-      $scope.midiInputs = [
+
+      $scope.inputs = [
         {
           id : 'midi-input-1',
           name : 'Button 1',
