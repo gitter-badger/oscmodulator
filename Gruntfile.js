@@ -14,11 +14,9 @@ module.exports = function (grunt) {
     var platform = process.platform;
     if (platform === 'darwin') {
       buildType = 'osx';
-    }
-    else if (platform === 'linux') {
+    } else if (platform === 'linux') {
       buildType = 'linux';
-    }
-    else if (platform.match(/^win/)) {
+    } else if (platform.match(/^win/)) {
       buildType = 'windows';
     }
     return buildType;
@@ -37,49 +35,51 @@ module.exports = function (grunt) {
       }
     }
   }
-  allGruntTasks = allGruntTasks.concat(['gruntacular']);
+//  allGruntTasks = allGruntTasks.concat(['gruntacular']);
   allGruntTasks.forEach(grunt.loadNpmTasks);
 
   // configurable paths
   var yeomanConfig = {
-    app: 'app',
-    dist: 'dist'
+    app : 'app',
+    dist : 'dist',
+    tmp : '.tmp'
   };
 
   try {
     yeomanConfig.app = require('./component.json').appPath || yeomanConfig.app;
-  } catch (e) {}
+  } catch ( e ) {
+  }
 
   grunt.initConfig({
-    env: {
-      options: {
+    env : {
+      options : {
         //Shared Options Hash
       },
-      build: {
-        PHANTOMJS_BIN: './node_modules/phantomjs/lib/phantom/bin/phantomjs'
+      build : {
+        PHANTOMJS_BIN : './node_modules/phantomjs/lib/phantom/bin/phantomjs'
       }
     },
-    yeoman: yeomanConfig,
-    watch: {
-      coffee: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
-        tasks: ['coffee:dist']
+    yeoman : yeomanConfig,
+    watch : {
+      coffee : {
+        files : ['<%= yeoman.app %>/scripts/{,*/}*.coffee'],
+        tasks : ['coffee:dist']
       },
-      coffeeTest: {
-        files: ['test/spec/{,*/}*.coffee'],
-        tasks: ['coffee:test']
+      coffeeTest : {
+        files : ['test/spec/{,*/}*.coffee'],
+        tasks : ['coffee:test']
       },
-      livereload: {
-        files: [
+      livereload : {
+        files : [
           '<%= yeoman.app %>/{,*/}*.html',
           '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
           '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg}'
         ],
-        tasks: ['livereload']
+        tasks : ['livereload']
       }
     },
-    connect: {
+    connect : {
       livereload: {
         options: {
           port: 9000,
@@ -89,176 +89,211 @@ module.exports = function (grunt) {
             return [
               lrSnippet,
               mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app)
+              mountFolder(connect, yeomanConfig.app),
+              // read README to understand why this is necessary
+              mountFolder(connect, '.')
             ];
           }
         }
       },
-      test: {
+      e2e: {
         options: {
-          port: 9000,
+          port: 9001,
           middleware: function (connect) {
             return [
               mountFolder(connect, '.tmp'),
-              mountFolder(connect, 'test')
+              mountFolder(connect, yeomanConfig.app),
+              // read README to understand why this is necessary
+              mountFolder(connect, '.')
             ];
           }
         }
       }
     },
-    open: {
-      server: {
-        url: 'http://localhost:<%= connect.livereload.options.port %>'
+    open : {
+      server : {
+        url : 'http://localhost:<%= connect.livereload.options.port %>'
       }
     },
-    clean: {
-      dist: ['.tmp', '<%= yeoman.dist %>/*'],
-      server: '.tmp'
+    clean : {
+      dist : ['.tmp', '<%= yeoman.dist %>/*'],
+      server : '.tmp',
+      // unit tests don't run compass, so they shouldn't blow away the .tmp directory either
+      unit : []
     },
-    bower: {
-      install: {
+    bower : {
+      install : {
         //just run 'grunt bower:install' and you'll see files from your Bower packages in lib directory
       }
     },
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc'
+    jshint : {
+      options : {
+        jshintrc : '.jshintrc'
       },
-      all: [
-        'Gruntfile.js',
-        '<%= yeoman.app %>/scripts/{,*/}*.js'
+      all : [
+        'Gruntfile.js', '<%= yeoman.app %>/scripts/{,*/}*.js'
       ]
     },
-    testacular: {
+    karma: {
       unit: {
-        configFile: 'testacular.conf.js',
-        singleRun: true
+        configFile: 'test/karma.conf.js',
+        autoWatch: false,
+        singleRun: true,
+        browsers: ['PhantomJS']
+      },
+      'unit-watch': {
+        configFile: 'test/karma.conf.js',
+        singleRun: false,
+        autoWatch: true
+      },
+      e2e: {
+        configFile: 'test/karma-e2e.conf.js',
+        autoWatch: false,
+        singleRun: true,
+        browsers: ['PhantomJS']
+      },
+      'e2e-watch': {
+        configFile: 'test/karma-e2e.conf.js',
+        singleRun: false,
+        autoWatch: true
+      },
+      'e2e-cross-browser': {
+        configFile: 'test/karma-e2e.conf.js',
+        singleRun: true,
+        autoWatch: false,
+        browsers: ['Chrome', 'Firefox', 'Safari', 'Opera']
       }
     },
-    coffee: {
-      dist: {
-        files: {
-          '.tmp/scripts/coffee.js': '<%= yeoman.app %>/scripts/*.coffee'
+    coffee : {
+      dist : {
+        files : {
+          '.tmp/scripts/coffee.js' : '<%= yeoman.app %>/scripts/*.coffee'
         }
       },
-      test: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/spec',
-          src: '*.coffee',
-          dest: 'test/spec'
-        }]
+      test : {
+        files : [
+          {
+            expand : true,
+            cwd : '.tmp/spec',
+            src : '*.coffee',
+            dest : 'test/spec'
+          }
+        ]
       }
     },
-    concat: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '.tmp/scripts/*.js',
-            '<%= yeoman.app %>/scripts/*.js'
+    concat : {
+      dist : {
+        files : {
+          '<%= yeoman.dist %>/scripts/scripts.js' : [
+            '.tmp/scripts/*.js', '<%= yeoman.app %>/scripts/*.js'
           ]
         }
       }
     },
-    useminPrepare: {
-      html: '<%= yeoman.app %>/index.html',
-      options: {
-        dest: '<%= yeoman.dist %>'
+    useminPrepare : {
+      html : '<%= yeoman.app %>/index.html',
+      options : {
+        dest : '<%= yeoman.dist %>'
       }
     },
-    usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      options: {
-        dirs: ['<%= yeoman.dist %>']
+    usemin : {
+      html : ['<%= yeoman.dist %>/{,*/}*.html'],
+      css : ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+      options : {
+        dirs : ['<%= yeoman.dist %>']
       }
     },
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
+    imagemin : {
+      dist : {
+        files : [
+          {
+            expand : true,
+            cwd : '<%= yeoman.app %>/images',
+            src : '{,*/}*.{png,jpg,jpeg}',
+            dest : '<%= yeoman.dist %>/images'
+          }
+        ]
       }
     },
-    cssmin: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/styles/main.css': [
-            '.tmp/styles/{,*/}*.css',
-            '<%= yeoman.app %>/styles/{,*/}*.css'
+    cssmin : {
+      dist : {
+        files : {
+          '<%= yeoman.dist %>/styles/main.css' : [
+            '.tmp/styles/{,*/}*.css', '<%= yeoman.app %>/styles/{,*/}*.css'
           ]
         }
       }
     },
-    htmlmin: {
-      dist: {
-        options: {
+    htmlmin : {
+      dist : {
+        options : {
           /*removeCommentsFromCDATA: true,
-          // https://github.com/yeoman/grunt-usemin/issues/44
-          //collapseWhitespace: true,
-          collapseBooleanAttributes: true,
-          removeAttributeQuotes: true,
-          removeRedundantAttributes: true,
-          useShortDoctype: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true*/
+           // https://github.com/yeoman/grunt-usemin/issues/44
+           //collapseWhitespace: true,
+           collapseBooleanAttributes: true,
+           removeAttributeQuotes: true,
+           removeRedundantAttributes: true,
+           useShortDoctype: true,
+           removeEmptyAttributes: true,
+           removeOptionalTags: true*/
         },
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
-          dest: '<%= yeoman.dist %>'
-        }]
+        files : [
+          {
+            expand : true,
+            cwd : '<%= yeoman.app %>',
+            src : ['*.html', 'views/*.html'],
+            dest : '<%= yeoman.dist %>'
+          }
+        ]
       }
     },
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
+    cdnify : {
+      dist : {
+        html : ['<%= yeoman.dist %>/*.html']
       }
     },
-    ngmin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.dist %>/scripts',
-          src: '*.js',
-          dest: '<%= yeoman.dist %>/scripts'
-        }]
+    ngmin : {
+      dist : {
+        files : [
+          {
+            expand : true,
+            cwd : '<%= yeoman.dist %>/scripts',
+            src : '*.js',
+            dest : '<%= yeoman.dist %>/scripts'
+          }
+        ]
       }
     },
-    uglify: {
-      dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
+    uglify : {
+      dist : {
+        files : {
+          '<%= yeoman.dist %>/scripts/scripts.js' : [
             '<%= yeoman.dist %>/scripts/scripts.js'
           ],
         }
       }
     },
-    copy: {
-      dist: {
-        files: [{
-          expand: true,
-          dot: true,
-          cwd: '<%= yeoman.app %>',
-          dest: '<%= yeoman.dist %>',
-          src: [
-            '*.{ico,txt}',
-            '.htaccess',
-            'components/**/*'
-          ]
-        }]
+    copy : {
+      dist : {
+        files : [
+          {
+            expand : true,
+            dot : true,
+            cwd : '<%= yeoman.app %>',
+            dest : '<%= yeoman.dist %>',
+            src : [
+              '*.{ico,txt}', '.htaccess', 'components/**/*'
+            ]
+          }
+        ]
       }
     },
-    shell: {
-      run: {
-        command: 'build/' + buildType + '/run.sh',
-        options: {
-          stderr: true,
-          stdout: true
+    shell : {
+      run : {
+        command : 'build/' + buildType + '/run.sh',
+        options : {
+          stderr : true,
+          stdout : true
         }
       }
     }
@@ -279,16 +314,51 @@ module.exports = function (grunt) {
     'coffee:dist',
     'livereload-start',
     'connect:livereload',
-    'open',
+    'open:server',
     'watch'
   ]);
 
+  // This task purposely doesn't use the unit/e2e tasks
+  // in order to avoid the duplicated hint/clean/compile tasks
   grunt.registerTask('test', [
-    'env:build',
+    //'jshint:dev',
     'clean:server',
-    'coffee',
-    'connect:test',
-    'testacular'
+    'karma:unit',
+    'connect:e2e',
+    'karma:e2e'
+  ]);
+
+  grunt.registerTask('unit', [
+    //'jshint:dev',
+    'clean:unit',
+    'karma:unit'
+  ]);
+
+  grunt.registerTask('unit-watch', [
+    //'jshint:dev',
+    'clean:unit',
+    'karma:unit-watch'
+  ]);
+
+  grunt.registerTask('e2e', [
+    //'jshint:dev',
+    'clean:server',
+    'connect:e2e',
+    'karma:e2e'
+  ]);
+
+  grunt.registerTask('e2e-watch', [
+    //'jshint:dev',
+    'clean:server',
+    'connect:e2e',
+    'karma:e2e-watch'
+  ]);
+
+  grunt.registerTask('e2e-cross-browser', [
+    //'jshint:dev',
+    'clean:server',
+    'connect:e2e',
+    'karma:e2e-cross-browser'
   ]);
 
   grunt.registerTask('build', [
@@ -307,11 +377,6 @@ module.exports = function (grunt) {
     'usemin',
     'ngmin',
     'uglify'
-  ]);
-
-  grunt.registerTask('travis', [
-    'bower:install',
-    'build'
   ]);
 
   grunt.registerTask('default', ['build']);

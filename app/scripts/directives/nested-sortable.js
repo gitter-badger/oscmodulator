@@ -21,6 +21,7 @@ angular.module('oscmodulatorApp').directive('nestedSortable', function () {
           id : 'midi-input-1',
           name : 'Button 1',
           type : 'midi-to-osc',
+          collapsed : false,
           mute : false,
           solo : false,
           midi : {

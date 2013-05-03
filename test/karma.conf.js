@@ -1,17 +1,11 @@
-// Testacular configuration
+/*jshint quotmark:single*/
+// Karma configuration
+
+// base path, that will be used to resolve files and exclude
+basePath = '../app';
 
 
-// Base path, that will be used to resolve files and excludes.
-// Had to set this to the app folder so that template files
-// could be loaded from within tests using the html2js preprocessor
-// using the same path as the angular application.
-basePath = 'app';
-
-
-// List of files / patterns to load in the browser.
-// Had to list these in the same order as the index file
-// so dependencies could be loaded correctly. Hopefully
-// using require.js will help remove the need for this.
+// list of files / patterns to load in the browser
 files = [
   JASMINE,
   JASMINE_ADAPTER,
@@ -19,9 +13,10 @@ files = [
   'components/angular/angular.js',
   'components/angular-mocks/angular-mocks.js',
   'components/angular-bootstrap/ui-bootstrap-tpls.js',
+//  'app/config.js',
+//  'app/config_overrides.js',
   'scripts/app.js',
   'scripts/**/*.js',
-  '../test/mock/**/*.js',
   '../test/spec/**/*.js',
   'views/*.html'
 ];
@@ -29,16 +24,15 @@ files = [
 // The html2js preprossessor is used to load template files
 // during testing so directives can be unit tested.
 preprocessors = {
-    '**/*.html': 'html2js'
+  '**/*.html': 'html2js'
 };
 
 // list of files to exclude
-exclude = [
-];
+exclude = [];
 
 // test results reporter to use
-// possible values: dots || progress
-reporter = 'progress';
+// possible values: dots || progress || growl
+reporters = ['progress'];
 
 // web server port
 port = 8080;
@@ -61,10 +55,14 @@ autoWatch = false;
 // - ChromeCanary
 // - Firefox
 // - Opera
-// - Safari
+// - Safari (only Mac)
 // - PhantomJS
-browsers = ['PhantomJS'];
+// - IE (only Windows)
+browsers = ['Chrome'];
+
+// If browser does not capture in given timeout [ms], kill it
+captureTimeout = 5000;
 
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit
-singleRun = false;
+singleRun = true;
