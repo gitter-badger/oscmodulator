@@ -7,7 +7,7 @@ describe('e2e: midiInputs', function () {
     });
 
     it('should start with one midi input.', function () {
-      expect(element('div.midiInput').count(), "all treeItems on the page").toEqual(1);
+      expect(element('div.midiInput').count(), 'all treeItems on the page').toEqual(1);
     });
 
     it('should start out expanded.', function() {

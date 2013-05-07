@@ -1,4 +1,4 @@
-/*jshint quotmark:single*/
+/* jshint quotmark:single */
 // Karma E2E configuration
 
 // base path, that will be used to resolve files and exclude

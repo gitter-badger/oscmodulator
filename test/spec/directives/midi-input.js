@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Directive: midiInput', function () {
-  var element;
+//  var element;
 
 //  beforeEach(module('oscmodulatorApp'));
 //  beforeEach(module('views/midi-input.html'));

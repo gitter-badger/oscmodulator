@@ -5,6 +5,8 @@ var mountFolder = function (connect, dir) {
 };
 
 module.exports = function (grunt) {
+  /* Allow jshint:with_overrides below */
+  /* jshint camelcase: false */
 
   /**
    * Determines the build type which is later used to load the correct node-webkit build.
@@ -80,12 +82,12 @@ module.exports = function (grunt) {
       }
     },
     connect : {
-      livereload: {
-        options: {
-          port: 9000,
+      livereload : {
+        options : {
+          port : 9000,
           // Change this to '0.0.0.0' to access the server from outside.
-          hostname: 'localhost',
-          middleware: function (connect) {
+          hostname : 'localhost',
+          middleware : function (connect) {
             return [
               lrSnippet,
               mountFolder(connect, '.tmp'),
@@ -96,10 +98,10 @@ module.exports = function (grunt) {
           }
         }
       },
-      e2e: {
-        options: {
-          port: 9001,
-          middleware: function (connect) {
+      e2e : {
+        options : {
+          port : 9001,
+          middleware : function (connect) {
             return [
               mountFolder(connect, '.tmp'),
               mountFolder(connect, yeomanConfig.app),
@@ -132,36 +134,45 @@ module.exports = function (grunt) {
       },
       all : [
         'Gruntfile.js', '<%= yeoman.app %>/scripts/{,*/}*.js'
-      ]
+      ],
+      // Jasmine specs use globals among other things that require different linting configuration.
+      with_overrides : {
+        options : {
+          jshintrc : 'test/.jshintrc'
+        },
+        files : {
+          src : [ 'test/**/*.js', '!**/karma*.conf.js' ]
+        }
+      }
     },
-    karma: {
-      unit: {
-        configFile: 'test/karma.conf.js',
-        autoWatch: false,
-        singleRun: true,
-        browsers: ['PhantomJS']
+    karma : {
+      unit : {
+        configFile : 'test/karma.conf.js',
+        autoWatch : false,
+        singleRun : true,
+        browsers : ['PhantomJS']
       },
       'unit-watch': {
-        configFile: 'test/karma.conf.js',
-        singleRun: false,
-        autoWatch: true
+        configFile : 'test/karma.conf.js',
+        singleRun : false,
+        autoWatch : true
       },
-      e2e: {
-        configFile: 'test/karma-e2e.conf.js',
-        autoWatch: false,
-        singleRun: true,
-        browsers: ['PhantomJS']
+      e2e : {
+        configFile : 'test/karma-e2e.conf.js',
+        autoWatch : false,
+        singleRun : true,
+        browsers : ['PhantomJS']
       },
       'e2e-watch': {
-        configFile: 'test/karma-e2e.conf.js',
-        singleRun: false,
-        autoWatch: true
+        configFile : 'test/karma-e2e.conf.js',
+        singleRun : false,
+        autoWatch : true
       },
       'e2e-cross-browser': {
-        configFile: 'test/karma-e2e.conf.js',
-        singleRun: true,
-        autoWatch: false,
-        browsers: ['Chrome', 'Firefox', 'Safari', 'Opera']
+        configFile : 'test/karma-e2e.conf.js',
+        singleRun : true,
+        autoWatch : false,
+        browsers : ['Chrome', 'Firefox', 'Safari', 'Opera']
       }
     },
     coffee : {
@@ -227,15 +238,15 @@ module.exports = function (grunt) {
     htmlmin : {
       dist : {
         options : {
-          /*removeCommentsFromCDATA: true,
+          /*removeCommentsFromCDATA : true,
            // https://github.com/yeoman/grunt-usemin/issues/44
-           //collapseWhitespace: true,
-           collapseBooleanAttributes: true,
-           removeAttributeQuotes: true,
-           removeRedundantAttributes: true,
-           useShortDoctype: true,
-           removeEmptyAttributes: true,
-           removeOptionalTags: true*/
+           //collapseWhitespace : true,
+           collapseBooleanAttributes : true,
+           removeAttributeQuotes : true,
+           removeRedundantAttributes : true,
+           useShortDoctype : true,
+           removeEmptyAttributes : true,
+           removeOptionalTags : true*/
         },
         files : [
           {
@@ -321,7 +332,6 @@ module.exports = function (grunt) {
   // This task purposely doesn't use the unit/e2e tasks
   // in order to avoid the duplicated hint/clean/compile tasks
   grunt.registerTask('test', [
-    //'jshint:dev',
     'clean:server',
     'karma:unit',
     'connect:e2e',
@@ -329,33 +339,28 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('unit', [
-    //'jshint:dev',
     'clean:unit',
     'karma:unit'
   ]);
 
   grunt.registerTask('unit-watch', [
-    //'jshint:dev',
     'clean:unit',
     'karma:unit-watch'
   ]);
 
   grunt.registerTask('e2e', [
-    //'jshint:dev',
     'clean:server',
     'connect:e2e',
     'karma:e2e'
   ]);
 
   grunt.registerTask('e2e-watch', [
-    //'jshint:dev',
     'clean:server',
     'connect:e2e',
     'karma:e2e-watch'
   ]);
 
   grunt.registerTask('e2e-cross-browser', [
-    //'jshint:dev',
     'clean:server',
     'connect:e2e',
     'karma:e2e-cross-browser'

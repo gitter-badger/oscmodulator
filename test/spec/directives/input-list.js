@@ -6,10 +6,10 @@ describe('Directive: nestedSortable', function () {
   beforeEach(module('views/input-list.html'));
   beforeEach(module('views/midi-input.html'));
 
-  beforeEach(inject(function (_$rootScope_, _$compile_, $templateCache) {
+  beforeEach(inject(function ($rootScope, $compile) {
     element = angular.element('<div data-input-list></div>');
-    element = _$compile_(element)(_$rootScope_);
-    _$rootScope_.$digest();
+    element = $compile(element)($rootScope);
+    $rootScope.$digest();
   }));
 
   it('should start with one midi input', inject(function ($rootScope/*, $compile*/) {
