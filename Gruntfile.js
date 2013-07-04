@@ -58,7 +58,7 @@ module.exports = function (grunt) {
         //Shared Options Hash
       },
       build : {
-        PHANTOMJS_BIN : './node_modules/phantomjs/lib/phantom/bin/phantomjs'
+        PHANTOMJS_BIN : './node_modules/phantomjs/bin/phantomjs'
       }
     },
     yeoman : yeomanConfig,
@@ -280,7 +280,7 @@ module.exports = function (grunt) {
         files : {
           '<%= yeoman.dist %>/scripts/scripts.js' : [
             '<%= yeoman.dist %>/scripts/scripts.js'
-          ],
+          ]
         }
       }
     },
