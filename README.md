@@ -16,6 +16,9 @@ Once you have those installed, you can build the project as follows:
     // clone the repo
     git clone https://github.com/OSCModulator/oscmodulator.git
     cd oscmodulator
+    // npm install tools
+    npm install -g bower
+    npm install -g grunt-cli
     // npm install NodeJS dependencies
     npm install
     // bower install Web UI dependencies
