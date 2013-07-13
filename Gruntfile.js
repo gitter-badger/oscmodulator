@@ -45,7 +45,7 @@ module.exports = function (grunt) {
       options : {
         //Shared Options Hash
       },
-      build : {
+      test: {
         PHANTOMJS_BIN : './node_modules/phantomjs/bin/phantomjs'
       }
     },
@@ -300,9 +300,8 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-shell');
 
+  //TODO Replace deprecated grunt-regarde with grunt-contrib-watch
   grunt.renameTask('regarde', 'watch');
-  // remove when mincss task is renamed
-  grunt.renameTask('mincss', 'cssmin');
 
   grunt.registerTask('run-node-webkit', [
     'shell:run'
@@ -320,6 +319,7 @@ module.exports = function (grunt) {
   // This task purposely doesn't use the unit/e2e tasks
   // in order to avoid the duplicated hint/clean/compile tasks
   grunt.registerTask('test', [
+    'env:test',
     'clean:server',
     'karma:unit',
     'connect:e2e',
@@ -327,35 +327,39 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('unit', [
+    'env:test',
     'clean:unit',
     'karma:unit'
   ]);
 
   grunt.registerTask('unit-watch', [
+    'env:test',
     'clean:unit',
     'karma:unit-watch'
   ]);
 
   grunt.registerTask('e2e', [
+    'env:test',
     'clean:server',
     'connect:e2e',
     'karma:e2e'
   ]);
 
   grunt.registerTask('e2e-watch', [
+    'env:test',
     'clean:server',
     'connect:e2e',
     'karma:e2e-watch'
   ]);
 
   grunt.registerTask('e2e-cross-browser', [
+    'env:test',
     'clean:server',
     'connect:e2e',
     'karma:e2e-cross-browser'
   ]);
 
   grunt.registerTask('build', [
-    'env:build',
     'clean:dist',
     'jshint',
     'test',
