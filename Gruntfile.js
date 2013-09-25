@@ -138,12 +138,13 @@ module.exports = function (grunt) {
         configFile : 'test/karma.conf.js',
         autoWatch : false,
         singleRun : true,
-        browsers : ['PhantomJS']
+        browsers : ['PhantomJS'],
       },
       'unit-watch': {
         configFile : 'test/karma.conf.js',
         singleRun : false,
-        autoWatch : true
+        autoWatch : true,
+        captureTimeout : 10000
       },
       e2e : {
         configFile : 'test/karma-e2e.conf.js',
@@ -154,7 +155,8 @@ module.exports = function (grunt) {
       'e2e-watch': {
         configFile : 'test/karma-e2e.conf.js',
         singleRun : false,
-        autoWatch : true
+        autoWatch : true,
+        captureTimeout : 10000
       },
       'e2e-cross-browser': {
         configFile : 'test/karma-e2e.conf.js',

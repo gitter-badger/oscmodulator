@@ -48,15 +48,12 @@
                     <!-- path row -->
                     <div class="container3Col oscPathRow">
                         <div class="leftCol oscHostConfig">
-                            <div class="btn-group">
-                                <button class="btn dropdown-toggle oscHost" data-toggle="dropdown">
-                                    <span class="oscHost">OSC Host</span> <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="oscHost" href="#">Live</a></li>
-                                    <li><a class="oscHost" href="#">Resolume</a></li>
-                                </ul>
-                            </div>
+                            <!-- use http://silviomoreto.github.io/bootstrap-select/ ? -->
+                            <!-- AngularJS Select Model: http://docs.angularjs.org/api/ng.directive:select -->
+                            <select class="oscHost" required="false" ng-model="config.osc.host" ng-options="host.name for host in hosts">
+                                <!--<option value="">OSC Host</option>-->
+                            </select>
+                            <!--<div data-drop-down-component data-items="oscHosts"/>-->
                         </div>
                         <div class="rightCol">
                             <button class="btn removeOSCOutput" type="button"><i class="icon-remove"></i></button>
