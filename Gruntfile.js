@@ -98,6 +98,19 @@ module.exports = function (grunt) {
             ];
           }
         }
+      },
+      'e2e-watch' : {
+        options : {
+          port : 9002,
+          middleware : function (connect) {
+            return [
+              mountFolder(connect, '.tmp'),
+              mountFolder(connect, yeomanConfig.app),
+              // read README to understand why this is necessary
+              mountFolder(connect, '.')
+            ];
+          }
+        }
       }
     },
     open : {
@@ -138,7 +151,7 @@ module.exports = function (grunt) {
         configFile : 'test/karma.conf.js',
         autoWatch : false,
         singleRun : true,
-        browsers : ['PhantomJS'],
+        browsers : ['PhantomJS']
       },
       'unit-watch': {
         configFile : 'test/karma.conf.js',
@@ -153,7 +166,7 @@ module.exports = function (grunt) {
         browsers : ['PhantomJS']
       },
       'e2e-watch': {
-        configFile : 'test/karma-e2e.conf.js',
+        configFile : 'test/karma-e2e-watch.conf.js',
         singleRun : false,
         autoWatch : true,
         captureTimeout : 10000
@@ -350,7 +363,7 @@ module.exports = function (grunt) {
   grunt.registerTask('e2e-watch', [
     'env:test',
     'clean:server',
-    'connect:e2e',
+    'connect:e2e-watch',
     'karma:e2e-watch'
   ]);
 

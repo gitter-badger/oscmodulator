@@ -10,10 +10,9 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       hosts : '=oscHosts',
       id : '@id'
     },
-    controller : function midiInputCtrl($scope /*, $element, $attrs*/) {
-      $scope.oscHost = '';
+    controller : function midiInputCtrl(/*$scope, $element, $attrs*/) {
     },
-    link : function postLink(/*scope, element, attrs, controllers*/) {
+    link : function postLink(/*$scope, element, attrs, controllers*/) {
     }
   };
 });
