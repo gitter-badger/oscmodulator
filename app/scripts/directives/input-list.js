@@ -29,12 +29,24 @@ angular.module('oscmodulatorApp').directive('inputList', function () {
             type : 'on'
           },
           osc : {
-            host : 'live',
+            host : null,
             path : '/osc/server/path',
             parameters : [
-              10, 'foo'
+              10,
+              'foo'
             ]
           }
+        }
+      ];
+
+      $scope.hosts = [
+        {
+          name : 'Live',
+          port : 9000
+        },
+        {
+          name : 'Resolume',
+          port : 9001
         }
       ];
 

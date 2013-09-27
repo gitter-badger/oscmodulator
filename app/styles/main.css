@@ -98,8 +98,13 @@ button.midiNoteType
 .oscPathRow
 {
 }
-
+/*
 button.oscHost
+{
+    width: 100px;
+}
+*/
+select.oscHost
 {
     width: 100px;
 }
@@ -199,77 +204,4 @@ button.oscHost
 {
     background-color: red;
     padding: 25px;
-}
-
-
-/** Nested Sortable **/
-.placeholder {
-    /*outline: 1px dotted #4183C4;*/
-    background-color: #b0c4de;
-}
-
-.error {
-    background-color: #fbe3e4;
-}
-
-ol {
-    margin: 0;
-    padding: 0;
-    list-style: none inside none;
-    /*padding-left: 30px;*/
-}
-
-/*ol.sortable, */
-ol.sortable ol {
-    margin: 0 0 0 25px;
-    padding: 0;
-    list-style-type: none;
-}
-
-ol.sortable {
-    /*margin: 4em 0;*/
-}
-
-.sortable li {
-    /*margin: 5px 0 0 0;*/
-    /*padding: 0;*/
-}
-
-.sortable li div  {
-    /*border: 1px solid #d4d4d4;*/
-    /*padding: 6px;*/
-    margin: 0;
-    cursor: move;
-}
-
-.sortable li.branch div {
-}
-
-.sortable li.leaf div {
-}
-
-li.collapsed.hovering div {
-    background-color: #fafafa;
-}
-
-.disclose {
-    cursor: pointer;
-    /*width: 10px;*/
-    /*display: none;*/
-}
-
-.sortable li.collapsed > ol {
-    display: none;
-}
-
-.sortable li.branch > div > .disclose {
-    /*display: inline-block;*/
-}
-
-.sortable li.collapsed > div > .disclose > span:before {
-    /*content: '+ ';*/
-}
-
-.sortable li.expanded > div > .disclose > span:before {
-    /*content: '- ';*/
 }
