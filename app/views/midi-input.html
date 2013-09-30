@@ -12,17 +12,19 @@
         </div>
         <div class="rightCol midiInputConfig">
             <div class="inline-input-append midiNoteConfig">
-                <input class="input-mini" type="text" name="midiInNote" placeholder="Midi">
-                <div class="btn-group">
-                    <button class="btn dropdown-toggle midiNoteType" data-toggle="dropdown">
-                        <span class="midiNoteType">on</span> <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="midiNoteTypeOption" href="#midiNoteOn">on</a></li>
-                        <li><a class="midiNoteTypeOption" href="#midiNoteOff">off</a></li>
-                        <li><a class="midiNoteTypeOption" href="#midiNoteHold">hold</a></li>
-                    </ul>
-                </div>
+                <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi">
+                <select class="midiNoteType" required="true" ng-model="config.midi.type" ng-options="type for type in midiTypes">
+                </select>
+                <!--<div class="btn-group">-->
+                    <!--<button class="btn dropdown-toggle midiNoteType" data-toggle="dropdown">-->
+                        <!--<span class="midiNoteType">on</span> <span class="caret"></span>-->
+                    <!--</button>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteOn">on</a></li>-->
+                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteOff">off</a></li>-->
+                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteHold">hold</a></li>-->
+                    <!--</ul>-->
+                <!--</div>-->
             </div>
             <div class="btn-group">
                 <button class="btn solo" type="button" data-toggle="button"

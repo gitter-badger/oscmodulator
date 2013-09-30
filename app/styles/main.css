@@ -3,6 +3,11 @@ html
     background-color: black;
 }
 
+select
+{
+    margin-bottom: 0;
+}
+
 .container3Col
 {
     width: 100%;
@@ -65,7 +70,7 @@ button.midiNoteType
 .container3Col.midiInputHeader .centerCol
 {
     margin-left: 60px;
-    margin-right: 300px;
+    margin-right: 315px;
 }
 
 .container3Col.oscPathRow .centerCol
@@ -104,6 +109,17 @@ button.oscHost
     width: 100px;
 }
 */
+
+input.midiNote
+{
+
+}
+
+select.midiNoteType
+{
+    width: 75px;
+}
+
 select.oscHost
 {
     width: 100px;
@@ -204,4 +220,22 @@ select.oscHost
 {
     background-color: red;
     padding: 25px;
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px)
+{
+    .container3Col .rightCol
+    {
+        display: none;
+    }
+
+    .container3Col .leftCol
+    {
+    }
+
+    .container3Col.midiInputHeader .centerCol
+    {
+        margin-right: 0px;
+    }
 }
