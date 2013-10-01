@@ -18,22 +18,19 @@ describe('Directive: midiInput', function (){
     scope = $rootScope.$new();
     scope.input = {
       id: 'midi-input-1',
-      name: 'Button 1',
+      name: null,
       type: 'midi-to-osc',
       collapsed: false,
       mute: false,
       solo: false,
       midi: {
-        note: 'c1',
+        note: null,
         type: 'on'
       },
       osc: {
         host: null,
-        path: '/osc/server/path',
-        parameters: [
-          10,
-          'foo'
-        ]
+        path: null,
+        parameters: []
       }
     };
     scope.hostIds = [];
@@ -104,5 +101,77 @@ describe('Directive: midiInput', function (){
     element.scope().$apply();
 
     expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
+  }));
+
+  it('should default to having no name set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=name]').val()).toBe('');
+  }));
+
+  it('should be able to configure the name through the scope.', inject(function($compile){
+    scope.input.name = "James";
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=name]').val()).toBe('James');
+  }));
+
+  it('should default to having no midi note set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=midiInNote]').val()).toBe('');
+  }));
+
+  it('should be able to configure the midi note through the scope.', inject(function($compile){
+    scope.input.midi.note = "c7";
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=midiInNote]').val()).toBe('c7');
+  }));
+
+  it('should default to having no osc path set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=oscPath]').val()).toBe('');
+  }));
+
+  it('should be able to configure the osc path through the scope.', inject(function($compile){
+    scope.input.osc.path = "/path/to/object";
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('input[name=oscPath]').val()).toBe('/path/to/object');
+  }));
+
+  it('should default to having no osc parameters set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('div[name=oscParam]').length).toEqual(0);
+  }));
+
+  it('should be able to configure the osc path through the scope.', inject(function($compile){
+    scope.input.osc.parameters = [1,'foo',3];
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+    element.scope().$apply();
+
+    expect(element.find('div[name=oscParam]').length).toEqual(3);
   }));
 });
