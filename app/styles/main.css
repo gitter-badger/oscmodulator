@@ -3,6 +3,12 @@ html
     background-color: black;
 }
 
+select, input
+{
+    margin-bottom: 0;
+}
+
+/* 3 Column Layouts */
 .container3Col
 {
     width: 100%;
@@ -15,13 +21,10 @@ html
 
 .container3Col .rightCol
 {
-    float:right;
+    /*float:right;*/
+    position: absolute;
+    right: 0;
     padding-right: 5px;
-}
-
-.container3Col .rightCol input
-{
-    margin-bottom: 0;
 }
 
 .container3Col .centerCol
@@ -30,11 +33,69 @@ html
     padding-right: 24px;
 }
 
+/* Input row */
 .leftCol .icon-resize-vertical
 {
     margin-left: 5px;
 }
 
+button.midiNoteType
+{
+    width: 65px;
+}
+
+.container3Col.midiInputHeader .centerCol
+{
+    margin-left: 60px;
+    margin-right: 315px;
+}
+
+.container3Col.midiInputHeader
+{
+    position: relative;
+}
+
+.container3Col.midiInputHeader .rightCol
+{
+    margin-bottom: 5px;
+}
+
+/* Output Row */
+.container3Col.oscPathRow .centerCol
+{
+    margin-left: 105px;
+    margin-right: 60px;
+}
+
+.oscPathRow .leftCol,
+.oscPathRow .rightCol,
+.oscPathRow .centerCol
+{
+    padding: 5px;
+}
+
+.container3Col .centerCol input
+{
+    margin-bottom: 0;
+    width: 100%;
+}
+
+select.midiNoteType
+{
+    width: 75px;
+}
+
+select.oscHost
+{
+    width: 100px;
+}
+
+.oscParameterList
+{
+    padding: 5px;
+}
+
+/* parameters */
 .inline-input-append
 {
     display: inline-block;
@@ -57,65 +118,9 @@ html
     border-bottom-left-radius: 0;
 }
 
-button.midiNoteType
+btn.addOSCParam
 {
-    width: 65px;
-}
-
-.container3Col.midiInputHeader .centerCol
-{
-    margin-left: 60px;
-    margin-right: 300px;
-}
-
-.container3Col.oscPathRow .centerCol
-{
-    margin-left: 111px;
-    margin-right: 70px;
-}
-
-.oscPathRow .leftCol,
-.oscPathRow .rightCol,
-.oscPathRow .centerCol
-{
-    padding: 5px;
-}
-
-.oscPathRow .leftCol
-{
-}
-
-.oscPathRow .rightCol
-{
-}
-
-.container3Col .centerCol input
-{
-    margin-bottom: 0;
-    width: 100%;
-}
-
-.oscPathRow
-{
-}
-/*
-button.oscHost
-{
-    width: 100px;
-}
-*/
-select.oscHost
-{
-    width: 100px;
-}
-
-.oscParameterList
-{
-    padding: 5px;
-}
-
-.tree
-{
+    margin-left: 2px;
 }
 
 .treeContent
@@ -195,13 +200,28 @@ select.oscHost
     border-top: 1px solid #efefef;
 }
 
-.btn.collapsed icon
-{
-
-}
-
 .treeItemGroup
 {
     background-color: red;
     padding: 25px;
+}
+
+/* Landscape phones and down */
+@media (max-width: 480px)
+{
+    .container3Col.midiInputHeader .rightCol
+    {
+        bottom: 0;
+    }
+
+    .midiInputHeader
+    {
+        height: 65px;
+    }
+
+    .container3Col.midiInputHeader .centerCol
+    {
+        margin-right: 0px;
+        padding-right: 18px;
+    }
 }
