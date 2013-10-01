@@ -31,7 +31,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
             type: 'on'
           },
           osc: {
-            host: null,
+            host: 'Live',
             path: '/osc/server/path',
             parameters: [
               10,
@@ -40,6 +40,10 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
           }
         }
       ];
+
+      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
+      // This list will be passed to the midi inputs so they know how to populate the available hosts.
+      $scope.hostIds = ['Live', 'Resolume'];
 
       $scope.hosts = [
         {

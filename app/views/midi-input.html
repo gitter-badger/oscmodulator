@@ -15,16 +15,6 @@
                 <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi">
                 <select class="midiNoteType" required="true" ng-model="config.midi.type" ng-options="type for type in midiTypes">
                 </select>
-                <!--<div class="btn-group">-->
-                    <!--<button class="btn dropdown-toggle midiNoteType" data-toggle="dropdown">-->
-                        <!--<span class="midiNoteType">on</span> <span class="caret"></span>-->
-                    <!--</button>-->
-                    <!--<ul class="dropdown-menu">-->
-                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteOn">on</a></li>-->
-                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteOff">off</a></li>-->
-                        <!--<li><a class="midiNoteTypeOption" href="#midiNoteHold">hold</a></li>-->
-                    <!--</ul>-->
-                <!--</div>-->
             </div>
             <div class="btn-group">
                 <button class="btn solo" type="button" data-toggle="button"
@@ -51,8 +41,7 @@
                     <div class="container3Col oscPathRow">
                         <div class="leftCol oscHostConfig">
                             <!-- use http://silviomoreto.github.io/bootstrap-select/ ? -->
-                            <!-- AngularJS Select Model: http://docs.angularjs.org/api/ng.directive:select -->
-                            <select class="oscHost" required="true" ng-model="config.osc.host" ng-options="host.name for host in hosts">
+                            <select class="oscHost" required="true" ng-model="config.osc.host" ng-options="host for host in hosts">
                                 <!--<option value="">OSC Host</option>-->
                             </select>
                             <!--<div data-drop-down-component data-items="oscHosts"/>-->

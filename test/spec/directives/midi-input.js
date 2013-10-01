@@ -1,52 +1,46 @@
 'use strict';
 
-describe('Directive: midiInput', function () {
+describe('Directive: midiInput', function (){
   var element, scope, template;
 
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/midi-input.html'));
 
-  beforeEach(inject(function ($rootScope) {
+  beforeEach(inject(function ($rootScope){
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
-      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hosts">' +
+      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds">' +
         '</div>'
     );
 
     // Create a fresh scope for this test.
     scope = $rootScope.$new();
     scope.input = {
-      id : 'midi-input-1',
-      name : 'Button 1',
-      type : 'midi-to-osc',
-      collapsed : false,
-      mute : false,
-      solo : false,
-      midi : {
-        note : 'c1',
-        type : 'on'
+      id: 'midi-input-1',
+      name: 'Button 1',
+      type: 'midi-to-osc',
+      collapsed: false,
+      mute: false,
+      solo: false,
+      midi: {
+        note: 'c1',
+        type: 'on'
       },
-      osc : {
-        host : null,
-        path : '/osc/server/path',
-        parameters : [
+      osc: {
+        host: null,
+        path: '/osc/server/path',
+        parameters: [
           10,
           'foo'
         ]
       }
     };
-    scope.oscHosts = [];
-
-    // Compile the DOM into an Angular view using using our test scope.
-//    element = $compile(template)(scope);
-//
-//    // Kick off the digest cycle on our directive's isolated scope.
-//    element.scope().$apply();
+    scope.hostIds = [];
   }));
 
   it('Should have an unconfigured select object for setting the OSC Hosts.',
-    inject(function($compile) {
+    inject(function ($compile){
       var selectElement;
 
       // Compile the DOM into an Angular view using using our test scope.
@@ -67,22 +61,9 @@ describe('Directive: midiInput', function () {
   );
 
   it('Should be configurable through the hosts property on its scope but should not set a default.',
-    inject(function ($compile) {
+    inject(function ($compile){
       // Configure the scope.
-      scope.hosts = [
-        {
-          name : 'host 1',
-          port : 1
-        },
-        {
-          name : 'host 2',
-          port : 2
-        },
-        {
-          name : 'host 3',
-          port : 3
-        }
-      ];
+      scope.hostIds = ['host 1', 'host 2', 'host 3'];
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(scope);
@@ -97,46 +78,31 @@ describe('Directive: midiInput', function () {
     })
   );
 
-  // TODO Not sure why the options can't be defaulted from the parent model structure.
-//  it('should be possible to set the default host through config.',
-//    inject(function ($compile) {
-//      // Configure the scope.
-//      scope.hosts = [
-//        {
-//          name : 'host 1',
-//          port : 1
-//        },
-//        {
-//          name : 'host 2',
-//          port : 2
-//        },
-//        {
-//          name : 'host 3',
-//          port : 3
-//        }
-//      ];
-//      // Configure the default host.
-//      scope.input.osc.host = {name : 'host 2', port : 2};
-//
-//      // Compile the DOM into an Angular view using using our test scope.
-//      element = $compile(template)(scope);
-//
-//      // Kick off the digest cycle on our directive's isolated scope.
-//      element.scope().$apply();
-//      debugger;
-//      // Should only have the 3 options specified in the scope.
-//      expect(element.find('select.oscHost option').length).toEqual(3);
-//    })
-//  );
+  it('should be possible to set the default host through config.',
+    inject(function ($compile) {
+      // Configure the scope.
+      scope.hostIds = ['host 1', 'host 2', 'host 3'];
+      // Configure the default host.
+      scope.input.osc.host = 'host 2';
 
-//  it('should start with a midi note type of ON.', inject(function ($compile) {
-//
-//    // Compile the DOM into an Angular view using using our test scope.
-//    element = $compile(template)(scope);
-//
-//    // Kick off the digest cycle on our directive's isolated scope.
-//    element.scope().$apply();
-//
-//    expect(element.find('select.oscHost option[selected=selected]').attr('value')).toBe('on');
-//  }));
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(scope);
+
+      // Kick off the digest cycle on our directive's isolated scope.
+      element.scope().$apply();
+
+      // Should only have the 3 options specified in the scope.
+      expect(element.find('select.oscHost option').length).toEqual(3);
+    })
+  );
+
+  it('should start with a midi note type of ON.', inject(function ($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(scope);
+
+    // Kick off the digest cycle on our directive's isolated scope.
+    element.scope().$apply();
+
+    expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
+  }));
 });
