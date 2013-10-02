@@ -112,7 +112,7 @@ describe('Directive: midiInput', function (){
   }));
 
   it('should be able to configure the name through the scope.', inject(function($compile){
-    scope.input.name = "James";
+    scope.input.name = 'James';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(scope);
@@ -130,7 +130,7 @@ describe('Directive: midiInput', function (){
   }));
 
   it('should be able to configure the midi note through the scope.', inject(function($compile){
-    scope.input.midi.note = "c7";
+    scope.input.midi.note = 'c7';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(scope);
@@ -148,7 +148,7 @@ describe('Directive: midiInput', function (){
   }));
 
   it('should be able to configure the osc path through the scope.', inject(function($compile){
-    scope.input.osc.path = "/path/to/object";
+    scope.input.osc.path = '/path/to/object';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(scope);
