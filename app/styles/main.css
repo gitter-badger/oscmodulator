@@ -38,16 +38,21 @@ select, input
 {
     margin-left: 5px;
 }
-
+/*
 button.midiNoteType
 {
     width: 65px;
+}
+*/
+.midiNote
+{
+    width: 30px;
 }
 
 .container3Col.midiInputHeader .centerCol
 {
     margin-left: 60px;
-    margin-right: 315px;
+    margin-right: 285px;
 }
 
 .container3Col.midiInputHeader
@@ -118,9 +123,10 @@ select.oscHost
     border-bottom-left-radius: 0;
 }
 
-btn.addOSCParam
+.oscParam
 {
-    margin-left: 2px;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 .treeContent
