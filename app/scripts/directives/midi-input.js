@@ -20,21 +20,37 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.midi.type = 'on';
       }
 
+      if($scope.config.mute === true && $scope.config.solo === true){
+        $scope.config.mute = $scope.config.solo = false;
+      }
+
       /**
        * Add an empty parameter to the list of OSC parameters.
        */
-      $scope.addOSCParameter = function()
-      {
+      $scope.addOSCParameter = function(){
         $scope.config.osc.parameters.push({value:null});
       };
       /**
        * Remove a parameter from the list of OSC parameters.
        * @param index The index of the parameter to remove.
        */
-      $scope.removeOSCParameter = function(index)
-      {
+      $scope.removeOSCParameter = function(index){
         $scope.config.osc.parameters.splice(index, 1);
       };
+    },
+    link : function link($scope/*, $element, $attrs, $controller*/){
+      // Make sure that if the solo button is enabled, that the mute button gets disabled.
+      $scope.$watch('config.solo', function(newValue, oldValue){
+        if( newValue === true ){
+          $scope.config.mute = false;
+        }
+      });
+      // Make sure that if the mute button is enabled, that the solo button gets disabled.
+      $scope.$watch('config.mute', function(newValue/*, oldValue*/){
+        if( newValue === true ){
+          $scope.config.solo = false;
+        }
+      });
     }
   };
 });

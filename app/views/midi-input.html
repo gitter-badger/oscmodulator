@@ -17,15 +17,13 @@
                 </select>
             </div>
             <div class="btn-group">
-                <button class="btn solo" type="button" data-toggle="button"
-                        rel="popover" data-placement="bottom" data-trigger="hover"
-                        data-title="Solo" data-content="When activated, all other Midi Imputs with this midi note will be ignored.">S</button>
-                <button class="btn mute" type="button" data-toggle="button"
-                        rel="popover" data-placement="bottom" data-trigger="hover"
-                        data-title="Mute" data-content="When activated, this Midi Input will be ignored.">M</button>
+                <button class="btn solo" type="button" name="solo" title="Solo" ng-model="config.solo"
+                        btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">S</button>
+                <button class="btn mute" type="button" name="mute" title="Mute" ng-model="config.mute"
+                        btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">M</button>
             </div>
             <button class="btn duplicate" type="button" rel="popover" data-placement="bottom" data-trigger="hover"
-                    data-title="Duplicate" data-content="Create a new Midi Input using these settings.">D</button>
+                    data-title="Duplicate" data-content="Create a new Midi Input using these settings."><i class="icon-file"></i></button>
             <button class="btn removeMidiInput" type="button"><i class="icon-remove"></i></button>
         </div>
         <div class="centerCol">

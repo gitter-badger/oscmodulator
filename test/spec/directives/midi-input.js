@@ -234,4 +234,132 @@ describe('Directive: midiInput', function (){
     expect(element.find('div[name=oscParam]').length).toEqual(1);
     expect(element.find('div[name=oscParam] input').val()).toBe('a');
   }));
+
+  it('should be possible to configure the solo button through config',
+    inject(function($compile){
+      var isolatedScope;
+
+      parentScope.input.solo = true;
+      parentScope.input.mute = false;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.solo).toBe(true);
+      expect(isolatedScope.config.mute).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should be possible to configure the mute button through config',
+    inject(function($compile){
+      var isolatedScope;
+
+      parentScope.input.solo = false;
+      parentScope.input.mute = true;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.mute).toBe(true);
+      expect(isolatedScope.config.solo).toBe(false);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should default as neither muted nor soloed',
+    inject(function($compile){
+      var isolatedScope;
+
+      parentScope.input.solo = null;
+      parentScope.input.mute = null;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.mute).toBeNull();
+      expect(isolatedScope.config.solo).toBeNull();
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should fix situations where the config is both soloed and muted',
+    inject(function($compile){
+      var isolatedScope;
+
+      parentScope.input.solo = true;
+      parentScope.input.mute = true;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.mute).toBe(false);
+      expect(isolatedScope.config.solo).toBe(false);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should disable mute when soloed', inject(function($compile){
+    var isolatedScope;
+
+    parentScope.input.solo = false;
+    parentScope.input.mute = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // The solo should be on and the mute off.
+    expect(isolatedScope.config.mute).toBe(true);
+    expect(isolatedScope.config.solo).toBe(false);
+
+    isolatedScope.config.solo = true;
+    isolatedScope.$apply();
+
+    // The mute button should now be turned off and the solo button on.
+    expect(isolatedScope.config.mute).toBe(false);
+    expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+    expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
+  }));
+
+  it('should disable solo when muted', inject(function($compile){
+    var isolatedScope;
+
+    parentScope.input.mute = false;
+    parentScope.input.solo = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // The solo should be on and the mute off.
+    expect(isolatedScope.config.solo).toBe(true);
+    expect(isolatedScope.config.mute).toBe(false);
+
+    isolatedScope.config.mute = true;
+    isolatedScope.$apply();
+
+    // The mute button should now be turned off and the solo button on.
+    expect(isolatedScope.config.solo).toBe(false);
+    expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
+  }));
 });
