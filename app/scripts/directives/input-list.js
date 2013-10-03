@@ -22,7 +22,6 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         {
           id: 'midi-input-1',
           name: 'Button 1',
-          type: 'midi-to-osc',
           collapsed: false,
           mute: false,
           solo: false,
@@ -30,31 +29,14 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
             note: 'c1',
             type: 'on'
           },
-          osc: {
+          osc: [{
             host: 'Live',
             path: '/osc/server/path',
             parameters: [
               {value:10},
               {value:'foo'}
             ]
-          }
-//        },
-//        {
-//          id: 'midi-input-2',
-//          name: null,
-//          type: 'midi-to-osc',
-//          collapsed: false,
-//          mute: false,
-//          solo: false,
-//          midi: {
-//            note: null,
-//            type: null
-//          },
-//          osc: {
-//            host: null,
-//            path: null,
-//            parameters: []
-//          }
+          }]
         }
       ];
 

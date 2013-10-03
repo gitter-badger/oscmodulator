@@ -5,6 +5,7 @@ describe('Directive: nestedSortable', function () {
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/input-list.html'));
   beforeEach(module('views/midi-input.html'));
+  beforeEach(module('views/osc-output.html'));
 
   beforeEach(inject(function ($rootScope, $compile) {
     element = angular.element('<div data-input-list></div>');

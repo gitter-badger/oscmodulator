@@ -1,6 +1,6 @@
-'use strict';
-
 angular.module('oscmodulatorApp').directive('midiInput', function () {
+  'use strict';
+
   return {
     templateUrl : 'views/midi-input.html',
     restrict : 'A',
@@ -16,16 +16,41 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
        * @type {Array}
        */
       $scope.midiTypes = ['on', 'off', 'hold', 'double tap'];
-      if( $scope.config.midi.type === null || $scope.config.midi.type === 0 || $scope.config.midi.type === '' ){
+
+      if($scope.config.name === undefined || $scope.config.name === ''){
+        $scope.config.name = null;
+      }
+
+      if($scope.config.collapsed === undefined || $scope.config.collapsed === null){
+        $scope.config.collapsed = false;
+      }
+
+      if($scope.config.osc === undefined){
+        $scope.config.osc = [];
+      }
+
+      if($scope.config.midi === undefined){
+        $scope.config.midi = {};
+      }
+
+      if($scope.config.midi.note === undefined){
+        $scope.config.midi.note = null;
+      }
+
+      if($scope.config.midi.type === undefined || $scope.config.midi.type === null || $scope.config.midi.type === 0 || $scope.config.midi.type === '' ){
         $scope.config.midi.type = 'on';
+      }
+
+      if($scope.config.mute === undefined || $scope.config.mute === null){
+        $scope.config.mute = false;
+      }
+
+      if($scope.config.solo === undefined || $scope.config.solo === null){
+        $scope.config.solo = false;
       }
 
       if($scope.config.mute === true && $scope.config.solo === true){
         $scope.config.mute = $scope.config.solo = false;
-      }
-
-      if($scope.config.collapsed === null){
-        $scope.config.collapsed = false;
       }
 
       /**
@@ -35,17 +60,10 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.collapsed = !$scope.config.collapsed;
       };
       /**
-       * Add an empty parameter to the list of OSC parameters.
+       * Add an OSC output to the list of outputs.
        */
-      $scope.addOSCParameter = function(){
-        $scope.config.osc.parameters.push({value:null});
-      };
-      /**
-       * Remove a parameter from the list of OSC parameters.
-       * @param index The index of the parameter to remove.
-       */
-      $scope.removeOSCParameter = function(index){
-        $scope.config.osc.parameters.splice(index, 1);
+      $scope.addOSCOutput = function(){
+        $scope.config.osc.push({});
       };
     },
     link : function link($scope/*, $element, $attrs, $controller*/){
