@@ -8,6 +8,14 @@ select, input
     margin-bottom: 0;
 }
 
+.icon-copy
+{
+    background-image: url('/images/icon-copy.png');
+    background-position: 0 0;
+    height: 16px;
+    margin-top: 0;
+}
+
 /* 3 Column Layouts */
 .container3Col
 {

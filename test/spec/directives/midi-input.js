@@ -362,4 +362,61 @@ describe('Directive: midiInput', function (){
     expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
     expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
   }));
+
+  it('should start expanded by default.', inject(function($compile){
+    var isolatedScope;
+
+    parentScope.input.collapsed = null;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+  }));
+
+  it('should be possible to collapse through configuration.', inject(function($compile){
+    var isolatedScope;
+
+    parentScope.input.collapsed = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.collapsed).toBe(true);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
+  }));
+
+  it('should be possible to expand/collapse.', inject(function($compile){
+    var isolatedScope;
+
+    parentScope.input.collapsed = null;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // Expect it to start out expanded.
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+
+    isolatedScope.toggleCollapsed();
+    isolatedScope.$apply();
+
+    // Expect it to collapse.
+    expect(isolatedScope.config.collapsed).toBe(true);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
+
+    isolatedScope.toggleCollapsed();
+    isolatedScope.$apply();
+
+    // Expect it to expand again.
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+  }));
 });

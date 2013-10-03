@@ -24,6 +24,16 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.mute = $scope.config.solo = false;
       }
 
+      if($scope.config.collapsed === null){
+        $scope.config.collapsed = false;
+      }
+
+      /**
+       * Change the collapsed/expanded state of the midi-input display.
+       */
+      $scope.toggleCollapsed = function () {
+        $scope.config.collapsed = !$scope.config.collapsed;
+      };
       /**
        * Add an empty parameter to the list of OSC parameters.
        */
