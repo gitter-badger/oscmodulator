@@ -33,7 +33,8 @@
     <div class="midiInputContent">
         <div class="oscCollapsor" collapse="config.collapsed">
             <div class="oscList" ng-repeat="output in config.osc">
-                <div data-osc-output data-osc-hosts="hosts" data-osc-output-config="output"></div>
+                <div data-osc-output data-osc-hosts="hosts" data-osc-output-config="output"
+                     data-remove-osc-output="removeOSCOutput(e)"></div>
             </div>
             <div class="newOSCOutput">
                 <button class="btn" type="button" ng-click="addOSCOutput()"><i class="icon-plus"></i> OSC Output</button>

@@ -65,6 +65,11 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       $scope.addOSCOutput = function(){
         $scope.config.osc.push({});
       };
+
+      $scope.removeOSCOutput = function(e){
+        console.log("e is " + e);
+//        $scope.config.osc.splice(e, 1);
+      };
     },
     link : function link($scope/*, $element, $attrs, $controller*/){
       // Make sure that if the solo button is enabled, that the mute button gets disabled.

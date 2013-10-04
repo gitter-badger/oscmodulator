@@ -8,10 +8,14 @@ angular.module('oscmodulatorApp')
       replace: true,
       scope: {
         config: '=oscOutputConfig',
-        hosts: '=oscHosts'
+        hosts: '=oscHosts',
+        removeOSCOutput: '&removeOSCOutput'
       },
       controller: function oscOutputCtrl($scope/*, $element, $attrs*/){
-
+//        $scope.removeOSCOutput = function(e)
+//        {
+//          console.log("e is " + e);
+//        };
         /**
          * Add an empty parameter to the list of OSC parameters.
          */

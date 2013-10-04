@@ -142,7 +142,7 @@ describe('Directive: oscOutput', function () {
     isolatedScope.$apply();
 
     expect(isolatedScope.config.path).toBeNull();
-    expect(element.find('input[name=oscPath]').text()).toBe('');
+    expect(element.find('input[name=oscPath]').val()).toBe('');
   }));
 
   it('should be possible to configure the OSC path.', inject(function($compile){

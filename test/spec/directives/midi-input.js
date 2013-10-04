@@ -304,4 +304,23 @@ describe('Directive: midiInput', function (){
     expect(parentScope.input.osc.length).toBe(2);
     expect(element.find('div[name=oscOutputItem]').length).toBe(2);
   }));
+
+//  it('should be possible to remove an OSC output.', inject(function($compile){
+//    parentScope.input.osc = [{path:"/a"},{path:"/b"},{path:"/c"}];
+//
+//    // Compile the DOM into an Angular view using using our test scope.
+//    element = $compile(template)(parentScope);
+//    isolatedScope = element.scope();
+//    isolatedScope.$apply();
+//
+//    expect(isolatedScope.config.osc.length).toBe(3);
+//
+//    isolatedScope.removeOSCOutput(1);
+//    isolatedScope.$apply();
+//    debugger;
+//    expect(isolatedScope.config.osc.length).toBe(2);
+//    expect(parentScope.input.osc.length).toBe(2);
+//    expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
+//    expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
+//  }));
 });
