@@ -67,7 +67,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       };
 
       $scope.removeOSCOutput = function(e){
-        console.log("e is " + e);
+        console.log('e is ' + e);
 //        $scope.config.osc.splice(e, 1);
       };
     },
