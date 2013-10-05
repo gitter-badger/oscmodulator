@@ -1,3 +1,4 @@
+/*global $:false */
 angular.module('oscmodulatorApp').directive('inputList', function (){
   'use strict';
 
@@ -37,8 +38,8 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
       // This list will be passed to the midi inputs so they know how to populate the available hosts.
       $scope.hostIds = [];
-      for(var i = 0; i < $scope.hosts.length; i++){
-        $scope.hostIds.push($scope.hosts[i].name);
+      for(var j = 0; j < $scope.hosts.length; j++){
+        $scope.hostIds.push($scope.hosts[j].name);
       }
 
       /**
