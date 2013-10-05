@@ -12,8 +12,10 @@
         </div>
         <div class="rightCol midiInputConfig">
             <div class="inline-input-append midiNoteConfig">
-                <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi" ng-model="config.midi.note">
-                <select class="midiNoteType" required="true" ng-model="config.midi.type" ng-options="type for type in midiTypes">
+                <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi"
+                       ng-model="config.midi.note">
+                <select class="midiNoteType" required="true" ng-model="config.midi.type"
+                        ng-options="type for type in midiTypes">
                 </select>
             </div>
             <div class="btn-group">
@@ -22,8 +24,12 @@
                 <button class="btn mute" type="button" name="mute" title="Mute" ng-model="config.mute"
                         btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">M</button>
             </div>
-            <button class="btn duplicate" type="button" title="Duplicate"><i class="icon-copy"></i></button>
-            <button class="btn removeMidiInput" type="button" title="Remove Midi Input"><i class="icon-remove"></i></button>
+            <button class="btn duplicate" type="button" title="Duplicate" ng-click="duplicate()">
+                <i class="icon-copy"></i>
+            </button>
+            <button class="btn removeMidiInput" type="button" title="Remove Midi Input" ng-click="remove()">
+                <i class="icon-remove"></i>
+            </button>
         </div>
         <div class="centerCol">
             <input class="treeItemName" type="text" name="name" placeholder="Name" ng-model="config.name"/>
@@ -32,9 +38,9 @@
     <!-- Tree Item OSC Command -->
     <div class="midiInputContent">
         <div class="oscCollapsor" collapse="config.collapsed">
-            <div class="oscList" ng-repeat="output in config.osc">
+            <div class="oscList" ng-repeat="(index, output) in config.osc">
                 <div data-osc-output data-osc-hosts="hosts" data-osc-output-config="output"
-                     data-remove-osc-output="removeOSCOutput(e)"></div>
+                     data-remove="removeOSCOutput(index)"></div>
             </div>
             <div class="newOSCOutput">
                 <button class="btn" type="button" ng-click="addOSCOutput()"><i class="icon-plus"></i> OSC Output</button>

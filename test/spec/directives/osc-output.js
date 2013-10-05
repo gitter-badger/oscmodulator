@@ -24,6 +24,20 @@ describe('Directive: oscOutput', function () {
     parentScope.hosts = [];
   }));
 
+  it('should provide reasonable defaults to scope properties if none are passed.', inject(function($compile){
+    parentScope.osc = {};
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.host).toBeNull();
+    expect(isolatedScope.config.path).toBeNull();
+    expect(isolatedScope.config.parameters).toBeDefined();
+    expect(isolatedScope.config.parameters.length).toBe(0);
+  }));
+
   it('should default to having no osc parameters.', inject(function($compile){
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);

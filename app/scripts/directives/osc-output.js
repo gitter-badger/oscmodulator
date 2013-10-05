@@ -9,13 +9,21 @@ angular.module('oscmodulatorApp')
       scope: {
         config: '=oscOutputConfig',
         hosts: '=oscHosts',
-        removeOSCOutput: '&removeOSCOutput'
+        removeOSCOutput: '&remove'
       },
       controller: function oscOutputCtrl($scope/*, $element, $attrs*/){
-//        $scope.removeOSCOutput = function(e)
-//        {
-//          console.log("e is " + e);
-//        };
+        if($scope.config.host === undefined ){
+          $scope.config.host = null;
+        }
+
+        if($scope.config.path === undefined){
+          $scope.config.path = null;
+        }
+
+        if($scope.config.parameters === undefined){
+          $scope.config.parameters = [];
+        }
+
         /**
          * Add an empty parameter to the list of OSC parameters.
          */

@@ -8,7 +8,9 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
     scope : {
       config : '=midiInputConfig',
       hosts : '=oscHosts',
-      id : '@id'
+      id : '@id',
+      duplicate: '&duplicate',
+      remove: '&remove'
     },
     controller : function midiInputCtrl($scope/*, $element, $attrs*/) {
       /**
@@ -26,7 +28,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       }
 
       if($scope.config.osc === undefined){
-        $scope.config.osc = [];
+        $scope.config.osc = [{}];
       }
 
       if($scope.config.midi === undefined){
@@ -66,9 +68,8 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.osc.push({});
       };
 
-      $scope.removeOSCOutput = function(e){
-        console.log('e is ' + e);
-//        $scope.config.osc.splice(e, 1);
+      $scope.removeOSCOutput = function(index){
+        $scope.config.osc.splice(index, 1);
       };
     },
     link : function link($scope/*, $element, $attrs, $controller*/){

@@ -11,8 +11,7 @@ describe('Directive: midiInput', function (){
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
-      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds">' +
-        '</div>'
+      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds"></div>'
     );
 
     // Create a fresh scope for this test.
@@ -50,7 +49,7 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.mute).toBe(false);
     expect(isolatedScope.config.midi.note).toBeNull();
     expect(isolatedScope.config.midi.type).toBe('on');
-    expect(isolatedScope.config.osc.length).toBe(0);
+    expect(isolatedScope.config.osc.length).toBe(1);
   }));
 
   it('should start with a midi note type of ON.', inject(function ($compile){
@@ -305,22 +304,22 @@ describe('Directive: midiInput', function (){
     expect(element.find('div[name=oscOutputItem]').length).toBe(2);
   }));
 
-//  it('should be possible to remove an OSC output.', inject(function($compile){
-//    parentScope.input.osc = [{path:"/a"},{path:"/b"},{path:"/c"}];
-//
-//    // Compile the DOM into an Angular view using using our test scope.
-//    element = $compile(template)(parentScope);
-//    isolatedScope = element.scope();
-//    isolatedScope.$apply();
-//
-//    expect(isolatedScope.config.osc.length).toBe(3);
-//
-//    isolatedScope.removeOSCOutput(1);
-//    isolatedScope.$apply();
-//    debugger;
-//    expect(isolatedScope.config.osc.length).toBe(2);
-//    expect(parentScope.input.osc.length).toBe(2);
-//    expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
-//    expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
-//  }));
+  it('should be possible to remove an OSC output.', inject(function($compile){
+    parentScope.input.osc = [{path:'/a'},{path:'/b'},{path:'/c'}];
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(3);
+
+    isolatedScope.removeOSCOutput(1);
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(2);
+    expect(parentScope.input.osc.length).toBe(2);
+    expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
+    expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
+  }));
 });

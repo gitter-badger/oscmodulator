@@ -13,7 +13,7 @@ select, input
     background-image: url('/images/icon-copy.png');
     background-position: 0 0;
     height: 16px;
-    margin-top: 0;
+    margin-top: -1px;
 }
 
 /* 3 Column Layouts */
@@ -134,7 +134,11 @@ select.oscHost
 .oscParam
 {
     margin-right: 5px;
-    margin-bottom: 5px;
+}
+
+.addOSCParam
+{
+    /*margin-bottom: 5px;*/
 }
 
 .treeContent
@@ -189,11 +193,6 @@ select.oscHost
 .oscOutputItem
 {
     border-bottom: 1px solid #ddd;
-}
-
-.oscParameters
-{
-    display: inline-block;
 }
 
 .midiInputFooter,

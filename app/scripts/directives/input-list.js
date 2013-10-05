@@ -5,44 +5,23 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
     templateUrl: 'views/input-list.html',
     restrict: 'A',
     replace: true,
-    //require:"^MainCtrl",
-    controller: function nestedSortableCtrl($scope, $element /*, $attrs*/){
-      var jqElement, templates;
+    scope:{
+      inputs: '=inputs'
+    },
+    controller: function nestedSortableCtrl($scope/*, $element, $attrs*/){
+      // TODO Need to make sure input ids are always unique. Or should we just remove the id until it becomes necessary?
 
-      jqElement = angular.element($element);
+      if($scope.inputs === undefined){
+        $scope.inputs = [];
+      }
 
-      templates = {
-        // The template used to create a new midi input.
-        midiInput: '<div x-midi-input id="midi-input-1"></div>',
-        // The template used to create a new leaf node in the Nested Sortable.
-        leafNode: '<li class="leaf">'
-      };
+      if($scope.inputs.length === 0){
+        $scope.inputs.push({});
+      }
 
-      $scope.inputs = [
-        {
-          id: 'midi-input-1',
-          name: 'Button 1',
-          collapsed: false,
-          mute: false,
-          solo: false,
-          midi: {
-            note: 'c1',
-            type: 'on'
-          },
-          osc: [{
-            host: 'Live',
-            path: '/osc/server/path',
-            parameters: [
-              {value:10},
-              {value:'foo'}
-            ]
-          }]
-        }
-      ];
-
-      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
-      // This list will be passed to the midi inputs so they know how to populate the available hosts.
-      $scope.hostIds = ['Live', 'Resolume'];
+      for(var i = 0; i < $scope.inputs.length; i++){
+        $scope.inputs[i].id = 'midi-input-' + (i + 1);
+      }
 
       $scope.hosts = [
         {
@@ -55,80 +34,57 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         }
       ];
 
+      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
+      // This list will be passed to the midi inputs so they know how to populate the available hosts.
+      $scope.hostIds = [];
+      for(var i = 0; i < $scope.hosts.length; i++){
+        $scope.hostIds.push($scope.hosts[i].name);
+      }
+
       /**
-       * Create a new Midi Input.
-       * @param props {Object} The configuration object defining the properties of the new MidiInput.
+       * Get the index of the item identified by id.
+       * @param id The id of the input item you are looking for.
+       * @returns {int} The index of the item in the list of inputs.
        */
-      var createMidiInput = function (props){
-        jqElement.append(angular.element(templates.leafNode)).attr('id', props.id).append(angular.element(templates.midiInput));
+      var getItemIndexById = function(id){
+        for(var i = 0; i < $scope.inputs.length; i++){
+          if($scope.inputs[i].id === id){
+            return i;
+          }
+        }
+
+        return null;
       };
 
       /**
-       * Create a new Input Group.
+       * Add a Midi Input to the list of inputs.
        */
-      var createInputGroup = function (){
-
+      $scope.addMidiInput = function(){
+        $scope.inputs.push({id:'midi-input-' + ($scope.inputs.length + 1)});
       };
-
       /**
-       * Return the Nested Sortable DOM information as a string.
-       * @return {String}
-       *
-       var serializeSortable = function () {
-        return jqElement.nestedSortable('serialize');
-      };*/
-
-      /**
-       * Return the Nested Sortable DOM information as an object.
-       * @return {Object}
-       *
-       var sortableToHierarchy = function () {
-        return jqElement.nestedSortable('toHierarchy', {startDepthCount : 0});
-      };*/
-
-      /**
-       * Return the Nested Sortable DOM information as an array.
-       * @return {Array}
-       *
-       var sortableToArray = function () {
-        return jqElement.nestedSortable('toArray', {startDepthCount : 0});
-      };*/
-
-      // Public API for this controller.
-      return {
-        createMidiInput: createMidiInput,
-        createInputGroup: createInputGroup
-      };
-    },
-    link: function postLink(/*scope, element, attrs, controllers*/){
-      //      var jqElement = angular.element(element);
-      //      var nestedSortableCtrl = controllers;
-      /*
-       // Initialize the Nested Sortable functionality.
-       jqElement.nestedSortable({
-       forcePlaceholderSize : true,
-       handle : 'div',
-       helper : 'clone',
-       items : 'li',
-       opacity : 0.6,
-       placeholder : 'placeholder',
-       revert : 50,
-       tabSize : 25,
-       tolerance : 'pointer',
-       //toleranceElement:'div',
-       maxLevels : 3,
-       isTree : true,
-       expandOnHover : 700,
-       startCollapsed : true,
-       branchClass : 'branch',
-       collapsedClass : 'collapsed',
-       disableNestingClass : 'no-nesting',
-       errorClass : 'error',
-       expandedClass : 'expanded',
-       hoveringClass : 'hovering',
-       leafClass : 'leaf'
-       });
+       * Create a new midi input with all the same settings as the input with the specified id.
+       * @param id The id of the midi input to copy.
        */
+      $scope.duplicateMidiInput = function(id){
+        var index, newIndex;
+        index = getItemIndexById(id);
+
+        if(index !== null){
+          // TODO Is there a way to inject jquery so we can guarantee it's available?
+          $scope.inputs.push($.extend(true, {}, $scope.inputs[index]));
+
+          newIndex = $scope.inputs.length - 1;
+          $scope.inputs[newIndex].id = 'midi-input-' + $scope.inputs.length;
+        }
+      };
+      /**
+       * Remove the specified midi input from the list of inputs.
+       * @param id The id of the midi input to copy.
+       */
+      $scope.removeMidiInput = function(id){
+        $scope.inputs.splice(getItemIndexById(id), 1);
+      };
     }
   };
 });
