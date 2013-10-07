@@ -16,6 +16,23 @@ select, input
     margin-top: -1px;
 }
 
+/* Header */
+.header
+{
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    background-color: #aec8db;
+    width: 100%;
+    padding: 5px;
+}
+
+/* Input items*/
+.input-list
+{
+    margin-top: 40px;
+}
+
 /* 3 Column Layouts */
 .container3Col
 {

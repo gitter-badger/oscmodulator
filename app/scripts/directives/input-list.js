@@ -10,8 +10,6 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       inputs: '=inputs'
     },
     controller: function nestedSortableCtrl($scope/*, $element, $attrs*/){
-      // TODO Need to make sure input ids are always unique. Or should we just remove the id until it becomes necessary?
-
       if($scope.inputs === undefined){
         $scope.inputs = [];
       }
@@ -38,12 +36,6 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         $scope.hostIds.push($scope.hosts[j].name);
       }
 
-      /**
-       * Add a Midi Input to the list of inputs.
-       */
-      $scope.addMidiInput = function(){
-        $scope.inputs.push({});
-      };
       /**
        * Create a new midi input with all the same settings as the input with at the specified index.
        * @param index The index of the midi input to copy.

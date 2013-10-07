@@ -77,20 +77,20 @@ describe('Directive: inputList', function () {
     expect(element.find('div[name=midiInputItem]').length).toBe(1);
   }));
 
-  it('should be able to add new midi inputs to the list of inputs.', inject(function ($compile){
-    // Compile the DOM into an Angular view using using our test scope.
-    element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
-
-    expect(isolatedScope.inputs.length).toBe(1);
-
-    isolatedScope.addMidiInput();
-    isolatedScope.$apply();
-
-    expect(isolatedScope.inputs.length).toBe(2);
-    expect(element.find('div[name=midiInputItem]').length).toBe(2);
-  }));
+//  it('should be able to add new midi inputs to the list of inputs.', inject(function ($compile){
+//    // Compile the DOM into an Angular view using using our test scope.
+//    element = $compile(template)(parentScope);
+//    isolatedScope = element.scope();
+//    isolatedScope.$apply();
+//
+//    expect(isolatedScope.inputs.length).toBe(1);
+//
+//    isolatedScope.addMidiInput();
+//    isolatedScope.$apply();
+//
+//    expect(isolatedScope.inputs.length).toBe(2);
+//    expect(element.find('div[name=midiInputItem]').length).toBe(2);
+//  }));
 
   it('should be able to create a copy of an existing input.', inject(function ($compile){
     // Compile the DOM into an Angular view using using our test scope.
