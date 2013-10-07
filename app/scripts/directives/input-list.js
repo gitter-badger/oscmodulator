@@ -20,10 +20,6 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         $scope.inputs.push({});
       }
 
-      for(var i = 0; i < $scope.inputs.length; i++){
-        $scope.inputs[i].id = 'midi-input-' + (i + 1);
-      }
-
       $scope.hosts = [
         {
           name: 'Live',
@@ -43,48 +39,25 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       }
 
       /**
-       * Get the index of the item identified by id.
-       * @param id The id of the input item you are looking for.
-       * @returns {int} The index of the item in the list of inputs.
-       */
-      var getItemIndexById = function(id){
-        for(var i = 0; i < $scope.inputs.length; i++){
-          if($scope.inputs[i].id === id){
-            return i;
-          }
-        }
-
-        return null;
-      };
-
-      /**
        * Add a Midi Input to the list of inputs.
        */
       $scope.addMidiInput = function(){
-        $scope.inputs.push({id:'midi-input-' + ($scope.inputs.length + 1)});
+        $scope.inputs.push({});
       };
       /**
-       * Create a new midi input with all the same settings as the input with the specified id.
-       * @param id The id of the midi input to copy.
+       * Create a new midi input with all the same settings as the input with at the specified index.
+       * @param index The index of the midi input to copy.
        */
-      $scope.duplicateMidiInput = function(id){
-        var index, newIndex;
-        index = getItemIndexById(id);
-
-        if(index !== null){
-          // TODO Is there a way to inject jquery so we can guarantee it's available?
-          $scope.inputs.push($.extend(true, {}, $scope.inputs[index]));
-
-          newIndex = $scope.inputs.length - 1;
-          $scope.inputs[newIndex].id = 'midi-input-' + $scope.inputs.length;
-        }
+      $scope.duplicateMidiInput = function(index){
+        // TODO Is there a way to inject jquery so we can guarantee it's available?
+        $scope.inputs.push($.extend(true, {}, $scope.inputs[index]));
       };
       /**
        * Remove the specified midi input from the list of inputs.
-       * @param id The id of the midi input to copy.
+       * @param index The index of the midi input to copy.
        */
-      $scope.removeMidiInput = function(id){
-        $scope.inputs.splice(getItemIndexById(id), 1);
+      $scope.removeMidiInput = function(index){
+        $scope.inputs.splice(index, 1);
       };
     }
   };

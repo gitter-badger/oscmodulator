@@ -14,7 +14,6 @@ describe('Directive: inputList', function () {
 
     parentScope.items = [
       {
-        id: 'midi-input-1',
         name: 'Button 1',
         collapsed: false,
         mute: false,
@@ -36,7 +35,21 @@ describe('Directive: inputList', function () {
   }));
 
   it('should be possible to configure the input list.', inject(function ($compile){
-    parentScope.items = [{},{},{}];
+    parentScope.items = [
+      {
+        name:'a',
+        collapsed:true,
+        mute:true,
+        solo:false,
+        midi:{
+          note:'b#3',
+          type:'off'
+        },
+        osc:[{}]
+      },
+      {name:'b'},
+      {name:'c'}
+    ];
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
@@ -44,6 +57,12 @@ describe('Directive: inputList', function () {
     isolatedScope.$apply();
 
     expect(isolatedScope.inputs.length).toBe(3);
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=name]').val()).toBe('a');
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=midiInNote]').val()).toBe('b#3');
+    expect(element.find('div[name=midiInputItem]').first().find('select[name=midiNoteType] option[selected=selected]').text()).toBe('off');
+    expect(element.find('div[name=midiInputItem]').first().find('button[name=mute]').hasClass('active')).toBe(true);
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=solo]').hasClass('active')).toBe(false);
+    expect(element.find('div[name=midiInputItem]').last().find('input[name=name]').val()).toBe('c');
   }));
 
   it('should start with one midi input if none are specified.', inject(function($compile){
@@ -70,8 +89,6 @@ describe('Directive: inputList', function () {
     isolatedScope.$apply();
 
     expect(isolatedScope.inputs.length).toBe(2);
-    expect(isolatedScope.inputs[0].id).toBe('midi-input-1');
-    expect(isolatedScope.inputs[1].id).toBe('midi-input-2');
     expect(element.find('div[name=midiInputItem]').length).toBe(2);
   }));
 
@@ -83,17 +100,18 @@ describe('Directive: inputList', function () {
 
     expect(isolatedScope.inputs.length).toBe(1);
 
-    isolatedScope.duplicateMidiInput('midi-input-1');
+    isolatedScope.duplicateMidiInput(0);
     isolatedScope.$apply();
 
     expect(isolatedScope.inputs.length).toBe(2);
-    expect(element.find('div[name=midiInputItem]').last().attr('id')).toBe('midi-input-2');
-    expect(element.find('div[id=midi-input-2] input[name=name]').val()).toBe('Button 1');
-    expect(element.find('div[id=midi-input-2] input[name=midiInNote]').val()).toBe('c1');
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=name]').val()).toBe('Button 1');
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=midiInNote]').val()).toBe('c1');
+    expect(element.find('div[name=midiInputItem]').last().find('input[name=name]').val()).toBe('Button 1');
+    expect(element.find('div[name=midiInputItem]').last().find('input[name=midiInNote]').val()).toBe('c1');
   }));
 
   it('should be possible to remove a midi input.', inject(function ($compile){
-    parentScope.items = [{},{},{}];
+    parentScope.items = [{name:'a'},{name:'b'},{name:'c'}];
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
@@ -102,11 +120,11 @@ describe('Directive: inputList', function () {
 
     expect(isolatedScope.inputs.length).toBe(3);
 
-    isolatedScope.removeMidiInput('midi-input-2');
+    isolatedScope.removeMidiInput(1);
     isolatedScope.$apply();
 
     expect(isolatedScope.inputs.length).toBe(2);
-    expect(element.find('div[name=midiInputItem]').first().attr('id')).toBe('midi-input-1');
-    expect(element.find('div[name=midiInputItem]').last().attr('id')).toBe('midi-input-3');
+    expect(element.find('div[name=midiInputItem]').first().find('input[name=name]').val()).toBe('a');
+    expect(element.find('div[name=midiInputItem]').last().find('input[name=name]').val()).toBe('c');
   }));
 });

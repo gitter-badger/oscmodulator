@@ -1,7 +1,7 @@
 <div class="input-list">
-    <div ng-repeat="input in inputs">
-        <div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds"
-                data-duplicate="duplicateMidiInput(input.id)" data-remove="removeMidiInput(input.id)"></div>
+    <div ng-repeat="(key, input) in inputs">
+        <div data-midi-input data-midi-input-config="input" data-osc-hosts="hostIds"
+                data-duplicate="duplicateMidiInput(key)" data-remove="removeMidiInput(key)"></div>
     </div>
     <div>
         <button class="btn" type="button" ng-click="addMidiInput()"><icon class="icon-plus"></icon> Midi Input</button>

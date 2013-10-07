@@ -14,7 +14,7 @@
             <div class="inline-input-append midiNoteConfig">
                 <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi"
                        ng-model="config.midi.note">
-                <select class="midiNoteType" required="true" ng-model="config.midi.type"
+                <select class="midiNoteType" name="midiNoteType" required="true" ng-model="config.midi.type"
                         ng-options="type for type in midiTypes">
                 </select>
             </div>
