@@ -312,11 +312,11 @@ module.exports = function (grunt) {
     },
     karma: {
       unit: {
-        configFile: 'test/karma.conf.js',
+        configFile: 'test/karma.conf.coffee',
         singleRun: true
       },
       'unit-watch': {
-        configFile : 'test/karma.conf.js',
+        configFile : 'test/karma.conf.coffee',
         autoWatch : true
       },
       e2e: {
