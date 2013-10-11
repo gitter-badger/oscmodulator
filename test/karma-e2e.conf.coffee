@@ -1,6 +1,6 @@
-#jshint quotmark:single
+# jshint quotmark:single
 
-# Karma configuration
+# Karma E2E configuration
 # http://karma-runner.github.io/0.10/config/configuration-file.html
 module.exports = (config) ->
   'use strict'
@@ -10,37 +10,24 @@ module.exports = (config) ->
     basePath: '../'
 
     # testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ['jasmine']
-    reporters: ['spec', 'coverage']
+    frameworks: ['ng-scenario']
 
-    coverageReporter:
-      type: 'html'
-      dir: '.tmp/coverage'
+    reporters: ['spec']
 
     # list of files / patterns to load in the browser
     files: [
-      'app/components/jquery/jquery.js'
-      'app/components/angular/angular.js'
-      'app/components/angular-mocks/angular-mocks.js'
-      'app/components/angular-bootstrap/ui-bootstrap-tpls.js'
-      'app/scripts/**/*.js'
-      'app/scripts/**/*.coffee'
-      'test/mock/**/*.js'
-      'test/spec/**/*.js'
-      'test/spec/**/*.coffee'
-      'app/views/*.html'
+      pattern: 'app/scripts/**/*.*'
+      watched: true
+      included: false
+      served: false
+    ,
+      pattern: 'app/views/**/*.html'
+      watched: true
+      included: false
+      served: false
+    ,
+      'test/e2e/**/*.js'
     ]
-
-    # The html2js preprossessor is used to load template files
-    # during testing so directives can be unit tested.
-    preprocessors:
-      'app/scripts/**/*.js': 'coverage'
-      'app/scripts/**/*.coffee': ['coffee', 'coverage']
-      'test/spec/**/*.coffee': 'coffee'
-      '**/*.html': 'ng-html2js'
-
-    ngHtml2JsPreprocessor:
-      stripPrefix: 'app/'
 
     # list of files / patterns to exclude
     exclude: []
@@ -72,3 +59,9 @@ module.exports = (config) ->
     # if true, it capture browsers, run tests and exit
     singleRun: false
 
+    # Needs to match the port on which the grunt connect task launches the server
+    proxies:
+      '/': 'http://localhost:9001/'
+
+    # URL root prevent conflicts with the site root
+    urlRoot: '_karma_'
