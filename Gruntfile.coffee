@@ -14,6 +14,7 @@ module.exports = (grunt) ->
 
   require('load-grunt-tasks') grunt
   require('time-grunt') grunt
+  coffeelintOptions = require './coffeelint.json'
 
   # configurable paths
   yeomanConfig =
@@ -116,7 +117,6 @@ module.exports = (grunt) ->
       options:
         sourceMap: true
         sourceRoot: ''
-
       dist:
         files: [
           expand: true
@@ -125,7 +125,6 @@ module.exports = (grunt) ->
           dest: '.tmp/scripts'
           ext: '.js'
         ]
-
       test:
         files: [
           expand: true
@@ -134,6 +133,16 @@ module.exports = (grunt) ->
           dest: '.tmp/spec'
           ext: '.js'
         ]
+
+    coffeelint:
+      options: coffeelintOptions
+      dist:
+        files:
+          src: [
+            '<%= yeoman.app %>/scripts/{,*/}*.coffee'
+            'Gruntfile.coffee'
+            'test/karma*.coffee'
+          ]
 
     # not used since Uglify task does concat,
     # but still available if needed

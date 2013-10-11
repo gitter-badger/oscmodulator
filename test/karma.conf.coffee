@@ -3,15 +3,15 @@
 # Karma configuration
 # http://karma-runner.github.io/0.10/config/configuration-file.html
 module.exports = (config) ->
-  "use strict"
+  'use strict'
   config.set
 
     # base path, that will be used to resolve files and exclude
-    basePath: "../"
+    basePath: '../'
 
     # testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ["jasmine"]
-    reporters: ["spec", "coverage"]
+    frameworks: ['jasmine']
+    reporters: ['spec', 'coverage']
 
     coverageReporter:
       type: 'html'
@@ -19,24 +19,28 @@ module.exports = (config) ->
 
     # list of files / patterns to load in the browser
     files: [
-      "app/components/jquery/jquery.js"
-      "app/components/angular/angular.js"
-      "app/components/angular-mocks/angular-mocks.js"
-      "app/components/angular-bootstrap/ui-bootstrap-tpls.js"
-      "app/scripts/**/*.js"
-      "test/mock/**/*.js"
-      "test/spec/**/*.js"
-      "app/views/*.html"
+      'app/components/jquery/jquery.js'
+      'app/components/angular/angular.js'
+      'app/components/angular-mocks/angular-mocks.js'
+      'app/components/angular-bootstrap/ui-bootstrap-tpls.js'
+      'app/scripts/**/*.js'
+      'app/scripts/**/*.coffee'
+      'test/mock/**/*.js'
+      'test/spec/**/*.js'
+      'test/spec/**/*.coffee'
+      'app/views/*.html'
     ]
 
     # The html2js preprossessor is used to load template files
     # during testing so directives can be unit tested.
     preprocessors:
-      'app/scripts/**/*.js': ['coverage']
-      "**/*.html": "ng-html2js"
+      'app/scripts/**/*.js': 'coverage'
+      'app/scripts/**/*.coffee': ['coffee', 'coverage']
+      'test/spec/**/*.coffee': 'coffee'
+      '**/*.html': 'ng-html2js'
 
     ngHtml2JsPreprocessor:
-      stripPrefix: "app/"
+      stripPrefix: 'app/'
 
     # list of files / patterns to exclude
     exclude: []
@@ -59,7 +63,7 @@ module.exports = (config) ->
     # - Safari (only Mac)
     # - PhantomJS
     # - IE (only Windows)
-    browsers: ["PhantomJS"]
+    browsers: ['PhantomJS']
 
     # If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000
