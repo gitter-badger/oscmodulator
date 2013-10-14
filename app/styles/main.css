@@ -1,6 +1,6 @@
 html
 {
-    background-color: black;
+    background-color: #555;
 }
 
 select, input
@@ -22,15 +22,17 @@ select, input
     position: fixed;
     top: 0;
     z-index: 100;
-    background-color: #aec8db;
+    background-color: #444;
     width: 100%;
     padding: 5px;
+    box-shadow: 0 0 5px;
 }
 
 /* Input items*/
 .input-list
 {
     margin-top: 40px;
+    box-shadow: 0 0 5px 5px;
 }
 
 /* 3 Column Layouts */

@@ -109,6 +109,8 @@ describe('Directive: oscOutput', function () {
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
+      expect(isolatedScope.config.host).toBeNull();
+
       // There should be a select object with one option that is unconfigured.
       expect(element.find('select.oscHost option').length).toEqual(1);
       expect(element.find('select.oscHost option').attr('value')).toBe('');
@@ -124,6 +126,9 @@ describe('Directive: oscOutput', function () {
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
+
+      expect(isolatedScope.config.host).toBeNull();
+      expect(isolatedScope.hosts.length).toBe(3);
 
       // Should have the 3 options set in the scope and an empty option.
       expect(element.find('select.oscHost option').length).toEqual(4);
@@ -141,6 +146,8 @@ describe('Directive: oscOutput', function () {
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
+
+      expect(isolatedScope.config.host).toBe('host 2');
 
       // Should only have the 3 options specified in the scope.
       expect(element.find('select.oscHost option').length).toEqual(3);

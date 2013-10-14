@@ -6,22 +6,18 @@ angular.module('oscmodulatorApp').controller('MainCtrl', ['$scope', '$document',
   // UI and can be used as the configuration for node-webkit.
   $scope.inputs = [
     {
-      id: 'midi-input-1',
-      name: 'Button 1',
+      name: null,
       collapsed: false,
       mute: false,
       solo: false,
       midi: {
-        note: 'c1',
-        type: 'on'
+        note: null,
+        type: null
       },
       osc: [{
-        host: 'Live',
-        path: '/osc/server/path',
-        parameters: [
-          {value:10},
-          {value:'foo'}
-        ]
+        host: null,
+        path: null,
+        parameters: []
       }]
     }
   ];

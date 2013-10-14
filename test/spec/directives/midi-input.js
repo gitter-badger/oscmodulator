@@ -57,18 +57,20 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
-    // Kick off the digest cycle on our directive's isolated scope.
-    element.scope().$apply();
-
+    expect(isolatedScope.config.midi.type).toBe('on');
     expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
   }));
 
   it('should default to having no name set.', inject(function($compile){
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    element.scope().$apply();
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
+    expect(isolatedScope.config.name).toBeNull();
     expect(element.find('input[name=name]').val()).toBe('');
   }));
 
@@ -77,16 +79,20 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    element.scope().$apply();
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
+    expect(isolatedScope.config.name).toBe('James');
     expect(element.find('input[name=name]').val()).toBe('James');
   }));
 
   it('should default to having no midi note set.', inject(function($compile){
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    element.scope().$apply();
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
+    expect(isolatedScope.config.midi.note).toBeNull();
     expect(element.find('input[name=midiInNote]').val()).toBe('');
   }));
 
@@ -95,8 +101,10 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    element.scope().$apply();
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
+    expect(isolatedScope.config.midi.note).toBe('c7');
     expect(element.find('input[name=midiInNote]').val()).toBe('c7');
   }));
 
