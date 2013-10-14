@@ -7,7 +7,7 @@ describe('Controller: MainCtrl', function () {
 
   beforeEach(inject(function($rootScope, $controller) {
     scope = $rootScope.$new();
-    var ctrl = $controller('MainCtrl', {$scope: scope});
+    $controller('MainCtrl', {$scope: scope});
   }));
 
   it('should configure the default scope.', function(){
