@@ -23,13 +23,13 @@
                 <input class="input-mini oscParamInput" type="text" name="param{{ key }}"
                        placeholder="Param {{key + 1}}" ng-model="parameter.value">
                 <button class="btn oscParamRemove" type="button" ng-click="removeOSCParameter(key)"
-                        title="Remove OSC Parameter">
+                        name="removeOSCParam{{ key }}" title="Remove OSC Parameter">
                     <i class="icon-remove"></i>
                 </button>
             </div>
         <!--</div>-->
         <button class="btn addOSCParam" type="button" ng-click="addOSCParameter()"
-                title="Add OSC Parameter">
+                name="addOSCParam" title="Add OSC Parameter">
             <i class="icon-plus"></i>
         </button>
     </div>
