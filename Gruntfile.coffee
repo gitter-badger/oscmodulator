@@ -14,7 +14,8 @@ module.exports = (grunt) ->
 
   require('load-grunt-tasks') grunt
   require('time-grunt') grunt
-  coffeelintOptions = require './coffeelint.json'
+  path = require 'path'
+  coffeelint = require './coffeelint.json'
 
   # configurable paths
   yeomanConfig =
@@ -27,16 +28,20 @@ module.exports = (grunt) ->
   ###
   Determines the build type which is later used to load the correct node-webkit build.
   ###
-  buildType = (->
+  platform = (->
     buildType = 'unknown'
-    platform = process.platform
-    if platform is 'darwin'
-      buildType = 'osx'
-    else if platform is 'linux'
-      buildType = 'linux'
-    else buildType = 'windows' if platform.match(/^win/)
+    switch process.platform
+      when 'darwin' then buildType = 'osx'
+      when 'linux' then buildType = 'linux'
+      else
+        buildType = 'windows' if platform.match /^win/
     buildType
   )()
+
+  nwConfig =
+    root: 'build'
+    osx:
+      nwpath: 'node-webkit.app/Contents/MacOS/node-webkit'
 
   grunt.initConfig
     yeoman: yeomanConfig
@@ -135,7 +140,7 @@ module.exports = (grunt) ->
         ]
 
     coffeelint:
-      options: coffeelintOptions
+      options: coffeelint
       dist:
         files:
           src: [
@@ -236,6 +241,7 @@ module.exports = (grunt) ->
             'img/{,*/}*.{gif,webp}'
             'styles/fonts/*'
             'package.json'
+            'node_modules/**/*'
           ]
         ,
           expand: true
@@ -311,19 +317,44 @@ module.exports = (grunt) ->
           '<%= yeoman.dist %>/scripts/scripts.js': ['<%= yeoman.dist %>/scripts/scripts.js']
 
     shell:
-      run:
-        command: "build/#{buildType}/run.sh"
-        options:
-          stderr: true
-          stdout: true
-
-  grunt.registerTask 'run-node-webkit', [
-    'default', 'shell:run'
-  ]
+      options:
+        stderr: true
+        stdout: true
+      init:
+        command: [
+          'npm install -g grunt-cli@0.1.9 bower@1.2.7 nw-gyp@0.10.9',
+          'bower install'
+          'cd app'
+          'npm install'
+          ].join '&&'
 
   grunt.registerTask 'server', (target) ->
     return grunt.task.run(['build', 'open', 'connect:dist:keepalive']) if target is 'dist'
-    grunt.task.run ['clean:server', 'concurrent:server', 'autoprefixer', 'connect:livereload', 'open', 'watch']
+    grunt.task.run [
+      'clean:server'
+      'concurrent:server'
+      'autoprefixer'
+      'connect:livereload'
+      'open'
+      'watch'
+    ]
+
+  grunt.registerTask 'nw-run', ->
+    nw = [nwConfig.root, platform, nwConfig[platform].nwpath].join path.sep
+    grunt.task.run 'default'
+    grunt.config 'shell.nwrun.command', "#{nw} #{yeomanConfig.dist}"
+    grunt.task.run 'shell:nwrun'
+
+  grunt.registerTask 'nw-prep', ->
+    grunt.file.expand('app/node_modules/**/package.json').forEach (filePath) ->
+      config = grunt.file.readJSON filePath
+      return if not config?.gypfile
+      dir = path.dirname filePath
+      grunt.config 'shell.nwgyp.command', [
+        "cd #{dir}"
+        "nw-gyp rebuild --target=0.7.5"
+      ].join('&&')
+      grunt.task.run 'shell:nwgyp'
 
   grunt.registerTask 'test-prep', [
     'clean:server'
@@ -374,5 +405,10 @@ module.exports = (grunt) ->
   grunt.registerTask 'default', [
     'jshint'
     'test'
-    'e2e'
+    #'e2e'
+  ]
+
+  grunt.registerTask 'init', [
+    'shell:init'
+    'nw-prep'
   ]

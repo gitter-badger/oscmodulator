@@ -1,14 +1,25 @@
 {
-  "name": "OSC Modulator",
+  "name": "OSC-Modulator",
   "main": "index.html",
   "description": "OSC Modulator",
-  "version": "2.0-SNAPSHOT",
-  "keywords": [ "Midi", "OSC" ],
+  "version": "2.0.0",
+  "keywords": [
+    "Midi",
+    "OSC"
+  ],
   "window": {
     "icon": "link.png",
     "toolbar": true,
     "width": 800,
     "height": 500,
     "position": "center"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "midi": "~0.7.0",
+    "omgosc": "~1.0.0",
+    "underscore.deferred": "~0.4.0",
+    "legato": "git+https://github.com/dansomething/legato.git",
+    "firmata": "~0.2.9"
   }
 }

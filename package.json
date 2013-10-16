@@ -1,7 +1,7 @@
 {
   "author": "OSC Modulator",
   "name": "oscmodulator",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/OSCModulator/oscmodulator.git"
@@ -47,7 +47,8 @@
     "karma-spec-reporter": "0.0.5",
     "karma-coverage": "~0.1.0",
     "grunt-shell": "~0.4.0",
-    "grunt-coffeelint": "0.0.7"
+    "grunt-coffeelint": "0.0.7",
+    "nw-gyp": "~0.10.9"
   },
   "engines": {
     "node": ">=0.10.0"
