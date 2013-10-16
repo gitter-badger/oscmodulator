@@ -18,6 +18,8 @@ Once you have those installed, you can build the project as follows:
     cd oscmodulator
     // npm install NodeJS dependencies
     npm install
+    // install grunt-cli
+    npm install -g grunt-cli@0.1.9
     // Initialize the project
     grunt init
     // build and test the project

@@ -322,7 +322,7 @@ module.exports = (grunt) ->
         stdout: true
       init:
         command: [
-          'npm install -g grunt-cli@0.1.9 bower@1.2.7 nw-gyp@0.10.9',
+          'npm bower@1.2.7 nw-gyp@0.10.9',
           'bower install'
           'cd app'
           'npm install'
