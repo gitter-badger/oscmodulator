@@ -322,11 +322,11 @@ module.exports = (grunt) ->
         stdout: true
       init:
         command: [
-          'npm bower@1.2.7 nw-gyp@0.10.9',
+          'npm install bower@1.2.7 nw-gyp@0.10.9'
           'bower install'
           'cd app'
           'npm install'
-          ].join '&&'
+        ].join '&&'
 
   grunt.registerTask 'server', (target) ->
     return grunt.task.run(['build', 'open', 'connect:dist:keepalive']) if target is 'dist'
