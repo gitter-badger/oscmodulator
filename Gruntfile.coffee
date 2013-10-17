@@ -86,7 +86,7 @@ module.exports = (grunt) ->
       livereload:
         options:
           middleware: (connect) ->
-            [lrSnippet, mountFolder(connect, '.tmp'), mountFolder(connect, yeomanConfig.app)]
+            [lrSnippet, mountFolder(connect, '.tmp'), mountFolder(connect, yeomanConfig.app), mountFolder(connect, 'test')]
       test:
         options:
           middleware: (connect) ->

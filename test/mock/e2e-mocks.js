@@ -1,10 +1,48 @@
 'use strict';
 
-angular.module('e2e-mocks', ['ngMockE2E']).value('midi', {
-  start : function(){
-    console.log('mock midi class called.');
-    debugger;
-  }
+//angular.module('oscmodulatorApp').factory('midi', function () {
+//  return {
+//    start: function() {
+//      console.log('MOCK midi service called.');
+//    }
+//  };
+//});
+//
+//angular.module('oscmodulatorApp').factory('legato', function (node) {
+//  return {};
+//});
+//
+//// TODO Do we actually need this mock?
+//angular.module('oscmodulatorApp').factory('node', function (node) {
+//  return {
+//    require : function(){
+//      return {};
+//    }
+//  };
+//});
+
+angular.module('e2e-mocks', []).run(function(){
+  angular.module('oscmodulatorApp').factory('midi', function () {
+    return {
+      start: function() {
+        console.log('MOCK midi service called.');
+      }
+    };
+  });
+
+  angular.module('oscmodulatorApp').factory('legato', function (node) {
+    return {};
+  });
+
+  // TODO Do we actually need this mock?
+  angular.module('oscmodulatorApp').factory('node', function (node) {
+    return {
+      require : function(){
+        return {};
+      }
+    };
+  });
 });
 
-angular.module('oscmodulatorApp', []).requires.push('e2e-mocks');
+debugger;
+angular.module('oscmodulatorApp').requires.push('e2e-mocks');
