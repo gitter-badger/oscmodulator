@@ -373,19 +373,27 @@ module.exports = (grunt) ->
     'karma:unit-watch'
   ]
 
-  grunt.registerTask 'e2e-prep', [
+  grunt.registerTask 'e2e', [
     'build'
     'connect:dist'
-  ]
-
-  grunt.registerTask 'e2e', [
-    'e2e-prep'
     'karma:e2e'
   ]
 
   grunt.registerTask 'e2e-watch', [
-    'e2e-prep'
+    'build-debug'
+    'connect:dist'
     'karma:e2e-watch'
+  ]
+
+  grunt.registerTask 'build-debug', [
+    'clean:dist'
+    'useminPrepare'
+    'concurrent:dist'
+    'autoprefixer'
+    'concat'
+    'copy:dist'
+    'rev'
+    'usemin'
   ]
 
   grunt.registerTask 'build', [
@@ -405,7 +413,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'default', [
     'jshint'
     'test'
-    #'e2e'
+    'e2e'
   ]
 
   grunt.registerTask 'init', [

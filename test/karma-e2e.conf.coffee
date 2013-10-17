@@ -27,6 +27,8 @@ module.exports = (config) ->
       served: false
     ,
       'test/e2e/**/*.js'
+    ,
+      'test/mock/**/*.js'
     ]
 
     # list of files / patterns to exclude

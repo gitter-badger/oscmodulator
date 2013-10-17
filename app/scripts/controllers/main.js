@@ -5,6 +5,7 @@ angular.module('oscmodulatorApp').controller('MainCtrl',
     $scope.addMidiInput = function () {
     };
 
+    debugger;
     midi.start();
   }
 );
