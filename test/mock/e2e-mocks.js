@@ -8,17 +8,4 @@ angular.module('oscmodulatorApp').config(function($provide){
       }
     };
   });
-
-  $provide.factory('legato', function (node) {
-    return {};
-  });
-
-  // TODO Do we actually need this mock?
-  $provide.factory('node', function (node) {
-    return {
-      require : function(){
-        return {};
-      }
-    };
-  });
 });
