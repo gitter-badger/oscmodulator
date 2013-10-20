@@ -23,6 +23,9 @@ Once you have those installed, you can build the project as follows:
     npm install
     // bower install Web UI dependencies
     bower install
+    // you're all ready to go
+    // try one of the following:
+
     // build the project
     grunt build
     // or test the project

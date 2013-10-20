@@ -1,5 +1,6 @@
 <div class="input-list">
-    <div ng-repeat="input in inputs">
-        <div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds"></div>
+    <div ng-repeat="(key, input) in inputs">
+        <div data-midi-input data-midi-input-config="input" data-osc-hosts="hostIds"
+                data-duplicate="duplicateMidiInput(key)" data-remove="removeMidiInput(key)"></div>
     </div>
 </div>

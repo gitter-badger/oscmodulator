@@ -1,0 +1,36 @@
+<div class="oscOutputItem" name="oscOutputItem">
+    <!-- path row -->
+    <div class="container3Col oscPathRow">
+        <div class="leftCol oscHostConfig">
+            <!-- use http://silviomoreto.github.io/bootstrap-select/ ? -->
+            <select class="oscHost" required="true" ng-model="config.host" ng-options="host for host in hosts">
+            </select>
+        </div>
+        <div class="rightCol">
+            <button class="btn removeOSCOutput" type="button" title="Remove OSC Output" ng-click="removeOSCOutput()">
+                <i class="icon-remove"></i>
+            </button>
+        </div>
+        <div class="centerCol">
+            <input class="oscOutputPath" type="text" name="oscPath" placeholder="OSC Path" ng-model="config.path"/>
+        </div>
+    </div>
+    <!-- parameter row -->
+    <div class="oscParameterList">
+        <!--<div class="oscParameters">-->
+            <div class="inline-input-append oscParam" name="oscParam"
+                 ng-repeat="(key, parameter) in config.parameters">
+                <input class="input-mini oscParamInput" type="text" name="param{{ key }}"
+                       placeholder="Param {{key + 1}}" ng-model="parameter.value">
+                <button class="btn oscParamRemove" type="button" ng-click="removeOSCParameter(key)"
+                        name="removeOSCParam{{ key }}" title="Remove OSC Parameter">
+                    <i class="icon-remove"></i>
+                </button>
+            </div>
+        <!--</div>-->
+        <button class="btn addOSCParam" type="button" ng-click="addOSCParameter()"
+                name="addOSCParam" title="Add OSC Parameter">
+            <i class="icon-plus"></i>
+        </button>
+    </div>
+</div>

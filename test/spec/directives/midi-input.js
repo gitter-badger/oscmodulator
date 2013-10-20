@@ -1,108 +1,333 @@
 'use strict';
 
 describe('Directive: midiInput', function (){
-  var element, scope, template;
+  var element, parentScope, isolatedScope, template;
 
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/midi-input.html'));
+  beforeEach(module('views/osc-output.html'));
 
   beforeEach(inject(function ($rootScope){
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
-      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds">' +
-        '</div>'
+      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds"></div>'
     );
 
     // Create a fresh scope for this test.
-    scope = $rootScope.$new();
-    scope.input = {
+    parentScope = $rootScope.$new();
+    parentScope.input = {
       id: 'midi-input-1',
-      name: 'Button 1',
-      type: 'midi-to-osc',
+      name: null,
       collapsed: false,
       mute: false,
       solo: false,
       midi: {
-        note: 'c1',
+        note: null,
         type: 'on'
       },
-      osc: {
+      osc: [{
         host: null,
-        path: '/osc/server/path',
-        parameters: [
-          10,
-          'foo'
-        ]
-      }
+        path: null,
+        parameters: []
+      }]
     };
-    scope.hostIds = [];
+    parentScope.hostIds = [];
   }));
 
-  it('Should have an unconfigured select object for setting the OSC Hosts.',
-    inject(function ($compile){
-      var selectElement;
+  it('should be able to set reasonable defaults when provided with an empty config.', inject(function($compile){
+    parentScope.input = {id:'midi-input-1'};
 
-      // Compile the DOM into an Angular view using using our test scope.
-      element = $compile(template)(scope);
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
-      // Kick off the digest cycle on our directive's isolated scope.
-      element.scope().$apply();
-
-      selectElement = element.find('select.oscHost');
-
-      // There should be a select object.
-      expect(selectElement.length).toEqual(1);
-      // With one option.
-      expect(selectElement.find('option').length).toEqual(1);
-      // That is unconfigured.
-      expect(selectElement.find('option').attr('value')).toBe('');
-    })
-  );
-
-  it('Should be configurable through the hosts property on its scope but should not set a default.',
-    inject(function ($compile){
-      // Configure the scope.
-      scope.hostIds = ['host 1', 'host 2', 'host 3'];
-
-      // Compile the DOM into an Angular view using using our test scope.
-      element = $compile(template)(scope);
-
-      // Kick off the digest cycle on our directive's isolated scope.
-      element.scope().$apply();
-
-      // Should have the 3 options set in the scope and an empty option.
-      expect(element.find('select.oscHost option').length).toEqual(4);
-      // Where the first element is unconfigured.
-      expect(element.find('select.oscHost option').first().attr('value')).toBe('');
-    })
-  );
-
-  it('should be possible to set the default host through config.',
-    inject(function ($compile) {
-      // Configure the scope.
-      scope.hostIds = ['host 1', 'host 2', 'host 3'];
-      // Configure the default host.
-      scope.input.osc.host = 'host 2';
-
-      // Compile the DOM into an Angular view using using our test scope.
-      element = $compile(template)(scope);
-
-      // Kick off the digest cycle on our directive's isolated scope.
-      element.scope().$apply();
-
-      // Should only have the 3 options specified in the scope.
-      expect(element.find('select.oscHost option').length).toEqual(3);
-    })
-  );
+    expect(isolatedScope.config.name).toBe(null);
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(isolatedScope.config.solo).toBe(false);
+    expect(isolatedScope.config.mute).toBe(false);
+    expect(isolatedScope.config.midi.note).toBeNull();
+    expect(isolatedScope.config.midi.type).toBe('on');
+    expect(isolatedScope.config.osc.length).toBe(1);
+  }));
 
   it('should start with a midi note type of ON.', inject(function ($compile){
+    parentScope.input.midi.type = null;
+
     // Compile the DOM into an Angular view using using our test scope.
-    element = $compile(template)(scope);
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
 
-    // Kick off the digest cycle on our directive's isolated scope.
-    element.scope().$apply();
-
+    expect(isolatedScope.config.midi.type).toBe('on');
     expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
+  }));
+
+  it('should default to having no name set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.name).toBeNull();
+    expect(element.find('input[name=name]').val()).toBe('');
+  }));
+
+  it('should be able to configure the name through the scope.', inject(function($compile){
+    parentScope.input.name = 'James';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.name).toBe('James');
+    expect(element.find('input[name=name]').val()).toBe('James');
+  }));
+
+  it('should default to having no midi note set.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+    expect(element.find('input[name=midiInNote]').val()).toBe('');
+  }));
+
+  it('should be able to configure the midi note through the scope.', inject(function($compile){
+    parentScope.input.midi.note = 'c7';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe('c7');
+    expect(element.find('input[name=midiInNote]').val()).toBe('c7');
+  }));
+
+  it('should be possible to configure the solo button through config',
+    inject(function($compile){
+      parentScope.input.solo = true;
+      parentScope.input.mute = false;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.solo).toBe(true);
+      expect(isolatedScope.config.mute).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should be possible to configure the mute button through config',
+    inject(function($compile){
+      parentScope.input.solo = false;
+      parentScope.input.mute = true;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.mute).toBe(true);
+      expect(isolatedScope.config.solo).toBe(false);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should default as neither muted nor soloed',
+    inject(function($compile){
+      parentScope.input.solo = null;
+      parentScope.input.mute = null;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      expect(isolatedScope.config.mute).toBe(false);
+      expect(isolatedScope.config.solo).toBe(false);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should fix situations where the config is both soloed and muted',
+    inject(function($compile){
+      parentScope.input.solo = true;
+      parentScope.input.mute = true;
+
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      // The solo should be on and the mute off.
+      expect(isolatedScope.config.mute).toBe(false);
+      expect(isolatedScope.config.solo).toBe(false);
+      expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+      expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    })
+  );
+
+  it('should disable mute when soloed', inject(function($compile){
+    parentScope.input.solo = false;
+    parentScope.input.mute = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // The solo should be on and the mute off.
+    expect(isolatedScope.config.mute).toBe(true);
+    expect(isolatedScope.config.solo).toBe(false);
+
+    isolatedScope.config.solo = true;
+    isolatedScope.$apply();
+
+    // The mute button should now be turned off and the solo button on.
+    expect(isolatedScope.config.mute).toBe(false);
+    expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+    expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
+  }));
+
+  it('should disable solo when muted', inject(function($compile){
+    parentScope.input.mute = false;
+    parentScope.input.solo = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // The solo should be on and the mute off.
+    expect(isolatedScope.config.solo).toBe(true);
+    expect(isolatedScope.config.mute).toBe(false);
+
+    isolatedScope.config.mute = true;
+    isolatedScope.$apply();
+
+    // The mute button should now be turned off and the solo button on.
+    expect(isolatedScope.config.solo).toBe(false);
+    expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+    expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
+  }));
+
+  it('should start expanded by default.', inject(function($compile){
+    parentScope.input.collapsed = null;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+  }));
+
+  it('should be possible to collapse through configuration.', inject(function($compile){
+    parentScope.input.collapsed = true;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.collapsed).toBe(true);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
+  }));
+
+  it('should be possible to expand/collapse.', inject(function($compile){
+    parentScope.input.collapsed = null;
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    // Expect it to start out expanded.
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+
+    isolatedScope.toggleCollapsed();
+    isolatedScope.$apply();
+
+    // Expect it to collapse.
+    expect(isolatedScope.config.collapsed).toBe(true);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
+
+    isolatedScope.toggleCollapsed();
+    isolatedScope.$apply();
+
+    // Expect it to expand again.
+    expect(isolatedScope.config.collapsed).toBe(false);
+    expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
+  }));
+
+  it('should default to one osc output.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(1);
+    expect(element.find('div[name=oscOutputItem]').length).toBe(1);
+  }));
+
+  it('should be possible to configure the osc outputs.', inject(function($compile){
+    parentScope.input.osc = [{},{}];
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(2);
+    expect(element.find('div[name=oscOutputItem]').length).toBe(2);
+  }));
+
+  it('should be possible to add a new OSC output.', inject(function($compile){
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(1);
+
+    isolatedScope.addOSCOutput();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(2);
+    expect(parentScope.input.osc.length).toBe(2);
+    expect(element.find('div[name=oscOutputItem]').length).toBe(2);
+  }));
+
+  it('should be possible to remove an OSC output.', inject(function($compile){
+    parentScope.input.osc = [{path:'/a'},{path:'/b'},{path:'/c'}];
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(3);
+
+    isolatedScope.removeOSCOutput(1);
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.osc.length).toBe(2);
+    expect(parentScope.input.osc.length).toBe(2);
+    expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
+    expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
   }));
 });

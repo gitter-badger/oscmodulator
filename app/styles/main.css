@@ -1,11 +1,38 @@
 html
 {
-    background-color: black;
+    background-color: #555;
 }
 
 select, input
 {
     margin-bottom: 0;
+}
+
+.icon-copy
+{
+    background-image: url('/images/icon-copy.png');
+    background-position: 0 0;
+    height: 16px;
+    margin-top: -1px;
+}
+
+/* Header */
+.header
+{
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    background-color: #444;
+    width: 100%;
+    padding: 5px;
+    box-shadow: 0 0 5px;
+}
+
+/* Input items*/
+.input-list
+{
+    margin-top: 40px;
+    box-shadow: 0 0 5px 5px;
 }
 
 /* 3 Column Layouts */
@@ -38,16 +65,21 @@ select, input
 {
     margin-left: 5px;
 }
-
+/*
 button.midiNoteType
 {
     width: 65px;
+}
+*/
+.midiNote
+{
+    width: 30px;
 }
 
 .container3Col.midiInputHeader .centerCol
 {
     margin-left: 60px;
-    margin-right: 315px;
+    margin-right: 288px;
 }
 
 .container3Col.midiInputHeader
@@ -118,9 +150,14 @@ select.oscHost
     border-bottom-left-radius: 0;
 }
 
-btn.addOSCParam
+.oscParam
 {
-    margin-left: 2px;
+    margin-right: 5px;
+}
+
+.addOSCParam
+{
+    /*margin-bottom: 5px;*/
 }
 
 .treeContent
@@ -175,11 +212,6 @@ btn.addOSCParam
 .oscOutputItem
 {
     border-bottom: 1px solid #ddd;
-}
-
-.oscParameters
-{
-    display: inline-block;
 }
 
 .midiInputFooter,

@@ -5,45 +5,17 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
     templateUrl: 'views/input-list.html',
     restrict: 'A',
     replace: true,
-    //require:"^MainCtrl",
-    controller: function nestedSortableCtrl($scope, $element /*, $attrs*/){
-      var jqElement, templates;
+    scope:{
+      inputs: '=inputs'
+    },
+    controller: function($scope, jq){
+      if(!$scope.inputs){
+        $scope.inputs = [];
+      }
 
-      jqElement = angular.element($element);
-
-      templates = {
-        // The template used to create a new midi input.
-        midiInput: '<div x-midi-input id="midi-input-1"></div>',
-        // The template used to create a new leaf node in the Nested Sortable.
-        leafNode: '<li class="leaf">'
-      };
-
-      $scope.inputs = [
-        {
-          id: 'midi-input-1',
-          name: 'Button 1',
-          type: 'midi-to-osc',
-          collapsed: false,
-          mute: false,
-          solo: false,
-          midi: {
-            note: 'c1',
-            type: 'on'
-          },
-          osc: {
-            host: 'Live',
-            path: '/osc/server/path',
-            parameters: [
-              10,
-              'foo'
-            ]
-          }
-        }
-      ];
-
-      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
-      // This list will be passed to the midi inputs so they know how to populate the available hosts.
-      $scope.hostIds = ['Live', 'Resolume'];
+      if($scope.inputs.length === 0){
+        $scope.inputs.push({});
+      }
 
       $scope.hosts = [
         {
@@ -56,80 +28,27 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         }
       ];
 
+      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
+      // This list will be passed to the midi inputs so they know how to populate the available hosts.
+      $scope.hostIds = [];
+      for(var j = 0; j < $scope.hosts.length; j++){
+        $scope.hostIds.push($scope.hosts[j].name);
+      }
+
       /**
-       * Create a new Midi Input.
-       * @param props {Object} The configuration object defining the properties of the new MidiInput.
+       * Create a new midi input with all the same settings as the input with at the specified index.
+       * @param index The index of the midi input to copy.
        */
-      var createMidiInput = function (props){
-        jqElement.append(angular.element(templates.leafNode)).attr('id', props.id).append(angular.element(templates.midiInput));
+      $scope.duplicateMidiInput = function(index){
+        $scope.inputs.push(jq.extend(true, {}, $scope.inputs[index]));
       };
-
       /**
-       * Create a new Input Group.
+       * Remove the specified midi input from the list of inputs.
+       * @param index The index of the midi input to copy.
        */
-      var createInputGroup = function (){
-
+      $scope.removeMidiInput = function(index){
+        $scope.inputs.splice(index, 1);
       };
-
-      /**
-       * Return the Nested Sortable DOM information as a string.
-       * @return {String}
-       *
-       var serializeSortable = function () {
-        return jqElement.nestedSortable('serialize');
-      };*/
-
-      /**
-       * Return the Nested Sortable DOM information as an object.
-       * @return {Object}
-       *
-       var sortableToHierarchy = function () {
-        return jqElement.nestedSortable('toHierarchy', {startDepthCount : 0});
-      };*/
-
-      /**
-       * Return the Nested Sortable DOM information as an array.
-       * @return {Array}
-       *
-       var sortableToArray = function () {
-        return jqElement.nestedSortable('toArray', {startDepthCount : 0});
-      };*/
-
-      // Public API for this controller.
-      return {
-        createMidiInput: createMidiInput,
-        createInputGroup: createInputGroup
-      };
-    },
-    link: function postLink(/*scope, element, attrs, controllers*/){
-      //      var jqElement = angular.element(element);
-      //      var nestedSortableCtrl = controllers;
-      /*
-       // Initialize the Nested Sortable functionality.
-       jqElement.nestedSortable({
-       forcePlaceholderSize : true,
-       handle : 'div',
-       helper : 'clone',
-       items : 'li',
-       opacity : 0.6,
-       placeholder : 'placeholder',
-       revert : 50,
-       tabSize : 25,
-       tolerance : 'pointer',
-       //toleranceElement:'div',
-       maxLevels : 3,
-       isTree : true,
-       expandOnHover : 700,
-       startCollapsed : true,
-       branchClass : 'branch',
-       collapsedClass : 'collapsed',
-       disableNestingClass : 'no-nesting',
-       errorClass : 'error',
-       expandedClass : 'expanded',
-       hoveringClass : 'hovering',
-       leafClass : 'leaf'
-       });
-       */
     }
   };
 });

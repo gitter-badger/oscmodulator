@@ -1,23 +1,24 @@
-'use strict';
-
 describe('Controller: MainCtrl', function () {
-/*
+  'use strict';
+  var scope;
+
   // load the controller's module
   beforeEach(module('oscmodulatorApp'));
 
-  var MainCtrl,
-    scope;
-
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function($controller) {
-    scope = {};
-    MainCtrl = $controller('MainCtrl', {
-      $scope: scope
-    });
+  beforeEach(inject(function($rootScope, $controller) {
+    scope = $rootScope.$new();
+    $controller('MainCtrl', {$scope: scope});
   }));
 
-  it('should attach a list of awesomeThings to the scope', function() {
-    expect(scope.awesomeThings.length).toBe(3);
+  it('should configure the default scope.', function(){
+    expect(scope.inputs.length).toBe(1);
   });
-*/
+
+  it('should be able to add new inputs.', function(){
+    expect(scope.inputs.length).toBe(1);
+
+    scope.addMidiInput();
+
+    expect(scope.inputs.length).toBe(2);
+  });
 });
