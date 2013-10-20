@@ -19,35 +19,35 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
        */
       $scope.midiTypes = ['on', 'off', 'hold', 'double tap'];
 
-      if($scope.config.name === undefined || $scope.config.name === ''){
+      if(!$scope.config.name){
         $scope.config.name = null;
       }
 
-      if($scope.config.collapsed === undefined || $scope.config.collapsed === null){
+      if(!$scope.config.collapsed){
         $scope.config.collapsed = false;
       }
 
-      if($scope.config.osc === undefined){
+      if(!$scope.config.osc){
         $scope.config.osc = [{}];
       }
 
-      if($scope.config.midi === undefined){
+      if(!$scope.config.midi){
         $scope.config.midi = {};
       }
 
-      if($scope.config.midi.note === undefined){
+      if(!$scope.config.midi.note){
         $scope.config.midi.note = null;
       }
 
-      if($scope.config.midi.type === undefined || $scope.config.midi.type === null || $scope.config.midi.type === 0 || $scope.config.midi.type === '' ){
+      if(!$scope.config.midi.type){
         $scope.config.midi.type = 'on';
       }
 
-      if($scope.config.mute === undefined || $scope.config.mute === null){
+      if(!$scope.config.mute){
         $scope.config.mute = false;
       }
 
-      if($scope.config.solo === undefined || $scope.config.solo === null){
+      if(!$scope.config.solo){
         $scope.config.solo = false;
       }
 
@@ -67,7 +67,10 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       $scope.addOSCOutput = function(){
         $scope.config.osc.push({});
       };
-
+      /**
+       * Remove the OSC output object at the specified index.
+       * @param index
+       */
       $scope.removeOSCOutput = function(index){
         $scope.config.osc.splice(index, 1);
       };

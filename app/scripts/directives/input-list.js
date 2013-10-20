@@ -1,4 +1,3 @@
-/*global $:false */
 angular.module('oscmodulatorApp').directive('inputList', function (){
   'use strict';
 
@@ -9,7 +8,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
     scope:{
       inputs: '=inputs'
     },
-    controller: function nestedSortableCtrl($scope/*, $element, $attrs*/){
+    controller: function($scope, jq){
       if($scope.inputs === undefined){
         $scope.inputs = [];
       }
@@ -41,8 +40,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * @param index The index of the midi input to copy.
        */
       $scope.duplicateMidiInput = function(index){
-        // TODO Is there a way to inject jquery so we can guarantee it's available?
-        $scope.inputs.push($.extend(true, {}, $scope.inputs[index]));
+        $scope.inputs.push(jq.extend(true, {}, $scope.inputs[index]));
       };
       /**
        * Remove the specified midi input from the list of inputs.
