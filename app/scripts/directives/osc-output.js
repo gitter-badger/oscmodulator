@@ -12,15 +12,15 @@ angular.module('oscmodulatorApp')
         removeOSCOutput: '&remove'
       },
       controller: function oscOutputCtrl($scope/*, $element, $attrs*/){
-        if($scope.config.host === undefined ){
+        if(!$scope.config.host){
           $scope.config.host = null;
         }
 
-        if($scope.config.path === undefined){
+        if(!$scope.config.path){
           $scope.config.path = null;
         }
 
-        if($scope.config.parameters === undefined){
+        if(!$scope.config.parameters){
           $scope.config.parameters = [];
         }
 

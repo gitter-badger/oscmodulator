@@ -9,7 +9,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       inputs: '=inputs'
     },
     controller: function($scope, jq){
-      if($scope.inputs === undefined){
+      if(!$scope.inputs){
         $scope.inputs = [];
       }
 
