@@ -85,8 +85,11 @@ module.exports = (grunt) ->
         hostname: 'localhost'
       livereload:
         options:
-          middleware: (connect) ->
-            [lrSnippet, mountFolder(connect, '.tmp'), mountFolder(connect, yeomanConfig.app), mountFolder(connect, 'test')]
+          middleware: (connect) -> [
+            lrSnippet, mountFolder(connect, '.tmp')
+            mountFolder(connect, yeomanConfig.app)
+            mountFolder(connect, 'test')
+          ]
       test:
         options:
           middleware: (connect) ->
@@ -279,6 +282,10 @@ module.exports = (grunt) ->
         'svgmin'
         'htmlmin'
       ]
+      init: [
+        'shell:init-node'
+        'shell:init-nw'
+      ]
 
     karma:
       unit:
@@ -298,10 +305,6 @@ module.exports = (grunt) ->
         autoWatch: true
         browsers: ['Chrome']
 
-    cdnify:
-      dist:
-        html: ['<%= yeoman.dist %>/*.html']
-
     ngmin:
       dist:
         files: [
@@ -320,10 +323,13 @@ module.exports = (grunt) ->
       options:
         stderr: true
         stdout: true
-      init:
+      'init-node':
         command: [
-          'npm install bower@1.2.7 nw-gyp@0.10.9'
+          'npm install -g bower@1.2.7 nw-gyp@0.10.9'
           'bower install'
+        ].join '&&'
+      'init-nw':
+        command: [
           'cd app'
           'npm install'
         ].join '&&'
@@ -417,6 +423,6 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'init', [
-    'shell:init'
+    'concurrent:init'
     'nw-prep'
   ]
