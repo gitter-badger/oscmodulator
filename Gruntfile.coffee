@@ -147,7 +147,7 @@ module.exports = (grunt) ->
           src: [
             '<%= yeoman.app %>/scripts/{,*/}*.coffee'
             'Gruntfile.coffee'
-            'test/karma*.coffee'
+            'test/{,*/}*.coffee'
           ]
 
     # not used since Uglify task does concat,
