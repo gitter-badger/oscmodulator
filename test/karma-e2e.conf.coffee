@@ -26,7 +26,13 @@ module.exports = (config) ->
       included: false
       served: false
     ,
+      pattern: 'test/mock/**/*.js'
+      watched: true
+      included: false
+      served: false
+    ,
       'test/e2e/**/*.js'
+      'test/mock/**/*.js'
     ]
 
     # list of files / patterns to exclude
@@ -61,7 +67,7 @@ module.exports = (config) ->
 
     # Needs to match the port on which the grunt connect task launches the server
     proxies:
-      '/': 'http://localhost:9001/'
+      '/': 'http://localhost:9000/'
 
     # URL root prevent conflicts with the site root
     urlRoot: '_karma_'

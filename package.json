@@ -46,7 +46,8 @@
     "karma-coverage": "~0.1.0",
     "grunt-shell": "~0.5.0",
     "grunt-coffeelint": "0.0.7",
-    "nw-gyp": "~0.10.9"
+    "nw-gyp": "~0.10.9",
+    "grunt-replace": "~0.5.1"
   },
   "engines": {
     "node": ">=0.10.0"

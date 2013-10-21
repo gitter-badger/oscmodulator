@@ -86,19 +86,17 @@ module.exports = (grunt) ->
       livereload:
         options:
           middleware: (connect) -> [
-            lrSnippet, mountFolder(connect, '.tmp')
+            lrSnippet
+            mountFolder(connect, '.tmp')
             mountFolder(connect, yeomanConfig.app)
             mountFolder(connect, 'test')
           ]
-      test:
-        options:
-          middleware: (connect) ->
-            [mountFolder(connect, '.tmp'), mountFolder(connect, 'test')]
       dist:
         options:
-          port: 9001
-          middleware: (connect) ->
-            [mountFolder(connect, yeomanConfig.dist)]
+          middleware: (connect) -> [
+            mountFolder(connect, yeomanConfig.dist)
+            mountFolder(connect, 'test')
+          ]
 
     open:
       server:
@@ -334,6 +332,21 @@ module.exports = (grunt) ->
           'npm install'
         ].join '&&'
 
+    replace:
+      dist:
+        options:
+          patterns: [
+            match: /<!-- MOCKS -->[\s\S]+<!-- ENDMOCKS -->/gi,
+            replacement: ''
+            expression: true
+          ]
+        files: [
+          expand: false
+          flatten: true
+          src: '<%= yeoman.dist %>/index.html'
+          dest: '<%= yeoman.dist %>/index.html'
+        ]
+
   grunt.registerTask 'server', (target) ->
     return grunt.task.run(['build', 'open', 'connect:dist:keepalive']) if target is 'dist'
     grunt.task.run [
@@ -345,9 +358,14 @@ module.exports = (grunt) ->
       'watch'
     ]
 
+  grunt.registerTask 'nw-build', [
+    'default'
+    'replace:dist'
+  ]
+
   grunt.registerTask 'nw-run', ->
     nw = [nwConfig.root, platform, nwConfig[platform].nwpath].join path.sep
-    grunt.task.run 'default'
+    grunt.task.run 'nw-build'
     grunt.config 'shell.nwrun.command', "#{nw} #{yeomanConfig.dist}"
     grunt.task.run 'shell:nwrun'
 
@@ -362,20 +380,19 @@ module.exports = (grunt) ->
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
 
-  grunt.registerTask 'test-prep', [
+  grunt.registerTask 'unit-prep', [
     'clean:server'
     'concurrent:test'
     'autoprefixer'
-    'connect:test'
   ]
 
-  grunt.registerTask 'test', [
-    'test-prep'
+  grunt.registerTask 'unit', [
+    'unit-prep'
     'karma:unit'
   ]
 
-  grunt.registerTask 'test-watch', [
-    'test-prep'
+  grunt.registerTask 'unit-watch', [
+    'unit-prep'
     'karma:unit-watch'
   ]
 
@@ -386,20 +403,22 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'e2e-watch', [
-    'build-debug'
-    'connect:dist'
+    'clean:server'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'open'
     'karma:e2e-watch'
   ]
 
-  grunt.registerTask 'build-debug', [
-    'clean:dist'
-    'useminPrepare'
-    'concurrent:dist'
-    'autoprefixer'
-    'concat'
-    'copy:dist'
-    'rev'
-    'usemin'
+  grunt.registerTask 'test', [
+    'unit'
+    'e2e'
+  ]
+
+  grunt.registerTask 'lint', [
+    'jshint'
+    'coffeelint'
   ]
 
   grunt.registerTask 'build', [
@@ -417,9 +436,8 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'default', [
-    'jshint'
+    'lint'
     'test'
-    'e2e'
   ]
 
   grunt.registerTask 'init', [
