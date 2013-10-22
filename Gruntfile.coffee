@@ -91,24 +91,8 @@ module.exports = (grunt) ->
             mountFolder(connect, yeomanConfig.app)
             mountFolder(connect, 'test')
           ]
-      'e2e-watch':
-        options:
-          port: 9001
-          middleware: (connect) -> [
-            lrSnippet
-            mountFolder(connect, '.tmp')
-            mountFolder(connect, yeomanConfig.app)
-            mountFolder(connect, 'test')
-          ]
       dist:
         options:
-          middleware: (connect) -> [
-            mountFolder(connect, yeomanConfig.dist)
-            mountFolder(connect, 'test')
-          ]
-      e2e:
-        options:
-          port: 9002
           middleware: (connect) -> [
             mountFolder(connect, yeomanConfig.dist)
             mountFolder(connect, 'test')
@@ -415,7 +399,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'e2e', [
     'build'
-    'connect:e2e'
+    'connect:dist'
     'karma:e2e'
   ]
 
@@ -423,7 +407,8 @@ module.exports = (grunt) ->
     'clean:server'
     'concurrent:server'
     'autoprefixer'
-    'connect:e2e-watch'
+    'connect:livereload'
+    'open'
     'karma:e2e-watch'
   ]
 
