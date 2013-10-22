@@ -91,8 +91,24 @@ module.exports = (grunt) ->
             mountFolder(connect, yeomanConfig.app)
             mountFolder(connect, 'test')
           ]
+      'e2e-watch':
+        options:
+          port: 9001
+          middleware: (connect) -> [
+            lrSnippet
+            mountFolder(connect, '.tmp')
+            mountFolder(connect, yeomanConfig.app)
+            mountFolder(connect, 'test')
+          ]
       dist:
         options:
+          middleware: (connect) -> [
+            mountFolder(connect, yeomanConfig.dist)
+            mountFolder(connect, 'test')
+          ]
+      e2e:
+        options:
+          port: 9002
           middleware: (connect) -> [
             mountFolder(connect, yeomanConfig.dist)
             mountFolder(connect, 'test')
@@ -293,6 +309,7 @@ module.exports = (grunt) ->
       'unit-watch':
         configFile: 'test/karma.conf.coffee'
         autoWatch: true
+        browsers: ['Chrome']
 
       e2e:
         configFile: 'test/karma-e2e.conf.coffee'
@@ -398,7 +415,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'e2e', [
     'build'
-    'connect:dist'
+    'connect:e2e'
     'karma:e2e'
   ]
 
@@ -406,8 +423,7 @@ module.exports = (grunt) ->
     'clean:server'
     'concurrent:server'
     'autoprefixer'
-    'connect:livereload'
-    'open'
+    'connect:e2e-watch'
     'karma:e2e-watch'
   ]
 
