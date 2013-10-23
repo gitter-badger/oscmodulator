@@ -93,6 +93,7 @@ module.exports = (grunt) ->
           ]
       dist:
         options:
+          port: 9001
           middleware: (connect) -> [
             mountFolder(connect, yeomanConfig.dist)
             mountFolder(connect, 'test')
@@ -303,6 +304,8 @@ module.exports = (grunt) ->
         configFile: 'test/karma-e2e.conf.coffee'
         autoWatch: true
         browsers: ['Chrome']
+        proxies:
+          '/': 'http://localhost:9001/'
 
     ngmin:
       dist:
