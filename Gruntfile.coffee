@@ -49,7 +49,6 @@ module.exports = (grunt) ->
       coffee:
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee']
         tasks: ['coffee:dist']
-
       coffeeTest:
         files: ['test/spec/{,*/}*.coffee']
         tasks: ['coffee:test']
@@ -114,6 +113,16 @@ module.exports = (grunt) ->
           ]
         ]
       server: '.tmp'
+      deps:
+        files: [
+          dot: true
+          src: [
+            '<%= yeoman.app %>/node_modules'
+            '<%= yeoman.app %>/components'
+            'node_modules'
+          ]
+        ]
+
 
     jshint:
       options:
@@ -299,13 +308,13 @@ module.exports = (grunt) ->
       e2e:
         configFile: 'test/karma-e2e.conf.coffee'
         singleRun: true
+        proxies:
+          '/': 'http://localhost:9001/'
 
       'e2e-watch':
         configFile: 'test/karma-e2e.conf.coffee'
         autoWatch: true
         browsers: ['Chrome']
-        proxies:
-          '/': 'http://localhost:9001/'
 
     ngmin:
       dist:
