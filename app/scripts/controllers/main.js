@@ -1,4 +1,4 @@
-angular.module('oscmodulatorApp').controller('MainCtrl', ['$scope', '$document', function ($scope /*, $document*/) {
+angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, midi) {
   'use strict';
 
   // The list of inputs to configure the application with. This should come from external
@@ -28,6 +28,7 @@ angular.module('oscmodulatorApp').controller('MainCtrl', ['$scope', '$document',
   $scope.addMidiInput = function(){
     $scope.inputs.push({});
   };
-}]);
 
+  midi.start();
 
+});

@@ -14,7 +14,8 @@ module.exports = (grunt) ->
 
   require('load-grunt-tasks') grunt
   require('time-grunt') grunt
-  coffeelintOptions = require './coffeelint.json'
+  path = require 'path'
+  coffeelint = require './coffeelint.json'
 
   # configurable paths
   yeomanConfig =
@@ -27,16 +28,20 @@ module.exports = (grunt) ->
   ###
   Determines the build type which is later used to load the correct node-webkit build.
   ###
-  buildType = (->
+  platform = (->
     buildType = 'unknown'
-    platform = process.platform
-    if platform is 'darwin'
-      buildType = 'osx'
-    else if platform is 'linux'
-      buildType = 'linux'
-    else buildType = 'windows' if platform.match(/^win/)
+    switch process.platform
+      when 'darwin' then buildType = 'osx'
+      when 'linux' then buildType = 'linux'
+      else
+        buildType = 'windows' if platform.match /^win/
     buildType
   )()
+
+  nwConfig =
+    root: 'build'
+    osx:
+      nwpath: 'node-webkit.app/Contents/MacOS/node-webkit'
 
   grunt.initConfig
     yeoman: yeomanConfig
@@ -44,7 +49,6 @@ module.exports = (grunt) ->
       coffee:
         files: ['<%= yeoman.app %>/scripts/{,*/}*.coffee']
         tasks: ['coffee:dist']
-
       coffeeTest:
         files: ['test/spec/{,*/}*.coffee']
         tasks: ['coffee:test']
@@ -80,17 +84,19 @@ module.exports = (grunt) ->
         hostname: 'localhost'
       livereload:
         options:
-          middleware: (connect) ->
-            [lrSnippet, mountFolder(connect, '.tmp'), mountFolder(connect, yeomanConfig.app)]
-      test:
-        options:
-          middleware: (connect) ->
-            [mountFolder(connect, '.tmp'), mountFolder(connect, 'test')]
+          middleware: (connect) -> [
+            lrSnippet
+            mountFolder(connect, '.tmp')
+            mountFolder(connect, yeomanConfig.app)
+            mountFolder(connect, 'test')
+          ]
       dist:
         options:
           port: 9001
-          middleware: (connect) ->
-            [mountFolder(connect, yeomanConfig.dist)]
+          middleware: (connect) -> [
+            mountFolder(connect, yeomanConfig.dist)
+            mountFolder(connect, 'test')
+          ]
 
     open:
       server:
@@ -107,6 +113,16 @@ module.exports = (grunt) ->
           ]
         ]
       server: '.tmp'
+      deps:
+        files: [
+          dot: true
+          src: [
+            '<%= yeoman.app %>/node_modules'
+            '<%= yeoman.app %>/components'
+            'node_modules'
+          ]
+        ]
+
 
     jshint:
       options:
@@ -135,13 +151,13 @@ module.exports = (grunt) ->
         ]
 
     coffeelint:
-      options: coffeelintOptions
+      options: coffeelint
       dist:
         files:
           src: [
             '<%= yeoman.app %>/scripts/{,*/}*.coffee'
             'Gruntfile.coffee'
-            'test/karma*.coffee'
+            'test/{,*/}*.coffee'
           ]
 
     # not used since Uglify task does concat,
@@ -236,6 +252,7 @@ module.exports = (grunt) ->
             'img/{,*/}*.{gif,webp}'
             'styles/fonts/*'
             'package.json'
+            'node_modules/**/*'
           ]
         ,
           expand: true
@@ -273,6 +290,10 @@ module.exports = (grunt) ->
         'svgmin'
         'htmlmin'
       ]
+      init: [
+        'shell:init-node'
+        'shell:init-nw'
+      ]
 
     karma:
       unit:
@@ -282,19 +303,18 @@ module.exports = (grunt) ->
       'unit-watch':
         configFile: 'test/karma.conf.coffee'
         autoWatch: true
+        browsers: ['Chrome']
 
       e2e:
         configFile: 'test/karma-e2e.conf.coffee'
         singleRun: true
+        proxies:
+          '/': 'http://localhost:9001/'
 
       'e2e-watch':
         configFile: 'test/karma-e2e.conf.coffee'
         autoWatch: true
         browsers: ['Chrome']
-
-    cdnify:
-      dist:
-        html: ['<%= yeoman.dist %>/*.html']
 
     ngmin:
       dist:
@@ -311,50 +331,107 @@ module.exports = (grunt) ->
           '<%= yeoman.dist %>/scripts/scripts.js': ['<%= yeoman.dist %>/scripts/scripts.js']
 
     shell:
-      run:
-        command: "build/#{buildType}/run.sh"
-        options:
-          stderr: true
-          stdout: true
+      options:
+        stderr: true
+        stdout: true
+      'init-node':
+        command: [
+          'npm install -g bower@1.2.7 nw-gyp@0.10.9'
+          'bower install'
+        ].join '&&'
+      'init-nw':
+        command: [
+          'cd app'
+          'npm install'
+        ].join '&&'
 
-  grunt.registerTask 'run-node-webkit', [
-    'default', 'shell:run'
-  ]
+    replace:
+      dist:
+        options:
+          patterns: [
+            match: /<!-- MOCKS -->[\s\S]+<!-- ENDMOCKS -->/gi,
+            replacement: ''
+            expression: true
+          ]
+        files: [
+          expand: false
+          flatten: true
+          src: '<%= yeoman.dist %>/index.html'
+          dest: '<%= yeoman.dist %>/index.html'
+        ]
 
   grunt.registerTask 'server', (target) ->
     return grunt.task.run(['build', 'open', 'connect:dist:keepalive']) if target is 'dist'
-    grunt.task.run ['clean:server', 'concurrent:server', 'autoprefixer', 'connect:livereload', 'open', 'watch']
+    grunt.task.run [
+      'clean:server'
+      'concurrent:server'
+      'autoprefixer'
+      'connect:livereload'
+      'open'
+      'watch'
+    ]
 
-  grunt.registerTask 'test-prep', [
+  grunt.registerTask 'nw-build', [
+    'default'
+    'replace:dist'
+  ]
+
+  grunt.registerTask 'nw-run', ->
+    nw = [nwConfig.root, platform, nwConfig[platform].nwpath].join path.sep
+    grunt.task.run 'nw-build'
+    grunt.config 'shell.nwrun.command', "#{nw} #{yeomanConfig.dist}"
+    grunt.task.run 'shell:nwrun'
+
+  grunt.registerTask 'nw-prep', ->
+    grunt.file.expand('app/node_modules/**/package.json').forEach (filePath) ->
+      config = grunt.file.readJSON filePath
+      return if not config?.gypfile
+      dir = path.dirname filePath
+      grunt.config 'shell.nwgyp.command', [
+        "cd #{dir}"
+        "nw-gyp rebuild --target=0.7.5"
+      ].join('&&')
+      grunt.task.run 'shell:nwgyp'
+
+  grunt.registerTask 'unit-prep', [
     'clean:server'
     'concurrent:test'
     'autoprefixer'
-    'connect:test'
   ]
 
-  grunt.registerTask 'test', [
-    'test-prep'
+  grunt.registerTask 'unit', [
+    'unit-prep'
     'karma:unit'
   ]
 
-  grunt.registerTask 'test-watch', [
-    'test-prep'
+  grunt.registerTask 'unit-watch', [
+    'unit-prep'
     'karma:unit-watch'
   ]
 
-  grunt.registerTask 'e2e-prep', [
+  grunt.registerTask 'e2e', [
     'build'
     'connect:dist'
-  ]
-
-  grunt.registerTask 'e2e', [
-    'e2e-prep'
     'karma:e2e'
   ]
 
   grunt.registerTask 'e2e-watch', [
-    'e2e-prep'
+    'clean:server'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'open'
     'karma:e2e-watch'
+  ]
+
+  grunt.registerTask 'test', [
+    'unit'
+    'e2e'
+  ]
+
+  grunt.registerTask 'lint', [
+    'jshint'
+    'coffeelint'
   ]
 
   grunt.registerTask 'build', [
@@ -372,7 +449,11 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'default', [
-    'jshint'
+    'lint'
     'test'
-    'e2e'
+  ]
+
+  grunt.registerTask 'init', [
+    'concurrent:init'
+    'nw-prep'
   ]

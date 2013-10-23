@@ -10,7 +10,7 @@ select, input
 
 .icon-copy
 {
-    background-image: url('/images/icon-copy.png');
+    background-image: url('../img/icon-copy.png');
     background-position: 0 0;
     height: 16px;
     margin-top: -1px;
@@ -114,7 +114,7 @@ button.midiNoteType
 
 select.midiNoteType
 {
-    width: 75px;
+    width: 76px;
 }
 
 select.oscHost

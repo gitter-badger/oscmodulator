@@ -1,36 +1,40 @@
 oscmodulator
 ============
 
+[![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator])
+
 Modulate Anything!
 
 Dependencies
 -------------
 To build OSC Modulator, you will need:
+
 * NodeJS
-* Ruby
+* Grunt
+* Bower
 
 Building
 --------
 Once you have those installed, you can build the project as follows:
 
     // clone the repo
-    git clone https://github.com/OSCModulator/oscmodulator.git
-    cd oscmodulator
-    // npm install tools
-    npm install -g bower
-    npm install -g grunt-cli
+    > git clone https://github.com/OSCModulator/oscmodulator.git
+    > cd oscmodulator
+    
     // npm install NodeJS dependencies
-    npm install
-    // bower install Web UI dependencies
-    bower install
-    // you're all ready to go
-    // try one of the following:
-
+    > npm install
+    // install grunt-cli
+    > npm install -g grunt-cli@0.1.9
+    // Initialize the project
+    > grunt init
+    
+    // build and test the project
+    > grunt
     // build the project
-    grunt build
+    > grunt build
     // or test the project
-    grunt test
+    > grunt test
     // or run the project UI in a browser
-    grunt server
-    // or run the full node-webkit application
-    grunt run-node-webkit
+    > grunt server
+    // or run the full application
+    > grunt nw-run
