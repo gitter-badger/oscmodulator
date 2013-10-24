@@ -1,10 +1,11 @@
 'use strict';
 
 angular.module('oscmodulatorApp').config(function($provide){
-  $provide.factory('midi', function () {
+  $provide.factory('midi', function ($rootScope) {
     return {
-      start: function() {
+      connect: function() {
         console.log('MOCK midi service called.');
+        $rootScope.$broadcast('midi:activity');
       }
     };
   });

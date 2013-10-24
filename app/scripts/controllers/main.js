@@ -1,4 +1,4 @@
-angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, midi) {
+angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $timeout, midi) {
   'use strict';
 
   // The list of inputs to configure the application with. This should come from external
@@ -29,6 +29,19 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, midi)
     $scope.inputs.push({});
   };
 
-  midi.start();
+  $scope.midiActivity = false;
 
+  var promise;
+  $scope.$on('midi:activity', function() {
+    $scope.midiActivity = true;
+    if (promise) {
+      $timeout.cancel(promise);
+    }
+    promise = $timeout(function() {
+      $scope.midiActivity = false;
+      promise = null;
+    }, 500);
+  });
+
+  midi.connect();
 });
