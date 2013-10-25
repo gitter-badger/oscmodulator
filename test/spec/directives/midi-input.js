@@ -330,4 +330,88 @@ describe('Directive: midiInput', function (){
     expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
     expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
   }));
+
+  it('should emit an event when the midi note changes.', inject(function($compile){
+    var listener = {change:function(id, value){}};
+    spyOn(listener, 'change');
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+
+    isolatedScope.$on('input:update:midi:note', function(event, id, value){
+      listener.change(id, value);
+    });
+
+    isolatedScope.config.midi.note = 'c3';
+    isolatedScope.$apply();
+
+    expect(listener.change).toHaveBeenCalledWith('midi-input-1', 'c3');
+  }));
+
+  it('should emit an event when the midi note type changes.', inject(function($compile){
+    var listener = {change:function(id, value){}};
+    spyOn(listener, 'change');
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.type).toBe('on');
+
+    isolatedScope.$on('input:update:midi:type', function(event, id, value){
+      listener.change(id, value);
+    });
+
+    isolatedScope.config.midi.type = 'off';
+    isolatedScope.$apply();
+
+    expect(listener.change).toHaveBeenCalledWith('midi-input-1', 'off');
+  }));
+
+  it('should emit an event when the solo changes.', inject(function($compile){
+    var listener = {change:function(id, value){}};
+    spyOn(listener, 'change');
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.solo).toBe(false);
+
+    isolatedScope.$on('input:update:solo', function(event, id, value){
+      listener.change(id, value);
+    });
+
+    isolatedScope.config.solo = true;
+    isolatedScope.$apply();
+
+    expect(listener.change).toHaveBeenCalledWith('midi-input-1', true);
+  }));
+
+  it('should emit an event when the mute changes.', inject(function($compile){
+    var listener = {change:function(id, value){}};
+    spyOn(listener, 'change');
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.mute).toBe(false);
+
+    isolatedScope.$on('input:update:mute', function(event, id, value){
+      listener.change(id, value);
+    });
+
+    isolatedScope.config.mute = true;
+    isolatedScope.$apply();
+
+    expect(listener.change).toHaveBeenCalledWith('midi-input-1', true);
+  }));
 });

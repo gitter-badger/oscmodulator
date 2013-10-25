@@ -40,7 +40,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       }
 
       if(!$scope.config.midi.type){
-        $scope.config.midi.type = 'on';
+        $scope.config.midi.type = $scope.midiTypes[0];
       }
 
       if(!$scope.config.mute){
@@ -87,6 +87,22 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         if( newValue === true ){
           $scope.config.solo = false;
         }
+      });
+      // Dispatch an event if the midi note changes.
+      $scope.$watch('config.midi.note', function(newValue){
+        $scope.$emit('input:update:midi:note', $scope.id, newValue);
+      });
+      // Dispatch an event if the midi note type changes.
+      $scope.$watch('config.midi.type', function(newValue){
+        $scope.$emit('input:update:midi:type', $scope.id, newValue);
+      });
+      // Dispatch an event if the solo changes.
+      $scope.$watch('config.solo', function(newValue){
+        $scope.$emit('input:update:solo', $scope.id, newValue);
+      });
+      // Dispatch an event if the mute changes.
+      $scope.$watch('config.mute', function(newValue){
+        $scope.$emit('input:update:mute', $scope.id, newValue);
       });
     }
   };

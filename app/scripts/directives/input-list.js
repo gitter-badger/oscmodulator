@@ -42,12 +42,14 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       $scope.duplicateMidiInput = function(index){
         $scope.inputs.push(jq.extend(true, {}, $scope.inputs[index]));
       };
+
       /**
        * Remove the specified midi input from the list of inputs.
        * @param index The index of the midi input to copy.
        */
       $scope.removeMidiInput = function(index){
-        $scope.inputs.splice(index, 1);
+        var removed = $scope.inputs.splice(index, 1);
+        $scope.$emit('input:remove', removed[0].id);
       };
     }
   };

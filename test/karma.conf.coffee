@@ -25,7 +25,6 @@ module.exports = (config) ->
       'app/components/angular-bootstrap/ui-bootstrap-tpls.js'
       'app/scripts/**/*.js'
       'app/scripts/**/*.coffee'
-      'test/mock/**/*.js'
       'test/spec/**/*.js'
       'test/spec/**/*.coffee'
       'app/views/*.html'

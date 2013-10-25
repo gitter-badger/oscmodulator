@@ -14,6 +14,7 @@ describe('Directive: inputList', function () {
 
     parentScope.items = [
       {
+        id:1,
         name: 'Button 1',
         collapsed: false,
         mute: false,
@@ -111,5 +112,28 @@ describe('Directive: inputList', function () {
     expect(isolatedScope.inputs.length).toBe(2);
     expect(element.find('div[name=midiInputItem]').first().find('input[name=name]').val()).toBe('a');
     expect(element.find('div[name=midiInputItem]').last().find('input[name=name]').val()).toBe('c');
+  }));
+
+  it('should emit an event when an input is removed.', inject(function($compile){
+    var listener = {change:function(id){}};
+    spyOn(listener, 'change');
+
+    parentScope.items = [{id:1, name:'a'},{id:2, name:'b'},{id:3, name:'c'}];
+
+    parentScope.$on('input:remove', function(event, id){
+      listener.change(id);
+    });
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.inputs.length).toBe(3);
+
+    isolatedScope.removeMidiInput(1);
+    isolatedScope.$apply();
+
+    expect(listener.change).toHaveBeenCalledWith(2);
   }));
 });
