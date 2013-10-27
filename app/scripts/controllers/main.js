@@ -26,29 +26,16 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, backe
   // TODO Since we're no longer going to $watch the inputs list for changes, we should remove the two way binding.
   $scope.inputs = [];
 
-  /**
-   * The number of inputs created since the application launched (used to assign ids).
-   * @type {number}
-   */
-  $scope.inputsCreated = 0;
+  // Shows and hides the OSC Config panel.
+  $scope.hideOSCPanel = true;
 
-  /**
-   * Add a Midi Input to the list of inputs.
-   * TODO Find a way to put this functionality in the input-list directive?
-   */
-  $scope.addMidiInput = function(){
-    ++$scope.inputsCreated;
-    $scope.inputs.push({id:$scope.inputsCreated});
-    $scope.$emit('input:new', $scope.inputs[$scope.inputs.length - 1]);
+  $scope.toggleOSCPanel = function(){
+    $scope.hideOSCPanel = !$scope.hideOSCPanel;
   };
 
-//  $scope.$watch('inputs', function(newValue){
-//    console.log('input list changed: ');
-//    console.log(oldValue);
-//    console.log(newValue);
-//  });
+  $scope.addMidiInput = function(){
+    $scope.$broadcast('create:input');
+  };
 
   backend.init();
-
-  $scope.addMidiInput();
 });

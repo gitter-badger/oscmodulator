@@ -1,4 +1,28 @@
 <div class="header">
     <button name="addMidiInput" class="btn" ng-click="addMidiInput()"><icon class="icon-plus"></icon> Midi Input</button>
+    <button name="showOSCPanel" class="btn" ng-click="toggleOSCPanel()"><icon class="icon-cog"></icon> Configure OSC</button>
+</div>
+<div class="oscPanel" collapse="hideOSCPanel">
+    <div class="configPanel">
+        <h2>OSC Hosts</h2>
+        <div class="configRow">
+            <!-- Funny spacing to make sure no space characters appear between inputs. -->
+            <div class="configItem oscHostName"><input
+                name="oscHostName" type="text" placeholder="Name"></div
+           ><div class="configItem oscHostAddress"><input
+                name="oscHostAddress" type="text" placeholder="Address"></div
+           ><div class="configItem oscHostPort"><input
+                name="oscHostPort" type="text" placeholder="Port"></div>
+        </div>
+        <div class="removeConfigItem">
+            <button name="removeConfigItem" class="btn"><icon class="icon-remove"></icon></button>
+        </div>
+    </div>
+    <div class="oscHostCommands">
+        <button name="addOSCHost" class="btn"><icon class="icon-plus"></icon> OSC Host</button>
+    </div>
 </div>
 <div data-input-list data-inputs="inputs"></div>
+<div class="title">
+    <h1>OSC Modulator</h1>
+</div>

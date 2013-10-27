@@ -14,20 +14,30 @@ describe('Controller: MainCtrl', function () {
     $controller('MainCtrl', {$scope: scope, backend: backend});
   }));
 
-  it('should configure the default scope.', function(){
-    expect(scope.inputs.length).toBe(1);
+  // TODO Should we test that the backend service is initialized?
+
+  it('should toggle the OSC Host panel.', function(){
+    expect(scope.hideOSCPanel).toBe(true);
+
+    scope.toggleOSCPanel();
+
+    expect(scope.hideOSCPanel).toBe(false);
+
+    scope.toggleOSCPanel();
+
+    expect(scope.hideOSCPanel).toBe(true);
   });
 
-  it('should be able to add new inputs.', function(){
-    expect(scope.inputs.length).toBe(1);
-    expect(scope.inputs[0].id).toBe(1);
-    expect(scope.inputsCreated).toBe(1);
+  it('should emit an event when it wants to add a new input.', function(){
+    var listener = {change:function(){}};
+    spyOn(listener, 'change');
+
+    scope.$on('create:input', function(event){
+      listener.change();
+    });
 
     scope.addMidiInput();
 
-    expect(scope.inputs.length).toBe(2);
-    expect(scope.inputs[0].id).toBe(1);
-    expect(scope.inputs[1].id).toBe(2);
-    expect(scope.inputsCreated).toBe(2);
+    expect(listener.change).toHaveBeenCalled();
   });
 });

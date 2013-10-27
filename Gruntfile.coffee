@@ -417,6 +417,7 @@ module.exports = (grunt) ->
     'karma:e2e'
   ]
 
+  # TODO Reload CSS files when modified.
   grunt.registerTask 'e2e-watch', [
     'clean:server'
     'concurrent:server'

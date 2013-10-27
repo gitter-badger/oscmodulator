@@ -1,3 +1,9 @@
+*:focus
+{
+    /* TODO Find a more subtle highlight indicator than the Chrome default blue. */
+    outline: none !important;
+}
+
 html
 {
     background-color: #555;
@@ -16,6 +22,22 @@ select, input
     margin-top: -1px;
 }
 
+/* Title */
+.title
+{
+    background-color: #555;
+    z-index: -100;
+    position: fixed;
+    margin-top: 2px;
+    margin-left: -30px;
+}
+
+.title h1
+{
+    margin-top: 0;
+    font-size: 100px;
+}
+
 /* Header */
 .header
 {
@@ -25,14 +47,91 @@ select, input
     background-color: #444;
     width: 100%;
     padding: 5px;
-    box-shadow: 0 0 5px;
+    box-shadow: 0 0 5px 0;
+}
+
+/* OSC Host Config */
+.configPanel
+{
+    padding: 10px;
+    position: relative;
+}
+
+.oscPanel
+{
+    margin-top: 40px;
+    z-index: 90;
+    background-color: #92A7B4;
+    background-image: url('../img/blue-stripe.png');
+    box-shadow: 0 0 20px 6px #6F8491 inset;
+}
+
+.oscPanel h2
+{
+    color: #657F8F;
+    font-size: 60px;
+    line-height: 15px;
+    padding-top: 0;
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.oscHostName, .oscHostAddress, .oscHostPort, .oscPanel, .configPanel, .configRow, .configItem, .configItem input
+{
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.oscHostName
+{
+    width: 40%;
+}
+
+.oscHostAddress
+{
+    width: 30%;
+}
+
+.oscHostPort
+{
+    width: 30%;
+}
+
+.configItem
+{
+    display: inline-block;
+    border-right: 5px solid transparent;
+}
+
+.configItem:last-child
+{
+    padding-right: 40px;
+}
+
+.configItem input
+{
+    width: 100%;
+    margin: 0;
+    height: 30px;
+}
+
+.oscHostCommands
+{
+    margin: 0 10px 10px 10px;
+}
+
+.removeConfigItem
+{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
 }
 
 /* Input items*/
 .input-list
 {
-    margin-top: 40px;
-    box-shadow: 0 0 5px 5px;
+    box-shadow: 0 3px 5px 3px;
 }
 
 /* 3 Column Layouts */
@@ -179,13 +278,29 @@ select.oscHost
 
 .midiInput
 {
-    background-color: #efefef;
+    background-color: #ccc;
     border-top: 1px solid #aaa;
+}
+
+.input-row:nth-child(odd) .midiInput
+{
+    background-color: #BBC8D1;
+}
+
+.input-row:nth-child(odd) .midiInputContent
+{
+    border-left: 5px solid #BBC8D1;
+    border-right: 5px solid #BBC8D1;
+}
+
+.input-row:nth-child(odd) .midiInputFooter
+{
+    border-bottom: 5px solid #BBC8D1;
 }
 
 .midiInputHeader
 {
-    background-color: #ccc;
+    /*background-color: #ccc;*/
     padding-top: 5px;
     padding-bottom: 5px;
 }

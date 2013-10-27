@@ -21,8 +21,8 @@
             <div class="inline-input-append oscParam" name="oscParam"
                  ng-repeat="(key, parameter) in config.parameters">
                 <input class="input-mini oscParamInput" type="text" name="param{{ key }}"
-                       placeholder="Param {{key + 1}}" ng-model="parameter.value">
-                <button class="btn oscParamRemove" type="button" ng-click="removeOSCParameter(key)"
+                       placeholder="Param {{key + 1}}" ng-model="parameter.value"
+               ><button class="btn oscParamRemove" type="button" ng-click="removeOSCParameter(key)"
                         name="removeOSCParam{{ key }}" title="Remove OSC Parameter">
                     <i class="icon-remove"></i>
                 </button>
@@ -30,7 +30,7 @@
         <!--</div>-->
         <button class="btn addOSCParam" type="button" ng-click="addOSCParameter()"
                 name="addOSCParam" title="Add OSC Parameter">
-            <i class="icon-plus"></i>
+            <i class="icon-plus"></i> Parameter
         </button>
     </div>
 </div>
