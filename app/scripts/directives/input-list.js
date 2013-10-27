@@ -6,29 +6,12 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
     restrict: 'A',
     replace: true,
     scope:{
-      inputs: '=inputs'
+      inputs: '=inputs',
+      hosts: '=hosts'
     },
     controller: function($scope, jq){
       if(!$scope.inputs){
         $scope.inputs = [];
-      }
-
-      $scope.hosts = [
-        {
-          name: 'Live',
-          port: 9000
-        },
-        {
-          name: 'Resolume',
-          port: 9001
-        }
-      ];
-
-      // Need to store the host ids as a separate list so that midi-input select element handles defaults correctly.
-      // This list will be passed to the midi inputs so they know how to populate the available hosts.
-      $scope.hostIds = [];
-      for(var j = 0; j < $scope.hosts.length; j++){
-        $scope.hostIds.push($scope.hosts[j].name);
       }
 
       /**

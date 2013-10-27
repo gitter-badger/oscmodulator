@@ -194,4 +194,19 @@ describe('Directive: oscOutput', function () {
     expect(parentScope.osc.path).toBe('/my/second/path');
     expect(element.find('input[name=oscPath]').val()).toBe('/my/second/path');
   }));
+
+  it('should reset the OSC Host if the configured host was removed.', inject(function($compile){
+    parentScope.osc.host = 'b';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.host).toBe('b');
+
+    parentScope.$broadcast('remove:oscHost', 'b');
+
+    expect(isolatedScope.config.host).toBeNull();
+  }));
 });

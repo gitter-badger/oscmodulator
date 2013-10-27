@@ -8,7 +8,7 @@ describe('Directive: inputList', function () {
   beforeEach(module('views/osc-output.html'));
 
   beforeEach(inject(function ($rootScope) {
-    template = angular.element('<div data-input-list data-inputs="items"></div>');
+    template = angular.element('<div data-input-list data-inputs="items" data-osc-hosts="hosts"></div>');
 
     parentScope = $rootScope.$new();
 
@@ -33,6 +33,8 @@ describe('Directive: inputList', function () {
         }]
       }
     ];
+
+    parentScope.hosts = ['Live', 'Resolume'];
   }));
 
   it('should be possible to configure the input list.', inject(function ($compile){

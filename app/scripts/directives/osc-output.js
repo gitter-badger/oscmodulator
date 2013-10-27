@@ -38,7 +38,12 @@ angular.module('oscmodulatorApp')
           $scope.config.parameters.splice(index, 1);
         };
       },
-      link: function postLink(/*scope, element, attrs*/) {
+      link: function postLink(scope) {
+        scope.$on('remove:oscHost', function(event, id){
+          if(id === scope.config.host){
+            scope.config.host = null;
+          }
+        });
       }
     };
   });

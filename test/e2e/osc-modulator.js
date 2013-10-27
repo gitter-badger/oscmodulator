@@ -30,7 +30,7 @@ describe('e2e: OSC Modulator', function () {
     expect(element('button.collapseButton i.icon-chevron-right').count()).toBe(1);
 
     // Give the animation a second to run.
-    sleep(0.3);
+    sleep(0.5);
 
     expect(element('div.oscCollapsor').height()).toBeLessThan(1);
   });
@@ -139,5 +139,26 @@ describe('e2e: OSC Modulator', function () {
     sleep(0.2);
 
     expect(element('div.oscPanel').height()).toBeGreaterThan(1);
+  });
+
+  it('should be possible to add OSC Host configurations.', function(){
+    expect(element('div.configRow').count()).toBe(1);
+
+    element('button[name=addOSCHost]').click();
+
+    expect(element('div.configRow').count()).toBe(2);
+  });
+
+  it('should be possible to remove OSC Host configurations.', function(){
+    expect(element('div.configRow').count()).toBe(1);
+
+    element('button[name=addOSCHost]').click();
+    element('button[name=addOSCHost]').click();
+
+    expect(element('div.configRow').count()).toBe(3);
+
+    element('button[name=removeConfigItem1]').click();
+
+    expect(element('div.configRow').count()).toBe(2);
   });
 });
