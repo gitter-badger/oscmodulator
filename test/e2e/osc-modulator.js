@@ -1,4 +1,4 @@
-describe('e2e: midiInputs', function () {
+describe('e2e: OSC Modulator', function () {
   'use strict';
 
   beforeEach(function () {
@@ -30,7 +30,7 @@ describe('e2e: midiInputs', function () {
     expect(element('button.collapseButton i.icon-chevron-right').count()).toBe(1);
 
     // Give the animation a second to run.
-    sleep(0.5);
+    sleep(0.3);
 
     expect(element('div.oscCollapsor').height()).toBeLessThan(1);
   });
@@ -130,5 +130,14 @@ describe('e2e: midiInputs', function () {
     expect(element('input.oscParamInput').count()).toBe(1);
     element('button[name=removeOSCParam0]').click();
     expect(element('input.oscParamInput').count()).toBe(0);
+  });
+
+  it('should be possible to expand the OSC Host panel.', function(){
+    element('button[name=showOSCPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.2);
+
+    expect(element('div.oscPanel').height()).toBeGreaterThan(1);
   });
 });
