@@ -88,10 +88,8 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
 
   // TODO Should the event names be specified in a central location so they're
   // easy to change and lookup?
-  // TODO Do we want one event per piece of info that can change or do we want more generic
-  // event names (ex. input:new, input:remove and input:update)?
-  // TODO Is it ok to place these event listeners on the rootScope? It might be more
-  // efficient (a guess) but it breaks encapsulation.
+  // TODO Instead of placing listeners on the root scope, the events should be broadcast from the root and this service
+  // should be a scope that can listen for them.
   $rootScope.$on('input:new', function(event, input){
     backend.newInput(input);
   });

@@ -27,17 +27,4 @@ describe('Controller: MainCtrl', function () {
 
     expect(scope.hideOSCPanel).toBe(true);
   });
-
-  it('should emit an event when it wants to add a new input.', function(){
-    var listener = {change:function(){}};
-    spyOn(listener, 'change');
-
-    scope.$on('create:input', function(){
-      listener.change();
-    });
-
-    scope.addMidiInput();
-
-    expect(listener.change).toHaveBeenCalled();
-  });
 });

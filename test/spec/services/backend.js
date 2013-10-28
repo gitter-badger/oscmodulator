@@ -6,8 +6,6 @@ describe('Service: backend', function () {
   beforeEach(module('oscmodulatorApp'));
 
   beforeEach(inject(function (_backend_, $rootScope) {
-    // TODO We should be mocking the midi service.
-    // TODO We should be testing the init method.
     backend = _backend_;
     rootScope = $rootScope;
   }));

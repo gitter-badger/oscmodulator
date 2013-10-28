@@ -10,7 +10,7 @@ describe('e2e: OSC Modulator', function () {
   });
 
   it('should be possible to add new midi inputs.', function(){
-    element('button[name=addMidiInput]').click();
+    element('button[name=addInput]').click();
     expect(element('div.midiInput').count()).toBe(2);
   });
 
