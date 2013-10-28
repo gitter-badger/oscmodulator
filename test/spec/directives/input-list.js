@@ -8,7 +8,7 @@ describe('Directive: inputList', function () {
   beforeEach(module('views/osc-output.html'));
 
   beforeEach(inject(function ($rootScope) {
-    template = angular.element('<div data-input-list data-inputs="items" data-osc-hosts="hosts"></div>');
+    template = angular.element('<div data-input-list data-inputs="items"></div>');
 
     parentScope = $rootScope.$new();
 

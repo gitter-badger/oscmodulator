@@ -8,10 +8,9 @@ angular.module('oscmodulatorApp')
       replace: true,
       scope: {
         config: '=oscOutputConfig',
-        hosts: '=oscHosts',
         removeOSCOutput: '&remove'
       },
-      controller: function oscOutputCtrl($scope/*, $element, $attrs*/){
+      controller: function($scope, oscHostConfig){
         if(!$scope.config.host){
           $scope.config.host = null;
         }
@@ -23,6 +22,9 @@ angular.module('oscmodulatorApp')
         if(!$scope.config.parameters){
           $scope.config.parameters = [];
         }
+
+        // Expose the host config so that the DOM can call it directly.
+        $scope.hosts = oscHostConfig;
 
         /**
          * Add an empty parameter to the list of OSC parameters.
@@ -39,7 +41,11 @@ angular.module('oscmodulatorApp')
         };
       },
       link: function postLink(scope) {
-        scope.$on('remove:oscHost', function(event, id){
+        /**
+         * Listen to remove events in order to make sure this output's host is nullified if its osc host is removed
+         * from the config. Unfortunately, Angular will not take care of this for us automatically.
+         */
+        scope.$on('oscHostConfig:remove', function(event, id){
           if(id === scope.config.host){
             scope.config.host = null;
           }

@@ -11,7 +11,7 @@ describe('Directive: midiInput', function (){
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
-      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input" data-osc-hosts="hostIds"></div>'
+      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input"></div>'
     );
 
     // Create a fresh scope for this test.

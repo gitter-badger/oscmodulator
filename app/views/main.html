@@ -3,30 +3,9 @@
     <button name="showOSCPanel" class="btn" ng-click="toggleOSCPanel()"><icon class="icon-cog"></icon> Configure OSC</button>
 </div>
 <div class="oscPanel" collapse="hideOSCPanel">
-    <div class="configPanel">
-        <h2>OSC Hosts</h2>
-        <div ng-repeat="(key, host) in hosts">
-            <div class="configRow">
-                <!-- Funny spacing to make sure no space characters appear between inputs. -->
-                <div class="configItem oscHostName"><input
-                    name="oscHostName" type="text" placeholder="Name" ng-model="host.name"></div
-               ><div class="configItem oscHostAddress"><input
-                    name="oscHostAddress" type="text" placeholder="Address" ng-model="host.address"></div
-               ><div class="configItem oscHostPort"><input
-                    name="oscHostPort" type="text" placeholder="Port" ng-model="host.port"></div>
-            </div>
-            <div class="removeConfigItem">
-                <button name="removeConfigItem{{ key }}" class="btn" ng-click="removeOSCHost(key)">
-                    <icon class="icon-remove"></icon>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="oscHostCommands">
-        <button name="addOSCHost" class="btn" ng-click="addOSCHost()"><icon class="icon-plus"></icon> OSC Host</button>
-    </div>
+    <div data-osc-host-form></div>
 </div>
-<div data-input-list data-inputs="inputs" data-hosts="hostIds"></div>
+<div data-input-list data-inputs="inputs"></div>
 <div class="title">
     <h1>OSC Modulator</h1>
 </div>

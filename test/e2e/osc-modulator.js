@@ -133,12 +133,21 @@ describe('e2e: OSC Modulator', function () {
   });
 
   it('should be possible to expand the OSC Host panel.', function(){
+    expect(element('div.oscPanel').height()).toBeLessThan(1);
+
     element('button[name=showOSCPanel]').click();
 
     // Give the animation a second to run.
     sleep(0.2);
 
     expect(element('div.oscPanel').height()).toBeGreaterThan(1);
+
+    element('button[name=showOSCPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.5);
+
+    expect(element('div.oscPanel').height()).toBeLessThan(1);
   });
 
   it('should be possible to add OSC Host configurations.', function(){
@@ -161,4 +170,11 @@ describe('e2e: OSC Modulator', function () {
 
     expect(element('div.configRow').count()).toBe(2);
   });
+
+  // TODO Test adding a host and verifying that it shows up in the list of hosts for an OSC Output row.
+  // Wasn't able to get this working but it looks like e2e testing may be changing in future versions of Angular
+  // and maybe this test will get easier.
+
+  // TODO Test adding a host, selecting it in an output, removing that host, verify that the output host is null,
+  // add a new host with the same name, verify that the output host is still null.
 });
