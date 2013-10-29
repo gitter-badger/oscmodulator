@@ -31,6 +31,7 @@ angular.module('oscmodulatorApp')
          */
         $scope.addOSCParameter = function(){
           $scope.config.parameters.push({value:null});
+          // TODO Notify the backend service that the parameters have changed.
         };
         /**
          * Remove a parameter from the list of OSC parameters.
@@ -38,7 +39,10 @@ angular.module('oscmodulatorApp')
          */
         $scope.removeOSCParameter = function(index){
           $scope.config.parameters.splice(index, 1);
+          // TODO Notify the backend service that the parameters have changed.
         };
+
+        // TODO Watch changes to the individual osc parameters and pass those changes to the backend service.
       },
       link: function postLink(scope) {
         /**

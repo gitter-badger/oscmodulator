@@ -8,11 +8,13 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
     scope : {
       config : '=midiInputConfig',
       hosts : '=oscHosts',
-      id : '@id',
+      id : '=inputId',
       duplicate: '&duplicate',
       remove: '&remove'
     },
-    controller : function midiInputCtrl($scope/*, $element, $attrs*/) {
+    controller : function($scope) {
+      var i;
+
       /**
        * The list of midi note types displayed in the midi note type select box.
        * @type {Array}
@@ -28,7 +30,11 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       }
 
       if(!$scope.config.osc){
-        $scope.config.osc = [{}];
+        $scope.config.osc = [];
+      }
+
+      if($scope.config.osc.length === 0){
+        $scope.config.osc.push({});
       }
 
       if(!$scope.config.midi){
@@ -55,18 +61,39 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.mute = $scope.config.solo = false;
       }
 
+      $scope.outputsCreated = 0;
+
+      // Make sure all outputs have an id set by this class.
+      for(i = 0; i < $scope.config.osc.length; i++){
+        ++$scope.outputsCreated;
+
+        $scope.config.osc[i].id = {
+          input: $scope.id.input,
+          output: $scope.outputsCreated
+        };
+      }
+
       /**
        * Change the collapsed/expanded state of the midi-input display.
        */
       $scope.toggleCollapsed = function () {
         $scope.config.collapsed = !$scope.config.collapsed;
       };
+
       /**
        * Add an OSC output to the list of outputs.
        */
       $scope.addOSCOutput = function(){
-        $scope.config.osc.push({});
+        ++$scope.outputsCreated;
+
+        $scope.config.osc.push({
+          id: {
+            input: $scope.id.input,
+            output: $scope.outputsCreated
+          }
+        });
       };
+
       /**
        * Remove the OSC output object at the specified index.
        * @param index
@@ -90,19 +117,19 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       });
       // Dispatch an event if the midi note changes.
       $scope.$watch('config.midi.note', function(newValue){
-        $scope.$emit('input:update:midi:note', $scope.id, newValue);
+        // TODO Update the backend service.
       });
       // Dispatch an event if the midi note type changes.
       $scope.$watch('config.midi.type', function(newValue){
-        $scope.$emit('input:update:midi:type', $scope.id, newValue);
+        // TODO Update the backend service.
       });
       // Dispatch an event if the solo changes.
       $scope.$watch('config.solo', function(newValue){
-        $scope.$emit('input:update:solo', $scope.id, newValue);
+        // TODO Update the backend service.
       });
       // Dispatch an event if the mute changes.
       $scope.$watch('config.mute', function(newValue){
-        $scope.$emit('input:update:mute', $scope.id, newValue);
+        // TODO Update the backend service.
       });
     }
   };

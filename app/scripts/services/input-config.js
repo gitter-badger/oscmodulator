@@ -35,12 +35,6 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    */
   service.inputsCreated = 0;
 
-  // Make sure the id properties are always set by this class.
-//  for(var i = 0; i < service.inputs.length; i++){
-//    ++service.inputsCreated;
-//    service.inputs[i].id = service.inputsCreated;
-//  }
-
   /**
    * Add a Midi Input to the list of inputs.
    * TODO Add a method to pass input configurations into this class?
@@ -51,10 +45,11 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
       input = {};
     }
 
-    input.id = service.inputsCreated;
+    input.id = {
+      input: service.inputsCreated
+    };
     service.inputs.push(input);
     // TODO Tell the backend service that we've changed.
-//    $rootScope.$broadcast('input:new', service.inputs[service.inputs.length - 1]);
   };
 
   /**
@@ -76,10 +71,13 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    */
   service.duplicateInput = function(index){
     ++service.inputsCreated;
+
     service.inputs.push(jq.extend(true, {}, service.inputs[index]));
-    service.inputs[service.inputs.length - 1].id = service.inputsCreated;
+    service.inputs[service.inputs.length - 1].id = {
+      input: service.inputsCreated
+    };
+
     // TODO Tell the backend service that we've changed.
-//    service.$emit('input:new', service.inputs[service.inputs.length - 1]);
   };
 
   /**
@@ -89,7 +87,6 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
   service.removeInput = function(index){
     var removed = service.inputs.splice(index, 1);
     // TODO Tell the backend service that we've changed.
-//    service.$emit('input:remove', removed[0].id);
   };
 
   // Should always show the default input.

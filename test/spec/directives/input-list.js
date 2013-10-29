@@ -7,18 +7,24 @@ describe('Directive: inputList', function () {
   beforeEach(module('views/midi-input.html'));
   beforeEach(module('views/osc-output.html'));
 
-  beforeEach(inject(function ($rootScope) {
+  beforeEach(function() {
     template = angular.element('<div data-input-list></div>');
+  });
 
-    parentScope = $rootScope.$new();
-  }));
+  it('should provide access to the oscHostConfig object.', function(){
+    module(function($provide){
+      $provide.value('oscHostConfig',{});
+    });
 
-  it('should provide access to the oscHostConfig object.', inject(function($compile){
-    // Compile the DOM into an Angular view using using our test scope.
-    element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    inject(function($rootScope, $compile){
+      parentScope = $rootScope.$new();
 
-    expect(isolatedScope.inputConfig).toBeDefined('The inputConfig should be accessible on the scope.');
-  }));
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      expect(isolatedScope.inputConfig).toBeDefined('The inputConfig should be accessible on the scope.');
+    });
+  });
 });
