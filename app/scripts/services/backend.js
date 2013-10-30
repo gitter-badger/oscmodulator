@@ -140,29 +140,5 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
     // TODO Test this method.
   };
 
-  $rootScope.$on('input:new', function(event, input){
-    backend.newInput(input);
-  });
-  $rootScope.$on('input:update:midi:note', function(event, id, note){
-    backend.updateInputMidiNote(id, note);
-  });
-  $rootScope.$on('input:update:midi:type', function(event, id, type){
-    backend.updateInputMidiNoteType(id, type);
-  });
-  $rootScope.$on('input:update:mute', function(event, id, muted){
-    backend.updateInputMute(id, muted);
-  });
-  $rootScope.$on('input:update:solo', function(event, id, solo){
-    backend.updateInputSolo(id, solo);
-  });
-  $rootScope.$on('input:remove', function(event, id){
-    backend.removeInput(id);
-  });
-//  $scope.$on('output:new');
-//  $scope.$on('output:update:host');
-//  $scope.$on('output:update:path');
-//  $scope.$on('output:update:parameters');
-//  $scope.$on('output:remove');
-
   return backend;
 });
