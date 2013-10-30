@@ -44,7 +44,11 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) 
     }
   };
 
-  // Keep the hosts list in sync with the oscHosts list.
+  /**
+   * Keep the hosts list in sync with the oscHosts list.
+   * TODO Need to validate that the host name is unique and prompt the user if it is not.
+   * TODO We should only update the backend service with valid, unique hosts.
+   */
   service.$watch('hosts', function(){
     var j;
 

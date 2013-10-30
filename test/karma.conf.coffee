@@ -11,11 +11,7 @@ module.exports = (config) ->
 
     # testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine']
-    reporters: ['spec', 'coverage']
-
-    coverageReporter:
-      type: 'html'
-      dir: '.tmp/coverage'
+    reporters: ['spec']
 
     # list of files / patterns to load in the browser
     files: [

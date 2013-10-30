@@ -11,6 +11,9 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    * The list of inputs for the application.
    * Each input has the following structure:
    * {
+   *   id: {
+   *     input: 1
+   *   },
    *   name: null,
    *   collapsed: false,
    *   mute: false,
@@ -20,6 +23,10 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    *     type: null
    *   },
    *   osc: [{
+   *     id: {
+   *       input: 1,
+   *       output: 2
+   *     },
    *     host: null,
    *     path: null,
    *     parameters: []
@@ -37,7 +44,6 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
 
   /**
    * Add a Midi Input to the list of inputs.
-   * TODO Add a method to pass input configurations into this class?
    */
   service.addInput = function(input){
     ++service.inputsCreated;

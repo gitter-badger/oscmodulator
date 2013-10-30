@@ -8,7 +8,6 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
     scope : {
       config : '=midiInputConfig',
       hosts : '=oscHosts',
-      id : '=inputId',
       duplicate: '&duplicate',
       remove: '&remove'
     },
@@ -68,7 +67,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         ++$scope.outputsCreated;
 
         $scope.config.osc[i].id = {
-          input: $scope.id.input,
+          input: $scope.config.id.input,
           output: $scope.outputsCreated
         };
       }
@@ -88,7 +87,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
 
         $scope.config.osc.push({
           id: {
-            input: $scope.id.input,
+            input: $scope.config.id.input,
             output: $scope.outputsCreated
           }
         });

@@ -32,6 +32,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
     // Connect the input based on config.
     // midi.createInput(inputConfig);
     // otherwise, wait for the updates
+    // TODO Test this method.
   };
 
   /**
@@ -42,6 +43,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
   backend.updateInputMidiNote = function(inputId, newNote){
     console.log('Updating midi note for input ' + inputId + ': ' + newNote);
     // this.updateMidiListener(inputId)
+    // TODO Test this method.
   };
 
   /**
@@ -51,6 +53,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    */
   backend.updateInputMidiNoteType = function(inputId, newType){
     console.log('Updating midi note type for input ' + inputId + ': ' + newType);
+    // TODO Test this method.
   };
 
   /**
@@ -65,6 +68,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
     // midi.addMidiListener(input)
     // else
     // midi.removeMidiListener(inputId)
+    // TODO Test this method.
   };
 
   /**
@@ -75,6 +79,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
   backend.updateInputSolo = function(inputId, solo){
     console.log('Updating solo for input ' + inputId + ': ' + solo);
     // midi.solo(inputId)
+    // TODO Test this method.
   };
 
   /**
@@ -84,16 +89,60 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
   backend.removeInput = function(inputId){
     console.log('Removing input ' + inputId);
     // midi.removeMidiListener(inputId)
+    // TODO Test this method.
   };
 
-  // TODO Should the event names be specified in a central location so they're
-  // easy to change and lookup?
-  // TODO Instead of placing listeners on the root scope, the events should be broadcast from the root and this service
-  // should be a scope that can listen for them.
+  /**
+   * Add/update an OSC output.
+   * @param config An object with the structure
+   * {
+   *   id:{input:1, output:1},
+   *   host:'a',
+   *   path:'/path',
+   *   parameters:[{value:'value'}]
+   * }
+   */
+  backend.setOSCOutput = function(/*config*/){
+    // TODO Test this method.
+  };
+
+  /**
+   * Remove an OSC output configuration.
+   * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
+   */
+  backend.removeOSCOutput = function(/*id*/){
+    // TODO Test this method.
+  };
+
+  /**
+   * Update the OSC path for an existing output object.
+   * @param path {String} The path to set.
+   */
+  backend.setOSCPath = function(/*id, path*/){
+    // TODO Test this method.
+  };
+
+  /**
+   * Update the OSC host for an existing output object.
+   * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
+   * @param host {String} The id of the host to use with this output.
+   */
+  backend.setOSCHost = function(/*id, host*/){
+    // TODO Test this method.
+  };
+
+  /**
+   * Set the OSC parameters for the specified OSC output.
+   * @param id The id of the output to modify. {input:x, output:y}
+   * @param params The list of parameters to send with the specified output.
+   */
+  backend.setOSCParameters = function(/*id, params*/){
+    // TODO Test this method.
+  };
+
   $rootScope.$on('input:new', function(event, input){
     backend.newInput(input);
   });
-
   $rootScope.$on('input:update:midi:note', function(event, id, note){
     backend.updateInputMidiNote(id, note);
   });

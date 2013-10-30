@@ -1,25 +1,30 @@
 'use strict';
 
 describe('Directive: midiInput', function (){
-  var element, parentScope, isolatedScope, template;
+  var element, parentScope, isolatedScope, template, defaultConfig, backendMock;
 
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/midi-input.html'));
   beforeEach(module('views/osc-output.html'));
 
-  beforeEach(inject(function ($rootScope){
+  beforeEach(function(){
 
     // Create a DOM fragment to turn into a directive instance.
-//    template = angular.element(
-//      '<div data-midi-input id="{{input.id}}" data-midi-input-config="input"></div>'
-//    );
     template = angular.element(
-      '<div data-midi-input data-input-id="input.id" data-midi-input-config="input" data-duplicate="inputConfig.duplicateInput(key)" data-remove="inputConfig.removeInput(key)"></div>'
+      '<div data-midi-input data-midi-input-config="input" data-duplicate="inputConfig.duplicateInput(key)" data-remove="inputConfig.removeInput(key)"></div>'
     );
 
+    backendMock = {
+      setOSCParameters: function(){},
+      setOSCPath: function(){}
+    };
+
+    module(function($provide){
+      $provide.value('backend', backendMock);
+    });
+
     // Create a fresh scope for this test.
-    parentScope = $rootScope.$new();
-    parentScope.input = {
+    defaultConfig = {
       id: {input:0},
       name: null,
       collapsed: false,
@@ -35,25 +40,31 @@ describe('Directive: midiInput', function (){
         parameters: []
       }]
     };
-    parentScope.hostIds = [];
-  }));
+  });
 
-  it('should be able to set reasonable defaults when provided with an empty config.', inject(function($compile){
-    // Compile the DOM into an Angular view using using our test scope.
-    element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+  it('should be able to set reasonable defaults when provided with an empty config.',
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
 
-    expect(isolatedScope.config.name).toBe(null, 'The input should have an un-configured name.');
-    expect(isolatedScope.config.collapsed).toBe(false, 'The input should start out expanded.');
-    expect(isolatedScope.config.solo).toBe(false, 'The input should start out un-soloed.');
-    expect(isolatedScope.config.mute).toBe(false, 'The input should start out un-muted.');
-    expect(isolatedScope.config.midi.note).toBeNull('The output should start out with no midi note assigned.');
-    expect(isolatedScope.config.midi.type).toBe('on', 'The output should default to accepting midi on events.');
-    expect(isolatedScope.config.osc.length).toBe(1, 'The output should start with a single output.');
-  }));
+      // Compile the DOM into an Angular view using using our test scope.
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
 
-  it('should use the id passed from its parent.', inject(function($compile){
+      expect(isolatedScope.config.name).toBe(null, 'The input should have an un-configured name.');
+      expect(isolatedScope.config.collapsed).toBe(false, 'The input should start out expanded.');
+      expect(isolatedScope.config.solo).toBe(false, 'The input should start out un-soloed.');
+      expect(isolatedScope.config.mute).toBe(false, 'The input should start out un-muted.');
+      expect(isolatedScope.config.midi.note).toBeNull('The output should start out with no midi note assigned.');
+      expect(isolatedScope.config.midi.type).toBe('on', 'The output should default to accepting midi on events.');
+      expect(isolatedScope.config.osc.length).toBe(1, 'The output should start with a single output.');
+    })
+  );
+
+  it('should use the id passed from its parent.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.id = {input:10};
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -65,7 +76,9 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.id.input).toBe(10, 'The input should use the id value specified by the parent.');
   }));
 
-  it('should start with a midi note type of ON.', inject(function ($compile){
+  it('should start with a midi note type of ON.', inject(function ($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.midi.type = null;
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -77,7 +90,10 @@ describe('Directive: midiInput', function (){
     expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
   }));
 
-  it('should default to having no name set.', inject(function($compile){
+  it('should default to having no name set.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
@@ -87,7 +103,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('input[name=name]').val()).toBe('');
   }));
 
-  it('should be able to configure the name through the scope.', inject(function($compile){
+  it('should be able to configure the name through the scope.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.name = 'James';
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -99,7 +117,10 @@ describe('Directive: midiInput', function (){
     expect(element.find('input[name=name]').val()).toBe('James');
   }));
 
-  it('should default to having no midi note set.', inject(function($compile){
+  it('should default to having no midi note set.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
@@ -109,7 +130,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('input[name=midiInNote]').val()).toBe('');
   }));
 
-  it('should be able to configure the midi note through the scope.', inject(function($compile){
+  it('should be able to configure the midi note through the scope.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.midi.note = 'c7';
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -122,7 +145,9 @@ describe('Directive: midiInput', function (){
   }));
 
   it('should be possible to configure the solo button through config',
-    inject(function($compile){
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
       parentScope.input.solo = true;
       parentScope.input.mute = false;
 
@@ -140,7 +165,9 @@ describe('Directive: midiInput', function (){
   );
 
   it('should be possible to configure the mute button through config',
-    inject(function($compile){
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
       parentScope.input.solo = false;
       parentScope.input.mute = true;
 
@@ -158,7 +185,9 @@ describe('Directive: midiInput', function (){
   );
 
   it('should default as neither muted nor soloed',
-    inject(function($compile){
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
       parentScope.input.solo = null;
       parentScope.input.mute = null;
 
@@ -175,7 +204,9 @@ describe('Directive: midiInput', function (){
   );
 
   it('should fix situations where the config is both soloed and muted',
-    inject(function($compile){
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
       parentScope.input.solo = true;
       parentScope.input.mute = true;
 
@@ -192,7 +223,9 @@ describe('Directive: midiInput', function (){
     })
   );
 
-  it('should disable mute when soloed', inject(function($compile){
+  it('should disable mute when soloed', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.solo = false;
     parentScope.input.mute = true;
 
@@ -214,7 +247,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
   }));
 
-  it('should disable solo when muted', inject(function($compile){
+  it('should disable solo when muted', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.mute = false;
     parentScope.input.solo = true;
 
@@ -236,7 +271,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
   }));
 
-  it('should start expanded by default.', inject(function($compile){
+  it('should start expanded by default.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.collapsed = null;
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -248,7 +285,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
   }));
 
-  it('should be possible to collapse through configuration.', inject(function($compile){
+  it('should be possible to collapse through configuration.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.collapsed = true;
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -260,7 +299,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
   }));
 
-  it('should be possible to expand/collapse.', inject(function($compile){
+  it('should be possible to expand/collapse.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.collapsed = null;
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -287,7 +328,10 @@ describe('Directive: midiInput', function (){
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
   }));
 
-  it('should default to one osc output.', inject(function($compile){
+  it('should default to one osc output.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
@@ -301,7 +345,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('div[name=oscOutputItem]').length).toBe(1, 'The DOM should show the default output.');
   }));
 
-  it('should be possible to configure the osc outputs.', inject(function($compile){
+  it('should be possible to configure the osc outputs.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.osc = [{},{}];
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -314,7 +360,10 @@ describe('Directive: midiInput', function (){
     expect(element.find('div[name=oscOutputItem]').length).toBe(2, 'The DOM should show both outputs.');
   }));
 
-  it('should be possible to add a new OSC output.', inject(function($compile){
+  it('should be possible to add a new OSC output.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
@@ -332,7 +381,9 @@ describe('Directive: midiInput', function (){
     expect(element.find('div[name=oscOutputItem]').length).toBe(2, 'The DOM should show two outputs.');
   }));
 
-  it('should be possible to remove an OSC output.', inject(function($compile){
+  it('should be possible to remove an OSC output.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
     parentScope.input.osc = [{path:'/a'},{path:'/b'},{path:'/c'}];
 
     // Compile the DOM into an Angular view using using our test scope.
