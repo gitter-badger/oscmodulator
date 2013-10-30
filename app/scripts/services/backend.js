@@ -1,6 +1,7 @@
 /**
  * The backend service is used to communicate between the javascript UI running
  * in the browser and the code running outside of the browser (Node or C code).
+ * TODO Rename this class to message-middleware
  */
 angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) {
   'use strict';
@@ -25,43 +26,39 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
   /**
    * Create a new input on the backend.
    */
-  backend.newInput = function(/*inputConfig*/){
+  backend.setMidiInput = function(config){
     console.log('Creating new backend input.');
-    // Check that input has all the required properties.
-    // if(this.inputIsReady(inputConfig.id))
-    // Connect the input based on config.
-    // midi.createInput(inputConfig);
-    // otherwise, wait for the updates
+    console.log(config);
     // TODO Test this method.
   };
 
-  /**
-   * Change the midi note information for a specific input.
-   * @param inputId The id of the input who's midi note changed.
-   * @param newNote The new midi note to use.
-   */
-  backend.updateInputMidiNote = function(inputId, newNote){
-    console.log('Updating midi note for input ' + inputId + ': ' + newNote);
-    // this.updateMidiListener(inputId)
-    // TODO Test this method.
-  };
-
-  /**
-   * Change the midi note type information for a specific input.
-   * @param inputId The id of the input that was updated.
-   * @param newType The new midi note type.
-   */
-  backend.updateInputMidiNoteType = function(inputId, newType){
-    console.log('Updating midi note type for input ' + inputId + ': ' + newType);
-    // TODO Test this method.
-  };
+//  /**
+//   * Change the midi note information for a specific input.
+//   * @param inputId The id of the input who's midi note changed.
+//   * @param newNote The new midi note to use.
+//   */
+//  backend.updateInputMidiNote = function(inputId, newNote){
+//    console.log('Updating midi note for input ' + inputId + ': ' + newNote);
+//    // this.updateMidiListener(inputId)
+//    // TODO Test this method.
+//  };
+//
+//  /**
+//   * Change the midi note type information for a specific input.
+//   * @param inputId The id of the input that was updated.
+//   * @param newType The new midi note type.
+//   */
+//  backend.updateInputMidiNoteType = function(inputId, newType){
+//    console.log('Updating midi note type for input ' + inputId + ': ' + newType);
+//    // TODO Test this method.
+//  };
 
   /**
    * Change the mute setting of a midi input.
    * @param inputId The id of the input that was muted/unmuted.
    * @param muted True = input is muted.
    */
-  backend.updateInputMute = function(inputId, muted){
+  backend.muteInput = function(inputId, muted){
     console.log('Updating mute for input ' + inputId + ': ' + muted);
     // if( muted )
     // this.findInput(inputId)
@@ -76,7 +73,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param inputId The id of the input that was soloed/unsoloed.
    * @param solo True = input is soloed.
    */
-  backend.updateInputSolo = function(inputId, solo){
+  backend.soloInput = function(inputId, solo){
     console.log('Updating solo for input ' + inputId + ': ' + solo);
     // midi.solo(inputId)
     // TODO Test this method.
@@ -116,6 +113,8 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
 
   /**
    * Update the OSC path for an existing output object.
+   * TODO Remove the set path and set host methods. They feel like pre-mature optimization. The set osc parameters
+   * method may also be pre-mature optimization.
    * @param path {String} The path to set.
    */
   backend.setOSCPath = function(/*id, path*/){

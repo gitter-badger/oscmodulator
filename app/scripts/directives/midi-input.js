@@ -11,12 +11,13 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       duplicate: '&duplicate',
       remove: '&remove'
     },
-    controller : function($scope) {
+    controller : function($scope, backend) {
       var i;
 
       /**
        * The list of midi note types displayed in the midi note type select box.
        * @type {Array}
+       * TODO Change this to a JSON object that can be used as an ENUM.
        */
       $scope.midiTypes = ['on', 'off', 'hold', 'double tap'];
 
@@ -81,6 +82,8 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
 
       /**
        * Add an OSC output to the list of outputs.
+       *
+       * @internal The osc-output directive is responsible for updating the backend service when it becomes valid.
        */
       $scope.addOSCOutput = function(){
         ++$scope.outputsCreated;
@@ -98,37 +101,70 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
        * @param index
        */
       $scope.removeOSCOutput = function(index){
-        $scope.config.osc.splice(index, 1);
+        var removed = $scope.config.osc.splice(index, 1);
+        // TODO Should we check to see if the input is valid before removing it? If it's not currently valid then it
+        // will not exist in the backend.
+        backend.removeOSCOutput(removed[0].id);
       };
-    },
-    link : function link($scope/*, $element, $attrs, $controller*/){
-      // Make sure that if the solo button is enabled, that the mute button gets disabled.
-      $scope.$watch('config.solo', function(newValue/*, oldValue*/){
+
+      /**
+       * Set the valid state of this input. If the state becomes valid, tell the backend service about it.
+       * TODO Make this a private method?
+       */
+      $scope.updateValidity = function(){
+        // TODO Is there a way to prevent initialization from calling setMidiInput twice? Or maybe
+        // the backend should make sure things are changing before it adds midi listeners?
+        if($scope.config.midi.note && $scope.config.midi.type){
+          $scope.config.valid = true;
+          backend.setMidiInput($scope.config);
+        }
+        else{
+          // Remove the input if we go from valid to invalid.
+          if($scope.config.valid){
+            $scope.config.valid = false;
+            backend.removeInput($scope.config.id);
+          }
+        }
+
+        return $scope.config.valid;
+      };
+
+      /**
+       * Update the mute setting when changing solo and make sure the backend is notified.
+       */
+      $scope.$watch('config.solo', function(newValue){
+        // Make sure that if the solo button is enabled, that the mute button gets disabled.
         if( newValue === true ){
           $scope.config.mute = false;
         }
+
+        backend.soloInput($scope.config.id, newValue);
       });
-      // Make sure that if the mute button is enabled, that the solo button gets disabled.
-      $scope.$watch('config.mute', function(newValue/*, oldValue*/){
+
+      /**
+       * Update the solo setting when changing mute and make sure the backend is notified.
+       */
+      $scope.$watch('config.mute', function(newValue){
+        // Make sure that if the mute button is enabled, that the solo button gets disabled.
         if( newValue === true ){
           $scope.config.solo = false;
         }
+
+        backend.muteInput($scope.config.id, newValue);
       });
-      // Dispatch an event if the midi note changes.
-      $scope.$watch('config.midi.note', function(newValue){
-        // TODO Update the backend service.
+
+      /**
+       * Update the backend service when the midi note for this input changes.
+       */
+      $scope.$watch('config.midi.note', function(){
+        $scope.updateValidity();
       });
-      // Dispatch an event if the midi note type changes.
-      $scope.$watch('config.midi.type', function(newValue){
-        // TODO Update the backend service.
-      });
-      // Dispatch an event if the solo changes.
-      $scope.$watch('config.solo', function(newValue){
-        // TODO Update the backend service.
-      });
-      // Dispatch an event if the mute changes.
-      $scope.$watch('config.mute', function(newValue){
-        // TODO Update the backend service.
+
+      /**
+       * Update the backend service when the midi note type changes for this input.
+       */
+      $scope.$watch('config.midi.type', function(){
+        $scope.updateValidity();
       });
     }
   };

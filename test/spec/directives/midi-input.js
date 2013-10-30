@@ -16,7 +16,12 @@ describe('Directive: midiInput', function (){
 
     backendMock = {
       setOSCParameters: function(){},
-      setOSCPath: function(){}
+      setOSCPath: function(){},
+      removeOSCOutput: function(){},
+      soloInput: function(){},
+      muteInput: function(){},
+      setMidiInput: function(){},
+      removeInput: function(){}
     };
 
     module(function($provide){
@@ -25,7 +30,7 @@ describe('Directive: midiInput', function (){
 
     // Create a fresh scope for this test.
     defaultConfig = {
-      id: {input:0},
+      id: {input:1},
       name: null,
       collapsed: false,
       mute: false,
@@ -35,6 +40,7 @@ describe('Directive: midiInput', function (){
         type: 'on'
       },
       osc: [{
+        id:{input:1, output:1},
         host: null,
         path: null,
         parameters: []
@@ -81,13 +87,40 @@ describe('Directive: midiInput', function (){
     parentScope.input = defaultConfig;
     parentScope.input.midi.type = null;
 
+    spyOn(backendMock, 'removeInput');
+    spyOn(backendMock, 'setMidiInput');
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.type).toBe('on');
-    expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
+    expect(isolatedScope.config.midi.type).toBe('on');    expect(element.find('select.midiNoteType option[selected=selected]').text()).toBe('on');
+    expect(backendMock.removeInput).not.toHaveBeenCalled();
+    expect(backendMock.setMidiInput).not.toHaveBeenCalled();
+  }));
+
+  it('should call the backend service when the midi note type changes.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.type = 'on';
+    parentScope.input.midi.note = 'c7';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.type).toBe('on', 'The input should start with a midi note type of on.');
+
+    spyOn(backendMock, 'removeInput');
+    spyOn(backendMock, 'setMidiInput');
+
+    isolatedScope.config.midi.type = 'off';
+    isolatedScope.$apply();
+
+    expect(backendMock.removeInput).not.toHaveBeenCalled();
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
   }));
 
   it('should default to having no name set.', inject(function($compile, $rootScope){
@@ -135,6 +168,9 @@ describe('Directive: midiInput', function (){
     parentScope.input = defaultConfig;
     parentScope.input.midi.note = 'c7';
 
+    spyOn(backendMock, 'removeInput');
+    spyOn(backendMock, 'setMidiInput');
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
@@ -142,6 +178,31 @@ describe('Directive: midiInput', function (){
 
     expect(isolatedScope.config.midi.note).toBe('c7');
     expect(element.find('input[name=midiInNote]').val()).toBe('c7');
+    expect(backendMock.removeInput).not.toHaveBeenCalled();
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+  }));
+
+  it('should update the backend when the midi note changes.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.note = 'c7';
+
+    spyOn(backendMock, 'removeInput');
+    spyOn(backendMock, 'setMidiInput');
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe('c7', 'The midi note should be set correctly to start.');
+    expect(backendMock.removeInput).not.toHaveBeenCalled();
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+
+    isolatedScope.config.midi.note = 'b3';
+    isolatedScope.$apply();
+
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
   }));
 
   it('should be possible to configure the solo button through config',
@@ -150,6 +211,8 @@ describe('Directive: midiInput', function (){
       parentScope.input = defaultConfig;
       parentScope.input.solo = true;
       parentScope.input.mute = false;
+
+      spyOn(backendMock, 'soloInput');
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
@@ -161,6 +224,7 @@ describe('Directive: midiInput', function (){
       expect(isolatedScope.config.mute).toBe(false);
       expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
       expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
+      expect(backendMock.soloInput).toHaveBeenCalledWith({input:1}, true);
     })
   );
 
@@ -170,6 +234,8 @@ describe('Directive: midiInput', function (){
       parentScope.input = defaultConfig;
       parentScope.input.solo = false;
       parentScope.input.mute = true;
+
+      spyOn(backendMock, 'muteInput');
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
@@ -181,6 +247,7 @@ describe('Directive: midiInput', function (){
       expect(isolatedScope.config.solo).toBe(false);
       expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
       expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+      expect(backendMock.muteInput).toHaveBeenCalledWith({input:1}, true);
     })
   );
 
@@ -210,6 +277,9 @@ describe('Directive: midiInput', function (){
       parentScope.input.solo = true;
       parentScope.input.mute = true;
 
+      spyOn(backendMock, 'soloInput');
+      spyOn(backendMock, 'muteInput');
+
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
@@ -220,6 +290,8 @@ describe('Directive: midiInput', function (){
       expect(isolatedScope.config.solo).toBe(false);
       expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
       expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
+      expect(backendMock.soloInput).toHaveBeenCalledWith({input:1}, false);
+      expect(backendMock.muteInput).toHaveBeenCalledWith({input:1}, false);
     })
   );
 
@@ -228,6 +300,9 @@ describe('Directive: midiInput', function (){
     parentScope.input = defaultConfig;
     parentScope.input.solo = false;
     parentScope.input.mute = true;
+
+    spyOn(backendMock, 'soloInput');
+    spyOn(backendMock, 'muteInput');
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
@@ -245,6 +320,8 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.mute).toBe(false);
     expect(element.find('button[name=mute]').hasClass('active')).toBe(false);
     expect(element.find('button[name=solo]').hasClass('active')).toBe(true);
+    expect(backendMock.soloInput).toHaveBeenCalledWith({input:1}, true);
+    expect(backendMock.muteInput).toHaveBeenCalledWith({input:1}, false);
   }));
 
   it('should disable solo when muted', inject(function($compile, $rootScope){
@@ -252,6 +329,9 @@ describe('Directive: midiInput', function (){
     parentScope.input = defaultConfig;
     parentScope.input.mute = false;
     parentScope.input.solo = true;
+
+    spyOn(backendMock, 'soloInput');
+    spyOn(backendMock, 'muteInput');
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
@@ -261,6 +341,8 @@ describe('Directive: midiInput', function (){
     // The solo should be on and the mute off.
     expect(isolatedScope.config.solo).toBe(true);
     expect(isolatedScope.config.mute).toBe(false);
+    expect(backendMock.soloInput).toHaveBeenCalledWith({input:1}, true);
+    expect(backendMock.muteInput).toHaveBeenCalledWith({input:1}, false);
 
     isolatedScope.config.mute = true;
     isolatedScope.$apply();
@@ -269,6 +351,8 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.solo).toBe(false);
     expect(element.find('button[name=solo]').hasClass('active')).toBe(false);
     expect(element.find('button[name=mute]').hasClass('active')).toBe(true);
+    expect(backendMock.soloInput).toHaveBeenCalledWith({input:1}, false);
+    expect(backendMock.muteInput).toHaveBeenCalledWith({input:1}, true);
   }));
 
   it('should start expanded by default.', inject(function($compile, $rootScope){
@@ -386,12 +470,14 @@ describe('Directive: midiInput', function (){
     parentScope.input = defaultConfig;
     parentScope.input.osc = [{path:'/a'},{path:'/b'},{path:'/c'}];
 
+    spyOn(backendMock, 'removeOSCOutput');
+
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.osc.length).toBe(3);
+    expect(isolatedScope.config.osc.length).toBe(3, 'The input should start with 3 outputs.');
 
     isolatedScope.removeOSCOutput(1);
     isolatedScope.$apply();
@@ -400,5 +486,31 @@ describe('Directive: midiInput', function (){
     expect(parentScope.input.osc.length).toBe(2);
     expect(element.find('input[name=oscPath]').first().val()).toBe('/a');
     expect(element.find('input[name=oscPath]').last().val()).toBe('/c');
+    expect(backendMock.removeOSCOutput).toHaveBeenCalledWith({input:1, output:2});
+  }));
+
+  it('should remove the input from the backend when it becomes invalid.', inject(function($compile, $rootScope){
+    var setMidiInputCalls = 0;
+
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.note = 'c3';
+
+    spyOn(backendMock, 'removeInput');
+    spyOn(backendMock, 'setMidiInput');
+
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(backendMock.removeInput).not.toHaveBeenCalled();
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+
+    setMidiInputCalls = backendMock.setMidiInput.calls.length;
+    isolatedScope.config.midi.note = '';
+    isolatedScope.$apply();
+
+    expect(backendMock.setMidiInput.calls.length).toBe(setMidiInputCalls, 'The input should not have been set again.');
+    expect(backendMock.removeInput).toHaveBeenCalledWith({input:1});
   }));
 });

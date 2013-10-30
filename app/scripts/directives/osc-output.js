@@ -143,16 +143,15 @@ angular.module('oscmodulatorApp')
 
           return $scope.valid;
         };
-      },
-      link: function postLink(scope) {
+
         /**
          * Listen to remove events in order to make sure this output's host is nullified if its osc host is removed
          * from the config. Unfortunately, Angular will not take care of this for us automatically.
          */
-        scope.$on('oscHostConfig:remove', function(event, id){
-          if(id === scope.config.host){
-            scope.config.host = null;
-            scope.isValid();
+        $scope.$on('oscHostConfig:remove', function(event, id){
+          if(id === $scope.config.host){
+            $scope.config.host = null;
+            $scope.isValid();
           }
         });
       }
