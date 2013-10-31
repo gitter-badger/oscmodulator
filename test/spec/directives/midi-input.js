@@ -11,7 +11,7 @@ describe('Directive: midiInput', function (){
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
-      '<div data-midi-input data-midi-input-config="input" data-duplicate="inputConfig.duplicateInput(key)" data-remove="inputConfig.removeInput(key)"></div>'
+      '<div data-midi-input data-midi-input-config="input" data-duplicate="duplicateInput" data-remove="removeInput"></div>'
     );
 
     backendMock = {
@@ -512,5 +512,39 @@ describe('Directive: midiInput', function (){
 
     expect(backendMock.setMidiInput.calls.length).toBe(setMidiInputCalls, 'The input should not have been set again.');
     expect(backendMock.removeInput).toHaveBeenCalledWith({input:1});
+  }));
+
+  it('should be able to remove itself.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.removeInput = function(){};
+
+    spyOn(backendMock, 'removeInput');
+    spyOn(parentScope, 'removeInput');
+
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    isolatedScope.removeMe();
+
+    expect(parentScope.removeInput).toHaveBeenCalledWith({input:1});
+    expect(backendMock.removeInput).toHaveBeenCalledWith({input:1});
+  }));
+
+  it('should be able to duplicate itself.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.duplicateInput = function(){};
+
+    spyOn(parentScope, 'duplicateInput');
+
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    isolatedScope.duplicateMe();
+
+    expect(parentScope.duplicateInput).toHaveBeenCalledWith({input:1});
   }));
 });

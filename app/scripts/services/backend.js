@@ -27,8 +27,8 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * Create a new input on the backend.
    */
   backend.setMidiInput = function(config){
-    console.log('Creating new backend input.');
-    console.log(config);
+    console.log('Creating new backend input: ' + config.id.input);
+//    console.log(config);
     // TODO Test this method.
   };
 
@@ -59,7 +59,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param muted True = input is muted.
    */
   backend.muteInput = function(inputId, muted){
-    console.log('Updating mute for input ' + inputId + ': ' + muted);
+    console.log('Updating mute for input ' + inputId.input + ': ' + muted);
     // if( muted )
     // this.findInput(inputId)
     // midi.addMidiListener(input)
@@ -74,7 +74,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param solo True = input is soloed.
    */
   backend.soloInput = function(inputId, solo){
-    console.log('Updating solo for input ' + inputId + ': ' + solo);
+    console.log('Updating solo for input ' + inputId.input + ': ' + solo);
     // midi.solo(inputId)
     // TODO Test this method.
   };
@@ -84,7 +84,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param inputId The id of the input to be removed.
    */
   backend.removeInput = function(inputId){
-    console.log('Removing input ' + inputId);
+    console.log('Removing input ' + inputId.input);
     // midi.removeMidiListener(inputId)
     // TODO Test this method.
   };
@@ -99,16 +99,19 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    *   parameters:[{value:'value'}]
    * }
    */
-  backend.setOSCOutput = function(/*config*/){
+  backend.setOSCOutput = function(config){
     // TODO Test this method.
+    // TODO Should we just pass the id into this method and do a direct lookup?
+    console.log('Set OSC Output: ' + config.id.input + '|' + config.id.output);
   };
 
   /**
    * Remove an OSC output configuration.
    * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
    */
-  backend.removeOSCOutput = function(/*id*/){
+  backend.removeOSCOutput = function(id){
     // TODO Test this method.
+    console.log('Remove OSC Output: ' + id.input + '|' + id.output);
   };
 
   /**
@@ -117,8 +120,10 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * method may also be pre-mature optimization.
    * @param path {String} The path to set.
    */
-  backend.setOSCPath = function(/*id, path*/){
+  backend.setOSCPath = function(id, path){
     // TODO Test this method.
+    // TODO Should we just pass the id into this method and do a direct lookup?
+    console.log('Set OSC Path: ' + id.input + '|' + id.output + ', path: ' + path);
   };
 
   /**
@@ -126,8 +131,10 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
    * @param host {String} The id of the host to use with this output.
    */
-  backend.setOSCHost = function(/*id, host*/){
+  backend.setOSCHost = function(id, host){
     // TODO Test this method.
+    // TODO Should we just pass the id into this method and do a direct lookup?
+    console.log('Set OSC Host: ' + id.input + '|' + id.output + ', host: ' + host);
   };
 
   /**
@@ -135,8 +142,10 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    * @param id The id of the output to modify. {input:x, output:y}
    * @param params The list of parameters to send with the specified output.
    */
-  backend.setOSCParameters = function(/*id, params*/){
+  backend.setOSCParameters = function(id, params){
     // TODO Test this method.
+    // TODO Should we just pass the id into this method and do a direct lookup?
+    console.log('Set OSC Parameters: ' + id.input + '|' + id.output + ', params: ' + params);
   };
 
   return backend;

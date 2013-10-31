@@ -80,6 +80,34 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         $scope.config.collapsed = !$scope.config.collapsed;
       };
 
+      var removeHandler = $scope.remove();
+
+      /**
+       * Remove this input from this input.
+       *
+       * @internal This functionality could be moved to the input-list directive if we want. I moved it out of the
+       * input-config service so that input-config does not need to manipulate the backend.
+       */
+      $scope.removeMe = function(){
+        // Tell the backend to remove me.
+        backend.removeInput($scope.config.id);
+
+        // Tell my parent to remove me.
+        removeHandler($scope.config.id);
+      };
+
+      var duplicateHandler = $scope.duplicate();
+
+      /**
+       * Duplicate this input.
+       *
+       * @internal This functionality could be moved to the input-list or the duplicateInput method could be called
+       * on the input-config service directly. However, I've put it here for consistency with the removeMe functionality.
+       */
+      $scope.duplicateMe = function(){
+        duplicateHandler($scope.config.id);
+      };
+
       /**
        * Add an OSC output to the list of outputs.
        *

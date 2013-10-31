@@ -56,7 +56,7 @@ describe('Service: inputConfig', function () {
     inputConfig.inputs[0].name = 'a';
     inputConfig.inputs[0].note = 'c1';
 
-    inputConfig.duplicateInput(0);
+    inputConfig.duplicateInput(inputConfig.inputs[0].id);
 
     expect(inputConfig.inputs.length).toBe(2, 'There should be a second input after duplicating the first.');
     expect(inputConfig.inputs[0].id.input).not
@@ -76,10 +76,20 @@ describe('Service: inputConfig', function () {
 
     expect(inputConfig.inputs.length).toBe(3, 'There should be 3 inputs after adding two new ones.');
 
-    inputConfig.removeInput(1);
+    inputConfig.removeInput({input:2});
 
     expect(inputConfig.inputs.length).toBe(2, 'There should be two inputs after removing input b.');
     expect(inputConfig.inputs[0].name).toBe('a', 'The first input should be named a.');
     expect(inputConfig.inputs[1].name).toBe('c', 'The last input should be named c.');
+  });
+
+  it('should be able to find the index of an input using its id.', function(){
+    inputConfig.addInput({name:'a'});
+    inputConfig.addInput({name:'b'});
+    inputConfig.addInput({name:'c'});
+
+    expect(inputConfig.findInputIndex({input:7})).toBe(-1, 'It should not be able to find input 7.');
+    expect(inputConfig.findInputIndex({input:1})).toBe(0, 'It should find it at the first position.');
+    expect(inputConfig.findInputIndex({input:3})).toBe(2, 'It should find it at the last position.');
   });
 });
