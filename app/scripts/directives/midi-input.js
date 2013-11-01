@@ -1,3 +1,7 @@
+/**
+ * The midi-input directive creates a single midi input item in the DOM and manages communication with the backend
+ * service.
+ */
 angular.module('oscmodulatorApp').directive('midiInput', function () {
   'use strict';
 
@@ -144,7 +148,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
         // the backend should make sure things are changing before it adds midi listeners?
         if($scope.config.midi.note && $scope.config.midi.type){
           $scope.config.valid = true;
-          backend.setMidiInput($scope.config);
+          backend.setMidiInput($scope.config.id);
         }
         else{
           // Remove the input if we go from valid to invalid.

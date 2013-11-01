@@ -120,7 +120,7 @@ describe('Directive: midiInput', function (){
     isolatedScope.$apply();
 
     expect(backendMock.removeInput).not.toHaveBeenCalled();
-    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config.id);
   }));
 
   it('should default to having no name set.', inject(function($compile, $rootScope){
@@ -179,7 +179,7 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.midi.note).toBe('c7');
     expect(element.find('input[name=midiInNote]').val()).toBe('c7');
     expect(backendMock.removeInput).not.toHaveBeenCalled();
-    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config.id);
   }));
 
   it('should update the backend when the midi note changes.', inject(function($compile, $rootScope){
@@ -197,12 +197,12 @@ describe('Directive: midiInput', function (){
 
     expect(isolatedScope.config.midi.note).toBe('c7', 'The midi note should be set correctly to start.');
     expect(backendMock.removeInput).not.toHaveBeenCalled();
-    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config.id);
 
     isolatedScope.config.midi.note = 'b3';
     isolatedScope.$apply();
 
-    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config.id);
   }));
 
   it('should be possible to configure the solo button through config',
@@ -504,7 +504,7 @@ describe('Directive: midiInput', function (){
     isolatedScope.$apply();
 
     expect(backendMock.removeInput).not.toHaveBeenCalled();
-    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config);
+    expect(backendMock.setMidiInput).toHaveBeenCalledWith(isolatedScope.config.id);
 
     setMidiInputCalls = backendMock.setMidiInput.calls.length;
     isolatedScope.config.midi.note = '';

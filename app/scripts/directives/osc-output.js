@@ -1,5 +1,10 @@
-angular.module('oscmodulatorApp')
-  .directive('oscOutput', function () {
+/**
+ * The osc-output directive creates a single OSC output in the DOM and manages communciation with the backend service.
+ * TODO Should communication with the backend be moved into the midi-input directive? This would resolve issues
+ * where the output becomes valid and tells the backend service about it before the input becomes valid. If we don't
+ * move that communication down, then the backend service can inspect the midi config to see if it's valid.
+ */
+angular.module('oscmodulatorApp').directive('oscOutput', function () {
     'use strict';
 
     return {
@@ -66,6 +71,7 @@ angular.module('oscmodulatorApp')
           var wasValid = $scope.valid;
           if($scope.isValid()){
             if(wasValid){
+              // TODO Should we replace this level of backend management with just setOSCOutput calls?
               backend.setOSCPath($scope.config.id, newValue);
             }
           }
@@ -81,6 +87,7 @@ angular.module('oscmodulatorApp')
           var wasValid = $scope.valid;
           if($scope.isValid()){
             if(wasValid){
+              // TODO Should we replace this level of backend management with just setOSCOutput calls?
               backend.setOSCHost($scope.config.id, newValue);
             }
           }

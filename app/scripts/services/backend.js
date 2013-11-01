@@ -1,20 +1,20 @@
 /**
  * The backend service is used to communicate between the javascript UI running
  * in the browser and the code running outside of the browser (Node or C code).
- * TODO Rename this class to message-middleware
+ * TODO Rename this class to message-middleware.
+ * TODO Rename all directives and services to use ClassName style capitalization?
  */
-angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) {
+angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, inputConfig) {
   'use strict';
-  var backend = {};
+  var backend, midiRouteName, midiChannel;
 
-//  backend.updateMidiListener = function(inputId){
-//    var input = this.findInput(inputId);
-//
-//    if(this.inputIsReady(input)){
-//      midi.removeMidiListener(inputId);
-//      midi.addMidiListener(inputId, input);
-//    }
-//  };
+  backend = {};
+
+  // TODO Configure these somehow.
+  // Is the midiRouteName just an arbitrary identifier for the port we're listening on?
+  // Do we want to allow the channel to be configured as part of the midi input directive?
+  midiRouteName = 'midi1';
+  midiChannel = ':';
 
   /**
    * Initialize the backend and any services used by the backend.
@@ -24,34 +24,49 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
   };
 
   /**
-   * Create a new input on the backend.
+   * Create a legato path string using the elements provided.
+   * @param channel The channel on which to listen. If ':' then any channel.
+   * @param note The note name to listen for. ex: c3
    */
-  backend.setMidiInput = function(config){
-    console.log('Creating new backend input: ' + config.id.input);
-//    console.log(config);
-    // TODO Test this method.
+  backend.getPath = function(channel, note){
+    var i, list, path;
+
+    path = '';
+
+    list = [];
+    list.push(midiRouteName);
+    list.push(channel);
+    list.push('note');
+    list.push(note);
+
+    for(i = 0; i < list.length; i++){
+      path += '/' + list[i];
+    }
+
+    return path;
   };
 
-//  /**
-//   * Change the midi note information for a specific input.
-//   * @param inputId The id of the input who's midi note changed.
-//   * @param newNote The new midi note to use.
-//   */
-//  backend.updateInputMidiNote = function(inputId, newNote){
-//    console.log('Updating midi note for input ' + inputId + ': ' + newNote);
-//    // this.updateMidiListener(inputId)
-//    // TODO Test this method.
-//  };
-//
-//  /**
-//   * Change the midi note type information for a specific input.
-//   * @param inputId The id of the input that was updated.
-//   * @param newType The new midi note type.
-//   */
-//  backend.updateInputMidiNoteType = function(inputId, newType){
-//    console.log('Updating midi note type for input ' + inputId + ': ' + newType);
-//    // TODO Test this method.
-//  };
+  /**
+   * Create a new input on the backend.
+   */
+  backend.setMidiInput = function(id){
+    var path, index, note;
+
+    console.log('Creating new backend input: ' + id.input);
+
+    index = inputConfig.findInputIndex(id);
+    note = inputConfig.inputs[index].midi.note;
+    path = backend.getPath(midiChannel, note);
+
+    // If this input has already registered a listener, remove it.
+    // TODO How do we do this? I don't really understand the legato coffee script but should we extend legato to add
+    // a method for removing midi listeners from its 'closet'?
+
+    // Configure a new note listener for the specified config.
+    midi.on(path, function(){
+      console.log('Backend midi input callback, Jack!');
+    });
+  };
 
   /**
    * Change the mute setting of a midi input.
@@ -60,11 +75,6 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    */
   backend.muteInput = function(inputId, muted){
     console.log('Updating mute for input ' + inputId.input + ': ' + muted);
-    // if( muted )
-    // this.findInput(inputId)
-    // midi.addMidiListener(input)
-    // else
-    // midi.removeMidiListener(inputId)
     // TODO Test this method.
   };
 
@@ -75,7 +85,6 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    */
   backend.soloInput = function(inputId, solo){
     console.log('Updating solo for input ' + inputId.input + ': ' + solo);
-    // midi.solo(inputId)
     // TODO Test this method.
   };
 
@@ -85,7 +94,6 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi) 
    */
   backend.removeInput = function(inputId){
     console.log('Removing input ' + inputId.input);
-    // midi.removeMidiListener(inputId)
     // TODO Test this method.
   };
 
