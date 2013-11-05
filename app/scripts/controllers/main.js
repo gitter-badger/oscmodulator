@@ -34,6 +34,7 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $time
   var promise;
   $scope.$on('midi:activity', function() {
     $scope.midiActivity = true;
+    $scope.$apply();
     if (promise) {
       $timeout.cancel(promise);
     }
