@@ -41,7 +41,7 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $time
     promise = $timeout(function() {
       $scope.midiActivity = false;
       promise = null;
-    }, 500);
+    }, 100);
   });
 
   midi.connect();
