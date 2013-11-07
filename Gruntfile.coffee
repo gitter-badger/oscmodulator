@@ -411,7 +411,7 @@ module.exports = (grunt) ->
       dir = path.dirname filePath
       grunt.config 'shell.nwgyp.command', [
         "cd #{dir}"
-        "nw-gyp rebuild --target=0.7.5"
+        "nw-gyp rebuild --target=0.8.0"
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
 
