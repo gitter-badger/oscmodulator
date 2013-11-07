@@ -306,6 +306,14 @@ module.exports = (grunt) ->
         configFile: 'test/karma.conf.coffee'
         singleRun: true
 
+      'unit-ci':
+        configFile: 'test/karma.conf.coffee'
+        singleRun: true
+        reporters: ['spec', 'coverage']
+        coverageReporter:
+          type: 'lcov'
+          dir: '.tmp/coverage/'
+
       'unit-watch':
         configFile: 'test/karma.conf.coffee'
         autoWatch: true
@@ -418,6 +426,11 @@ module.exports = (grunt) ->
     'karma:unit'
   ]
 
+  grunt.registerTask 'unit-ci', [
+    'unit-prep'
+    'karma:unit-ci'
+  ]
+
   # TODO The code coverage makes it hard to read the scripts during debugging. Can we make the code coverage
   # run after the unit tests run or move the coverage into a separate task?
   grunt.registerTask 'unit-watch', [
@@ -431,7 +444,6 @@ module.exports = (grunt) ->
     'karma:e2e'
   ]
 
-  # TODO Reload CSS files when modified.
   grunt.registerTask 'e2e-watch', [
     'clean:server'
     'concurrent:server'

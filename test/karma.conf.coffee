@@ -30,7 +30,7 @@ module.exports = (config) ->
     # during testing so directives can be unit tested.
     preprocessors:
       'app/scripts/**/*.js': 'coverage'
-      'app/scripts/**/*.coffee': ['coffee', 'coverage']
+      'app/scripts/**/*.coffee': 'coffee'
       'test/spec/**/*.coffee': 'coffee'
       '**/*.html': 'ng-html2js'
 
