@@ -52,11 +52,9 @@ module.exports = (grunt) ->
       coffeeTest:
         files: ['test/spec/{,*/}*.coffee']
         tasks: ['coffee:test']
-
       styles:
         files: ['<%= yeoman.app %>/styles/{,*/}*.css']
         tasks: ['copy:styles', 'autoprefixer']
-
       livereload:
         options:
           livereload: LIVERELOAD_PORT
@@ -261,6 +259,14 @@ module.exports = (grunt) ->
           src: ['generated/*']
         ]
 
+      debug:
+        files: [
+          expand: true
+          cwd: '<%= yeoman.app %>'
+          dest: '<%= yeoman.dist %>'
+          src: '**/*'
+        ]
+
       styles:
         files: [
           expand: true
@@ -376,9 +382,17 @@ module.exports = (grunt) ->
     'replace:dist'
   ]
 
-  grunt.registerTask 'nw-run', ->
+  grunt.registerTask 'nw-build-debug', [
+    'clean:dist'
+    'copy:debug'
+    'replace:dist'
+  ]
+
+  grunt.registerTask 'nw-run', (target)  ->
     nw = [nwConfig.root, platform, nwConfig[platform].nwpath].join path.sep
-    grunt.task.run 'nw-build'
+
+    buildTask = if target is 'debug' then 'nw-build-debug' else 'nw-build'
+    grunt.task.run buildTask
     grunt.config 'shell.nwrun.command', "#{nw} #{yeomanConfig.dist}"
     grunt.task.run 'shell:nwrun'
 
@@ -423,6 +437,7 @@ module.exports = (grunt) ->
     'concurrent:server'
     'autoprefixer'
     'connect:livereload'
+    'watch'
     'open'
     'karma:e2e-watch'
   ]

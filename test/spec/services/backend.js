@@ -1,13 +1,13 @@
 describe('Service: backend', function () {
   'use strict';
-  var backend, rootScope, midiMock, oscHostConfigMock;
+  var backend, rootScope, midiMock;
 
   // load the service's module
   beforeEach(module('oscmodulatorApp'));
 
   beforeEach(function(){
     midiMock = {
-      start: function(){},
+      connect: function(){},
       on: function(){}
     };
 
@@ -22,9 +22,9 @@ describe('Service: backend', function () {
   });
 
   it('should initialize the midi object.', function(){
-    spyOn(midiMock, 'start');
+    spyOn(midiMock, 'connect');
     backend.init();
-    expect(midiMock.start).toHaveBeenCalled();
+    expect(midiMock.connect).toHaveBeenCalled();
   });
 
   it('should be able to create legato paths.', function(){

@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('oscmodulatorApp').factory('midi', function(legato) {
+angular.module('oscmodulatorApp').factory('midi', function($rootScope, legato) {
 
   var L = legato;
 
   return {
-    start: function() {
+    connect: function() {
       console.log('real midi service called.');
 
       L['in']('/midi1', L.midi.In('0', true));
@@ -22,7 +22,13 @@ angular.module('oscmodulatorApp').factory('midi', function(legato) {
 //        return console.log(this.path + ' - ' + this.val);
 ////        return console.log(this.path, this.val);
 //      });
+
+      L.on('/midi1/:/note/:', function() {
+        $rootScope.$broadcast('midi:activity');
+        console.log(this.path + ' - ' + this.val);
+      });
     },
+
     on: function(path/*, callback*/){
       // TODO How should we execute the callback? callback.apply()?
       L.on(path, function(){

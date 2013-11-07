@@ -20,7 +20,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    * Initialize the backend and any services used by the backend.
    */
   backend.init = function(){
-    midi.start();
+    midi.connect();
   };
 
   /**

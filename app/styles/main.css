@@ -283,7 +283,6 @@ select.oscHost
 
 .midiInput
 {
-    background-color: #ccc;
     border-top: 1px solid #aaa;
 }
 
@@ -356,6 +355,56 @@ select.oscHost
 {
     background-color: red;
     padding: 25px;
+}
+
+.midiActivity {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: relative;
+  float: right;
+  margin-top: 5px;
+  margin-right: 10px;
+  border-radius: 50px;
+  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+  background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+}
+
+.midiActivity input[type=checkbox] {
+  visibility: hidden;
+}
+
+.midiActivity label {
+  cursor: auto;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+
+  border-radius: 50px;
+  left: 3px;
+  top: 3px;
+
+  box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
+  background: -webkit-linear-gradient(top, #222 0%, #45484d 100%);
+}
+
+.midiActivity label::after {
+  opacity: 0;
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+
+  border-radius: 50px;
+  top: 1px;
+  left: 1px;
+
+  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+  background: -webkit-linear-gradient(top, #00bf00 0%, #009400 100%);
+}
+
+.midiActivity input[type=checkbox]:checked + label::after {
+  opacity: 1;
 }
 
 /* Landscape phones and down */
