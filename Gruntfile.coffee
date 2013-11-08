@@ -450,7 +450,6 @@ module.exports = (grunt) ->
     'concurrent:server'
     'autoprefixer'
     'connect:livereload'
-    'watch'
     'open'
     'karma:e2e-watch'
   ]
