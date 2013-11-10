@@ -1,20 +1,24 @@
 describe('Controller: MainCtrl', function () {
   'use strict';
-  var scope, backend;
+  var scope, messageMiddleware;
 
   // load the controller's module
   beforeEach(module('oscmodulatorApp'));
 
   beforeEach(inject(function($rootScope, $controller) {
     scope = $rootScope.$new();
-    backend = {
+    messageMiddleware = {
       init:function(){}
     };
 
-    $controller('MainCtrl', {$scope: scope, backend: backend});
+    spyOn(messageMiddleware, 'init');
+
+    $controller('MainCtrl', {$scope: scope, messageMiddleware: messageMiddleware});
   }));
 
-  // TODO Should we test that the backend service is initialized?
+  it('should initialize the messageMiddleware service.', function(){
+    expect(messageMiddleware.init).toHaveBeenCalled();
+  });
 
   it('should toggle the OSC Host panel.', function(){
     expect(scope.hideOSCPanel).toBe(true);

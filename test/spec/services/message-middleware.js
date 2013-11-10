@@ -1,4 +1,4 @@
-describe('Service: backend', function () {
+describe('Service: messageMiddleware', function () {
   'use strict';
   var backend, rootScope, midiMock;
 
@@ -15,8 +15,8 @@ describe('Service: backend', function () {
       $provide.value('midi', midiMock);
     });
 
-    inject(function (_backend_, $rootScope) {
-      backend = _backend_;
+    inject(function (_messageMiddleware_, $rootScope) {
+      backend = _messageMiddleware_;
       rootScope = $rootScope;
     });
   });
@@ -48,7 +48,7 @@ describe('Service: backend', function () {
     }]);
 
     spyOn(midiMock, 'on');
-    backend.setMidiInput(inputConfig.inputs[0].id);
+    backend.setMidiInput(inputConfig.inputs[1].id);
 
     expect(midiMock.on.calls[0].args[0]).toBe('/midi1/:/note/63', 'The path should have been called correctly.');
   }));

@@ -47,9 +47,9 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) 
   /**
    * Keep the hosts list in sync with the oscHosts list.
    * TODO Need to validate that the host name is unique and prompt the user if it is not.
-   * TODO Should we only add items to the ids list if they have a valid name, address and port?
-   * TODO Make sure that host names are unique.
-   * TODO Update the backend service when a new host is ready to be used.
+   * TODO Only add items to the ids list if they have a valid name, address and port.
+   * TODO Update the messageMiddleware service when a new host is ready to be used.
+   * TODO Can we remove this in favor of the list of objects?
    */
   service.$watch('hosts', function(){
     var j;

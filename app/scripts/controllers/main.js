@@ -1,7 +1,7 @@
 /**
  * The main controller is used to bootstrap our application and handle top level application control.
  */
-angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $timeout, backend, inputConfig) {
+angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $timeout, messageMiddleware, inputConfig) {
   'use strict';
 
   // Make the inputConfig accessible to the DOM.
@@ -32,5 +32,5 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $time
     }, 100);
   });
 
-  backend.init();
+  messageMiddleware.init();
 });

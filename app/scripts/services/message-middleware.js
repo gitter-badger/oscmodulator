@@ -4,7 +4,7 @@
  * TODO Rename this class to message-middleware.
  * TODO Rename all directives and services to use ClassName style capitalization?
  */
-angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, inputConfig) {
+angular.module('oscmodulatorApp').factory('messageMiddleware', function($rootScope, midi, inputConfig, $log) {
   'use strict';
   var backend, midiRouteName, midiChannel;
 
@@ -17,7 +17,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
   midiChannel = ':';
 
   /**
-   * Initialize the backend and any services used by the backend.
+   * Initialize the messageMiddleware and any services used by the messageMiddleware.
    */
   backend.init = function(){
     midi.connect();
@@ -29,42 +29,23 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    * @param note The note name to listen for. ex: c3
    */
   backend.getPath = function(channel, note){
-    var i, list, path;
-
-    path = '';
-
-    list = [];
-    list.push(midiRouteName);
-    list.push(channel);
-    list.push('note');
-    list.push(note);
-
-    for(i = 0; i < list.length; i++){
-      path += '/' + list[i];
-    }
-
-    return path;
+    return ['', midiRouteName, channel, 'note', note].join('/');
   };
 
   /**
-   * Create a new input on the backend.
+   * Create a new input on the messageMiddleware.
    */
   backend.setMidiInput = function(id){
-    var path, index, note;
+    var path, note;
 
-    console.log('Creating new backend input: ' + id.input);
+    $log.info('Creating new messageMiddleware input: ' + id.input);
 
-    index = inputConfig.findInputIndex(id);
-    note = inputConfig.inputs[index].midi.note;
+    note = inputConfig.inputs[id.input].midi.note;
     path = backend.getPath(midiChannel, note);
-
-    // If this input has already registered a listener, remove it.
-    // TODO How do we do this? I don't really understand the legato coffee script but should we extend legato to add
-    // a method for removing midi listeners from its 'closet'?
 
     // Configure a new note listener for the specified config.
     midi.on(path, function(){
-      console.log('Backend midi input callback, Jack!');
+      $log.info('Backend midi input callback, Jack!');
     });
   };
 
@@ -74,7 +55,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    * @param muted True = input is muted.
    */
   backend.muteInput = function(inputId, muted){
-    console.log('Updating mute for input ' + inputId.input + ': ' + muted);
+    $log.info('Updating mute for input ' + inputId.input + ': ' + muted);
     // TODO Test this method.
   };
 
@@ -84,7 +65,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    * @param solo True = input is soloed.
    */
   backend.soloInput = function(inputId, solo){
-    console.log('Updating solo for input ' + inputId.input + ': ' + solo);
+    $log.info('Updating solo for input ' + inputId.input + ': ' + solo);
     // TODO Test this method.
   };
 
@@ -93,7 +74,8 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    * @param inputId The id of the input to be removed.
    */
   backend.removeInput = function(inputId){
-    console.log('Removing input ' + inputId.input);
+    $log.info('Removing input ' + inputId.input);
+    // TODO How do we remove the correct callback if the midi note is used in two inputs?
     // TODO Test this method.
   };
 
@@ -110,7 +92,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
   backend.setOSCOutput = function(config){
     // TODO Test this method.
     // TODO Should we just pass the id into this method and do a direct lookup?
-    console.log('Set OSC Output: ' + config.id.input + '|' + config.id.output);
+    $log.info('Set OSC Output: ' + config.id.input + '|' + config.id.output);
   };
 
   /**
@@ -119,7 +101,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
    */
   backend.removeOSCOutput = function(id){
     // TODO Test this method.
-    console.log('Remove OSC Output: ' + id.input + '|' + id.output);
+    $log.info('Remove OSC Output: ' + id.input + '|' + id.output);
   };
 
   /**
@@ -131,7 +113,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
   backend.setOSCPath = function(id, path){
     // TODO Test this method.
     // TODO Should we just pass the id into this method and do a direct lookup?
-    console.log('Set OSC Path: ' + id.input + '|' + id.output + ', path: ' + path);
+    $log.info('Set OSC Path: ' + id.input + '|' + id.output + ', path: ' + path);
   };
 
   /**
@@ -142,7 +124,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
   backend.setOSCHost = function(id, host){
     // TODO Test this method.
     // TODO Should we just pass the id into this method and do a direct lookup?
-    console.log('Set OSC Host: ' + id.input + '|' + id.output + ', host: ' + host);
+    $log.info('Set OSC Host: ' + id.input + '|' + id.output + ', host: ' + host);
   };
 
   /**
@@ -153,7 +135,7 @@ angular.module('oscmodulatorApp').factory('backend', function($rootScope, midi, 
   backend.setOSCParameters = function(id, params){
     // TODO Test this method.
     // TODO Should we just pass the id into this method and do a direct lookup?
-    console.log('Set OSC Parameters: ' + id.input + '|' + id.output + ', params: ' + params);
+    $log.info('Set OSC Parameters: ' + id.input + '|' + id.output + ', params: ' + params);
   };
 
   return backend;
