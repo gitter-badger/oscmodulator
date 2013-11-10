@@ -432,8 +432,6 @@ module.exports = (grunt) ->
     'karma:unit-ci'
   ]
 
-  # TODO The code coverage makes it hard to read the scripts during debugging. Can we make the code coverage
-  # run after the unit tests run or move the coverage into a separate task?
   grunt.registerTask 'unit-watch', [
     'unit-prep'
     'karma:unit-watch'
