@@ -7,7 +7,7 @@
             </select>
         </div>
         <div class="rightCol">
-            <button class="btn removeOSCOutput" type="button" title="Remove OSC Output" ng-click="removeOSCOutput()">
+            <button class="btn removeOSCOutput" name="removeOSCOutput" type="button" title="Remove OSC Output" ng-click="removeMe()">
                 <i class="icon-remove"></i>
             </button>
         </div>
@@ -19,9 +19,10 @@
     <div class="oscParameterList">
         <!--<div class="oscParameters">-->
             <div class="inline-input-append oscParam" name="oscParam"
-                 ng-repeat="(key, parameter) in config.parameters">
+                 ng-repeat="(key, parameter) in parameterInputs">
                 <input class="input-mini oscParamInput" type="text" name="param{{ key }}"
                        placeholder="Param {{key + 1}}" ng-model="parameter.value"
+                       ng-minlength="1" ng-change="parametersChanged()"
                ><button class="btn oscParamRemove" type="button" ng-click="removeOSCParameter(key)"
                         name="removeOSCParam{{ key }}" title="Remove OSC Parameter">
                     <i class="icon-remove"></i>

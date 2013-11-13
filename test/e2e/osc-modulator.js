@@ -108,6 +108,18 @@ describe('e2e: OSC Modulator', function () {
     expect(element('div.midiInput').count()).toBe(0);
   });
 
+  it('should be possible to add an OSC output.', function(){
+    expect(element('div[name=oscOutputItem]').count()).toBe(1);
+    element('button[name=addOSCOutput]').click();
+    expect(element('div[name=oscOutputItem]').count()).toBe(2);
+  });
+
+  it('should be possible to remove an OSC output.', function(){
+    expect(element('div[name=oscOutputItem]').count()).toBe(1);
+    element('button[name=removeOSCOutput]').click();
+    expect(element('div[name=oscOutputItem]').count()).toBe(0);
+  });
+
   it('should start with no OSC parameters.', function(){
     expect(element('input.oscParamInput').count()).toBe(0);
   });

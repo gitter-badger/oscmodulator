@@ -284,6 +284,7 @@ select.oscHost
 .midiInput
 {
     border-top: 1px solid #aaa;
+    background-color: #ccc;
 }
 
 .input-row:nth-child(odd) .midiInput
@@ -304,7 +305,6 @@ select.oscHost
 
 .midiInputHeader
 {
-    /*background-color: #ccc;*/
     padding-top: 5px;
     padding-bottom: 5px;
 }
