@@ -1,7 +1,7 @@
 oscmodulator
 ============
 
-[![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator])
+[![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator)
 
 Modulate Anything!
 
