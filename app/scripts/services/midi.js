@@ -18,12 +18,12 @@ angular.module('oscmodulatorApp').factory('midi', function($rootScope, legato) {
 //        return console.log(this.path + ' - ' + this.val);
 //      });
 
-//      L.on('/midi1/', function() {
+//      L.on('/midi1/:/:/:', function() {
 //        return console.log(this.path + ' - ' + this.val);
 ////        return console.log(this.path, this.val);
 //      });
 
-      L.on('/midi1/:/note/:', function() {
+      L.on('/:/:/:/:', function() {
         $rootScope.$broadcast('midi:activity');
         console.log(this.path + ' - ' + this.val);
       });

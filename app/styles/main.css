@@ -7,6 +7,8 @@
 html
 {
     background-color: #555;
+    background-image: url('../img/logo.png');
+    /*background-attachment: ;*/
 }
 
 select, input
@@ -51,22 +53,21 @@ select, input
 }
 
 /* OSC Host Config */
-.configPanel
+.configForm
 {
     padding: 10px 10px 5px 10px;
     position: relative;
 }
 
-.oscPanel
+.configPanel
 {
-    margin-top: 40px;
     z-index: 90;
     background-color: #92A7B4;
     background-image: url('../img/blue-stripe.png');
     box-shadow: 0 0 20px 6px #6F8491 inset;
 }
 
-.oscPanel h2
+.configPanel h2
 {
     color: #657F8F;
     font-size: 60px;
@@ -76,11 +77,16 @@ select, input
     margin-left: 10px;
 }
 
-.oscHostName, .oscHostAddress, .oscHostPort, .oscPanel, .configPanel, .configRow, .configItem, .configItem input
+.oscHostName, .oscHostAddress, .oscHostPort, .oscPanel, .configForm, .configPanel, .configRow, .configItem, .configItem input
 {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+.oscPanel
+{
+    margin-top: 40px;
 }
 
 .configRow

@@ -1,9 +1,9 @@
 <div>
     <div class="configForm">
-        <h2>OSC Hosts</h2>
-        <div ng-repeat="(key, host) in oscHostConfig.hosts">
+        <h2>MIDI Ports</h2>
+        <div ng-repeat="(key, host) in midiPortConfig.ports">
             <div class="configRow">
-                <!-- Funny spacing to make sure no space characters appear between inputs. -->
+                <!-- Funny formatting to make sure no space characters appear between inputs. -->
                 <div class="configItem oscHostName"><input
                         name="oscHostName" type="text" placeholder="Name" ng-model="host.name"></div
                         ><div class="configItem oscHostAddress"><input
@@ -17,8 +17,5 @@
                 </button>
             </div>
         </div>
-    </div>
-    <div class="oscHostCommands">
-        <button name="addOSCHost" class="btn" ng-click="oscHostConfig.addOSCHost()"><icon class="icon-plus"></icon> OSC Host</button>
     </div>
 </div>
