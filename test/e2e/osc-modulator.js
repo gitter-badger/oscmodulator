@@ -163,24 +163,42 @@ describe('e2e: OSC Modulator', function () {
   });
 
   it('should be possible to add OSC Host configurations.', function(){
-    expect(element('div.configRow').count()).toBe(1);
+    expect(element('.oscPanel div.configRow').count()).toBe(1);
 
     element('button[name=addOSCHost]').click();
 
-    expect(element('div.configRow').count()).toBe(2);
+    expect(element('.oscPanel div.configRow').count()).toBe(2);
   });
 
   it('should be possible to remove OSC Host configurations.', function(){
-    expect(element('div.configRow').count()).toBe(1);
+    expect(element('.oscPanel div.configRow').count()).toBe(1);
 
     element('button[name=addOSCHost]').click();
     element('button[name=addOSCHost]').click();
 
-    expect(element('div.configRow').count()).toBe(3);
+    expect(element('.oscPanel div.configRow').count()).toBe(3);
 
     element('button[name=removeConfigItem1]').click();
 
-    expect(element('div.configRow').count()).toBe(2);
+    expect(element('.oscPanel div.configRow').count()).toBe(2);
+  });
+
+  it('should be possible to expand the Midi Port panel.', function(){
+    expect(element('div.midiPanel').height()).toBeLessThan(1);
+
+    element('button[name=showMidiPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.2);
+
+    expect(element('div.midiPanel').height()).toBeGreaterThan(1);
+
+    element('button[name=showMidiPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.5);
+
+    expect(element('div.midiPanel').height()).toBeLessThan(1);
   });
 
   // TODO Test adding a host and verifying that it shows up in the list of hosts for an OSC Output row.

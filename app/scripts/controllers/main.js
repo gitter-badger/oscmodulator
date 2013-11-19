@@ -16,8 +16,9 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $time
   $scope.toggleOSCPanel = function(){
     $scope.hideOSCPanel = !$scope.hideOSCPanel;
 
-    if(!$scope.hideMIDIPanel)
+    if(!$scope.hideMIDIPanel){
       $scope.hideMIDIPanel = true;
+    }
   };
 
   // Shows and hides the MIDI Config panel.
@@ -29,8 +30,9 @@ angular.module('oscmodulatorApp').controller('MainCtrl', function ($scope, $time
   $scope.toggleMIDIPanel = function(){
     $scope.hideMIDIPanel = !$scope.hideMIDIPanel;
 
-    if(!$scope.hideOSCPanel)
+    if(!$scope.hideOSCPanel){
       $scope.hideOSCPanel = true;
+    }
   };
 
   //TODO This will be moving to a directive

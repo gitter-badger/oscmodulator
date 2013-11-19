@@ -7,8 +7,6 @@
 html
 {
     background-color: #555;
-    background-image: url('../img/logo.png');
-    /*background-attachment: ;*/
 }
 
 select, input
@@ -27,7 +25,6 @@ select, input
 /* Title */
 .title
 {
-    background-color: #555;
     z-index: -100;
     position: fixed;
     margin-top: 2px;
@@ -38,6 +35,22 @@ select, input
 {
     margin-top: 0;
     font-size: 100px;
+}
+
+/* Logo */
+.logo
+{
+    background-color: transparent;
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: -101;
+}
+
+.logo img
+{
+    width: 99px;
+    height: 50px;
 }
 
 /* Header */
@@ -109,18 +122,18 @@ select, input
     width: 30%;
 }
 
-.configItem
+.oscPanel .configItem
 {
     display: inline-block;
     border-right: 5px solid transparent;
 }
 
-.configItem:last-child
+.oscPanel .configItem:last-child
 {
     padding-right: 40px;
 }
 
-.configItem input
+.oscPanel .configItem input
 {
     width: 100%;
     margin: 0;
@@ -137,6 +150,17 @@ select, input
     position: absolute;
     right: 10px;
     margin-top: -35px;
+}
+
+.midiPanel input
+{
+    margin: 0 10px 0 0;
+}
+
+.midiPanel label
+{
+    display: inline;
+    color: white;
 }
 
 /* Input items*/

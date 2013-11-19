@@ -1,20 +1,12 @@
 <div>
     <div class="configForm">
         <h2>MIDI Ports</h2>
-        <div ng-repeat="(key, host) in midiPortConfig.ports">
+        <div ng-repeat="(key, port) in midiPortConfig.ports">
             <div class="configRow">
                 <!-- Funny formatting to make sure no space characters appear between inputs. -->
-                <div class="configItem oscHostName"><input
-                        name="oscHostName" type="text" placeholder="Name" ng-model="host.name"></div
-                        ><div class="configItem oscHostAddress"><input
-                    name="oscHostAddress" type="text" placeholder="Address" ng-model="host.address"></div
-                    ><div class="configItem oscHostPort"><input
-                    name="oscHostPort" type="text" placeholder="Port" ng-model="host.port"></div>
-            </div>
-            <div class="removeConfigItem">
-                <button name="removeConfigItem{{ key }}" class="btn" ng-click="oscHostConfig.removeOSCHost(key)">
-                    <icon class="icon-remove"></icon>
-                </button>
+                <div class="configItem midiPort"><input id="midiPort{{key}}"
+                    name="midiPortEnabled" type="checkbox" ng-model="port.enabled"><label
+                    name="midiPortName" for="midiPort{{key}}">{{port.name}}</label></div>
             </div>
         </div>
     </div>

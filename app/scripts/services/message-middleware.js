@@ -1,7 +1,6 @@
 /**
  * The backend service is used to communicate between the javascript UI running
  * in the browser and the code running outside of the browser (Node or C code).
- * TODO Interact with the legato class directly.
  */
 angular.module('oscmodulatorApp').factory('messageMiddleware', function($rootScope, legato, inputConfig, $log) {
   'use strict';
