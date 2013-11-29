@@ -208,12 +208,13 @@ button.midiNoteType
 .midiNote
 {
     width: 30px;
+    margin-right: 5px;
 }
 
 .container3Col.midiInputHeader .centerCol
 {
     margin-left: 60px;
-    margin-right: 288px;
+    margin-right: 425px;
 }
 
 .container3Col.midiInputHeader
@@ -247,6 +248,18 @@ button.midiNoteType
 }
 
 select.midiNoteType
+{
+    width: 76px;
+    margin-right: 5px;
+}
+
+select.midiChannel
+{
+    width: 50px;
+    margin-right: 5px;
+}
+
+select.midiPort
 {
     width: 76px;
 }

@@ -10,6 +10,57 @@ describe('Service: inputConfig', function () {
     inputConfig = _inputConfig_;
   }));
 
+  it('should be able to validate the properties of an object,', function(){
+    var emptyInput = {},
+      invalidInput = {
+        string:false,
+        number:'b',
+        boolean:5,
+        object:true,
+        array:{}
+      },
+      validInput = {
+        string:'c',
+        number:10,
+        boolean:false,
+        object:{name:'foo'},
+        array:['bar','baz']
+      },
+      rules = {
+        string:{type:'string', default:'a'},
+        number:{type:'number', default:1},
+        boolean:{type:'boolean', default:true},
+        object:{type:'object', default:{}},
+        array:{type:'array', default:[]}
+      };
+
+    inputConfig.validate(emptyInput, rules);
+
+    expect(emptyInput.string).toBe('a');
+    expect(emptyInput.number).toBe(1);
+    expect(emptyInput.boolean).toBe(true);
+    expect(emptyInput.object).toEqual({});
+    expect(emptyInput.object).not.toBe(rules.object, 'The input should receive a fresh object.');
+    expect(emptyInput.array).toEqual([]);
+    expect(emptyInput.array).not.toBe(rules.array, 'The input should receive a fresh array.');
+
+    inputConfig.validate(invalidInput, rules);
+
+    expect(invalidInput.string).toBe('a');
+    expect(invalidInput.number).toBe(1);
+    expect(invalidInput.boolean).toBe(true);
+    expect(invalidInput.object).toEqual({});
+    expect(invalidInput.array).toEqual([]);
+
+    inputConfig.validate(validInput, rules);
+
+    expect(validInput.string).toBe('c');
+    expect(validInput.number).toBe(10);
+    expect(validInput.boolean).toBe(false);
+    expect(validInput.object).toEqual({name:'foo'});
+    expect(validInput.array).toEqual(['bar','baz']);
+  });
+
   it('should be able to validate an output configuration.', function(){
     var config = {
       host:1,
@@ -44,34 +95,19 @@ describe('Service: inputConfig', function () {
     expect(config.solo).toBe(false, 'The solo state should have been reset.');
     expect(config.mute).toBe(false, 'The mute state should have been reset.');
     expect(config.midi.note).toBeNull('The midi note should have been reset.');
-    expect(config.midi.type).toBe('on', 'The midi note event should have been reset.');
+    expect(config.midi.type).toBe('note', 'The midi note event should have been reset.');
     expect(config.outputs).toEqual({}, 'The outputs should have been reset.');
   });
 
-  it('should be able to create a default output.', function(){
-    var output = inputConfig.initOutput({});
-
-    expect(output.path).toBeNull('The path property should exist and be null.');
-    expect(output.host).toBeNull('The host property should exist and be null.');
-    expect(output.parameters).toBeDefined('The parameter list should exist.');
-    expect(output.parameters.length).toBe(0, 'The parameters should be empty by default.');
-  });
-
-  it('should be able to create a default input.', function(){
-    var input = inputConfig.initInput({});
-
-    expect(input.name).toBeNull('The name property should exist and be null.');
-    expect(input.collapsed).toBe(false, 'The input should be open by default.');
-    expect(input.solo).toBe(false, 'The input should not be soloed by default.');
-    expect(input.mute).toBe(false, 'The input should not be muted by default.');
-    expect(input.midi).toBeDefined('The input should have a midi object.');
-    expect(input.midi.note).toBeNull('The input should have a midi note property that is empty.');
-    expect(input.midi.type).toBe('on', 'The input should react to note on events by default.');
-    expect(input.outputs).toBeDefined('The input should have an output object by default.');
+  it('should default to one input.', function(){
+    expect(Object.keys(inputConfig.inputs).length).toBe(1, 'One input should exist by default.');
+    expect(inputConfig.inputs[1]).not.toBeNull('The default input should have an id.');
+    expect(inputConfig.inputs[1].id.input).toBe(1, 'The default input id should be the number of inputs created.');
+    expect(Object.keys(inputConfig.inputs[1].outputs).length).toBe(1, 'It should have a default output.');
   });
 
   it('should be able to add a default output to an input object.', function(){
-    inputConfig.inputs[1] = inputConfig.initInput({});
+    inputConfig.inputs[1] = inputConfig.validateInput({});
     inputConfig.inputs[1].id = {input:1};
 
     var id = inputConfig.addOutput({input:1});
@@ -83,7 +119,7 @@ describe('Service: inputConfig', function () {
       .toBe(id, 'The id of the new input should be returned.');
   });
 
-  it('should be able to add a default input to the inputConfig.', function(){
+  it('should be able to add a blank input to the inputConfig.', function(){
     expect(Object.keys(inputConfig.inputs).length).toBe(1, 'It should start with a single input.');
 
     var id = inputConfig.addInput();
@@ -95,13 +131,6 @@ describe('Service: inputConfig', function () {
     expect(Object.keys(inputConfig.inputs[2].outputs).length).toBe(1, 'It should have created a default output.');
     expect(inputConfig.inputs[2].outputs[2].host).toBeNull('The host property on this input/output should exist.');
     expect(inputConfig.inputs[2].id).toBe(id, 'The id of the input created should be returned.');
-  });
-
-  it('should default to one input.', function(){
-    expect(Object.keys(inputConfig.inputs).length).toBe(1, 'One input should exist by default.');
-    expect(inputConfig.inputs[1]).not.toBeNull('The default input should have an id.');
-    expect(inputConfig.inputs[1].id.input).toBe(1, 'The default input id should be the number of inputs created.');
-    expect(Object.keys(inputConfig.inputs[1].outputs).length).toBe(1, 'It should have a default output.');
   });
 
   it('should be able to add configured inputs.', function(){

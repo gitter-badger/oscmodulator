@@ -1,6 +1,8 @@
 describe('Directive: inputList', function () {
   'use strict';
-  var element, template, parentScope, isolatedScope, inputConfigMock, backendMock, defaultInputs, swapBackend, swapInputConfig;
+  var element, template, parentScope, isolatedScope, inputConfigMock,
+    messageMiddlewareMock, defaultInputs, swapMessageMiddleware, swapInputConfig,
+    swapMidiPortConfig, midiPortConfigMock;
 
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/input-list.html'));
@@ -18,8 +20,16 @@ describe('Directive: inputList', function () {
         mute:false,
         solo:false,
         midi:{
-          note:'c3',
-          type:'on'
+          name: 'c3',
+          note: 36,
+          type:'on',
+          port:{
+            name:'All',
+            id: '/:',
+            index: null,
+            enabled: true
+          },
+          channel: 'All'
         },
         outputs:{
           1:{
@@ -35,11 +45,15 @@ describe('Directive: inputList', function () {
       }
     };
 
-    swapBackend();
+    swapMessageMiddleware();
+    swapMidiPortConfig();
   });
 
-  swapBackend = function(){
-    backendMock = {
+  swapMessageMiddleware = function(){
+    messageMiddlewareMock = {
+      availableMidiPorts: {
+        inputs: ['a','b']
+      },
       setMidiInput: function(){},
       removeInput: function(){},
       setOSCOutput: function(){},
@@ -47,7 +61,36 @@ describe('Directive: inputList', function () {
     };
 
     module(function($provide){
-      $provide.value('messageMiddleware', backendMock);
+      $provide.value('messageMiddleware', messageMiddlewareMock);
+    });
+  };
+
+  swapMidiPortConfig = function(){
+    var portA = {
+      name:'a',
+      id: '/a',
+      index: 0,
+      enabled: true
+    }, portB = {
+      name:'b',
+      id:'/b',
+      index:1,
+      enabled:false
+    }, portAll = {
+      name:'All',
+      id:'/:',
+      index:null,
+      enabled:true
+    };
+
+    midiPortConfigMock = {
+      ports: [portA,portB],
+      enabledPorts: [portAll,portA],
+      defaultMidiPort: portAll
+    };
+
+    module(function($provide){
+      $provide.value('midiPortConfig', midiPortConfigMock);
     });
   };
 
@@ -84,17 +127,17 @@ describe('Directive: inputList', function () {
     inject(function($rootScope, $compile){
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setMidiInput');
+      spyOn(messageMiddlewareMock, 'setMidiInput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setMidiInput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
 
       parentScope.$broadcast('input:midi:add', {input:1});
 
-      expect(backendMock.setMidiInput).toHaveBeenCalledWith({input:1});
+      expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith({input:1});
     });
   });
 
@@ -104,17 +147,17 @@ describe('Directive: inputList', function () {
     inject(function($rootScope, $compile){
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setMidiInput');
+      spyOn(messageMiddlewareMock, 'setMidiInput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setMidiInput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
 
       parentScope.$broadcast('input:midi:update', {input:1});
 
-      expect(backendMock.setMidiInput).toHaveBeenCalledWith({input:1});
+      expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith({input:1});
     });
   });
 
@@ -124,19 +167,19 @@ describe('Directive: inputList', function () {
     inject(function($rootScope, $compile){
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'removeInput');
+      spyOn(messageMiddlewareMock, 'removeInput');
       spyOn(inputConfigMock, 'removeInput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.removeInput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.removeInput).not.toHaveBeenCalled();
       expect(inputConfigMock.removeInput).not.toHaveBeenCalled();
 
       parentScope.$broadcast('input:midi:remove', {input:1});
 
-      expect(backendMock.removeInput).toHaveBeenCalledWith({input:1});
+      expect(messageMiddlewareMock.removeInput).toHaveBeenCalledWith({input:1});
       expect(inputConfigMock.removeInput).toHaveBeenCalledWith({input:1});
     });
   });
@@ -189,13 +232,13 @@ describe('Directive: inputList', function () {
 
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setOSCOutput');
+      spyOn(messageMiddlewareMock, 'setOSCOutput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setOSCOutput).toHaveBeenCalledWith({input:1, output:1});
+      expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith({input:1, output:1});
     });
   });
 
@@ -205,16 +248,17 @@ describe('Directive: inputList', function () {
     inject(function($compile, $rootScope){
       inputConfigMock.inputs = defaultInputs;
       inputConfigMock.inputs[1].midi.note = null;
+      inputConfigMock.inputs[1].midi.name = null;
 
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setOSCOutput');
+      spyOn(messageMiddlewareMock, 'setOSCOutput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setOSCOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
     });
   });
 
@@ -223,42 +267,43 @@ describe('Directive: inputList', function () {
 
     parentScope = $rootScope.$new();
 
-    spyOn(backendMock, 'setOSCOutput');
-    spyOn(backendMock, 'removeOutput');
+    spyOn(messageMiddlewareMock, 'setOSCOutput');
+    spyOn(messageMiddlewareMock, 'removeOutput');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(backendMock.setOSCOutput).toHaveBeenCalled();
-    expect(backendMock.removeOutput).not.toHaveBeenCalled();
+    expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalled();
+    expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
 
     inputConfig.inputs[1].outputs[1].path = '/new/path';
     inputConfig.$apply();
 
-    expect(backendMock.setOSCOutput.calls.length).toBe(2, 'The messageMiddleware should be updated when the output path changes.');
-    expect(backendMock.removeOutput).toHaveBeenCalledWith({input:1, output:1});
+    expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(2, 'The messageMiddleware should be updated when the output path changes.');
+    expect(messageMiddlewareMock.removeOutput).toHaveBeenCalledWith({input:1, output:1});
   }));
 
   it('should not update the messageMiddleware if outputs are modified on an invalid input.',
     inject(function($compile, $rootScope, inputConfig){
       inputConfig.inputs = defaultInputs;
       inputConfig.inputs[1].midi.note = null;
+      inputConfig.inputs[1].midi.name = null;
 
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setOSCOutput');
+      spyOn(messageMiddlewareMock, 'setOSCOutput');
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setOSCOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
 
       inputConfig.inputs[1].outputs[1].path = '/new/path';
       inputConfig.$apply();
 
-      expect(backendMock.setOSCOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
     })
   );
 
@@ -267,41 +312,42 @@ describe('Directive: inputList', function () {
 
     parentScope = $rootScope.$new();
 
-    spyOn(backendMock, 'removeOutput');
+    spyOn(messageMiddlewareMock, 'removeOutput');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(backendMock.removeOutput).not.toHaveBeenCalled();
+    expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
 
     $rootScope.$broadcast('output:osc:remove', {input:1,output:1});
 
-    expect(backendMock.removeOutput).toHaveBeenCalledWith({input:1,output:1});
+    expect(messageMiddlewareMock.removeOutput).toHaveBeenCalledWith({input:1,output:1});
   }));
 
   it('should not update the messageMiddleware if outputs are removed from invalid inputs but should update the input config.',
     inject(function($compile, $rootScope, inputConfig){
       inputConfig.inputs = defaultInputs;
       inputConfig.inputs[1].midi.note = null;
+      inputConfig.inputs[1].midi.name = null;
 
       parentScope = $rootScope.$new();
 
-      spyOn(backendMock, 'setOSCOutput');
-      spyOn(backendMock, 'removeOutput');
+      spyOn(messageMiddlewareMock, 'setOSCOutput');
+      spyOn(messageMiddlewareMock, 'removeOutput');
       spyOn(inputConfig, 'removeOutput').andCallThrough();
 
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(backendMock.setOSCOutput).not.toHaveBeenCalled();
-      expect(backendMock.removeOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
       expect(inputConfig.removeOutput).not.toHaveBeenCalled();
 
       $rootScope.$broadcast('output:osc:remove', {input:1, output:1});
 
-      expect(backendMock.removeOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
       expect(inputConfig.removeOutput).toHaveBeenCalledWith({input:1, output:1});
     })
   );

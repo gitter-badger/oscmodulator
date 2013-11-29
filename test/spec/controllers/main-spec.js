@@ -1,6 +1,6 @@
 describe('Controller: MainCtrl', function () {
   'use strict';
-  var scope, messageMiddleware;
+  var scope, messageMiddleware, midiPortConfig;
 
   // load the controller's module
   beforeEach(module('oscmodulatorApp'));
@@ -8,12 +8,13 @@ describe('Controller: MainCtrl', function () {
   beforeEach(inject(function($rootScope, $controller) {
     scope = $rootScope.$new();
     messageMiddleware = {
-      init:function(){}
+      init:function(){},
+      updateAvailableMidiPorts:function(){}
     };
 
     spyOn(messageMiddleware, 'init');
 
-    $controller('MainCtrl', {$scope: scope, messageMiddleware: messageMiddleware});
+    $controller('MainCtrl', {$scope: scope, messageMiddleware: messageMiddleware, midiPortConfig: midiPortConfig});
   }));
 
   it('should initialize the messageMiddleware service.', function(){
@@ -33,15 +34,21 @@ describe('Controller: MainCtrl', function () {
   });
 
   it('should toggle the MIDI Port panel.', function(){
+    spyOn(messageMiddleware, 'updateAvailableMidiPorts');
+
     expect(scope.hideMIDIPanel).toBe(true);
+    expect(messageMiddleware.updateAvailableMidiPorts).not.toHaveBeenCalled();
 
     scope.toggleMIDIPanel();
 
     expect(scope.hideMIDIPanel).toBe(false);
+    expect(messageMiddleware.updateAvailableMidiPorts).toHaveBeenCalled();
 
     scope.toggleMIDIPanel();
 
     expect(scope.hideMIDIPanel).toBe(true);
+    expect(messageMiddleware.updateAvailableMidiPorts.calls.length)
+      .toBe(1, 'The available ports should only be updated when opening the midi port config form.');
   });
 
   it('should swap the OSC Host and MIDI panels when opening both.', function(){

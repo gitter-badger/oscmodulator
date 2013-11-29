@@ -4,42 +4,86 @@
  */
 angular.module('oscmodulatorApp').factory('messageMiddleware', function($rootScope, legato, inputConfig, $log) {
   'use strict';
-  var service, midiRouteName, midiChannel;
 
-  service = {};
+  var service;
 
-  // TODO Configure these somehow.
-  // Is the midiRouteName just an arbitrary identifier for the port we're listening on?
-  // Do we want to allow the channel to be configured as part of the midi input directive?
-  midiRouteName = 'midi1';
-  midiChannel = ':';
+  service = $rootScope.$new();
+
+  /**
+   * The list of midi ports available to the system.
+   * @type {{inputs: Array[{String}], outputs: Array[{String}]}}
+   */
+  service.availableMidiPorts = {
+    inputs:[],
+    outputs:[]
+  };
+
+  /**
+   * The number of midi input and output ports created (used to specify ids).
+   * @type {number}
+   */
+  service.midiPortsCreated = 0;
 
   /**
    * Initialize the messageMiddleware and any services used by the messageMiddleware.
    */
   service.init = function(){
     legato.init();
+    // Initialize the midi ports
+    service.updateAvailableMidiPorts();
+  };
+
+  /**
+   * Get the list of available midi ports.
+   */
+  service.updateAvailableMidiPorts = function(){
+    service.availableMidiPorts.inputs = legato.midi.ins();
+    service.availableMidiPorts.outputs = legato.midi.outs();
+  };
+
+  /**
+   * Start listening to a midi input port.
+   * @param index {String} The name of the port to listen to.
+   * @return The id of the midi port created so it can be removed at a later point.
+   */
+  service.listenToMidiPort = function(index){
+    return legato.in(legato.midi.In(index));
+  };
+
+  /**
+   * Stop listening to a midi port.
+   * @param id {int} The id of the port returned from listenToMidiPort.
+   */
+  service.removeMidiPort = function(id){
+    legato.removeInput(id);
   };
 
   /**
    * Create a legato path string using the elements provided.
-   * @param channel The channel on which to listen. If ':' then any channel.
-   * @param note The note name to listen for. ex: c3
+   * @param portId {String} The id of the port to receive messages from.
+   * @param channel {String} The channel on which to listen. If ':' then any channel.
+   * @param noteType {String} The type of note to listen to. ex: 'note' or 'cc'
+   * @param note {String} The note name to listen for. ex: c3
    */
-  service.getPath = function(channel, note){
-    return ['', midiRouteName, channel, 'note', note].join('/');
+  service.getPath = function(portId, channel, noteType, note){
+    return [portId, channel, noteType, note].join('/');
   };
 
   /**
    * Create a new input on the messageMiddleware.
    */
   service.setMidiInput = function(id){
-    var path, note, legatoId;
+    var legatoId,
+      input = inputConfig.inputs[id.input],
+      port = input.midi.port.id,
+      note = input.midi.note,
+      noteType = input.midi.type,
+      channel = input.midi.channel === 'All' ? ':' : input.midi.channel,
+      path = service.getPath(port, channel, noteType, note);
 
-    $log.info('Creating new messageMiddleware input: ' + id.input);
-
-    note = inputConfig.inputs[id.input].midi.note;
-    path = service.getPath(midiChannel, note);
+    if(input.routeId !== undefined && input.routeId !== null){
+      legato.removeRoute(input.routeId);
+    }
 
     // Configure a new note listener for the specified config.
     legatoId = legato.on(path, function(){
@@ -47,7 +91,7 @@ angular.module('oscmodulatorApp').factory('messageMiddleware', function($rootSco
     });
 
     // Store the legato id so we can use it later.
-    inputConfig.inputs[id.input].legatoId = legatoId;
+    inputConfig.inputs[id.input].routeId = legatoId;
   };
 
   /**
@@ -75,9 +119,8 @@ angular.module('oscmodulatorApp').factory('messageMiddleware', function($rootSco
    * @param inputId The id of the input to be removed.
    */
   service.removeInput = function(inputId){
-    $log.info('Removing input ' + inputId.input);
-    // TODO How do we remove the correct callback if the midi note is used in two inputs?
-    // TODO Test this method.
+    legato.removeRoute(inputConfig.inputs[inputId.input].routeId);
+    inputConfig.inputs[inputId.input].routeId = null;
   };
 
   /**

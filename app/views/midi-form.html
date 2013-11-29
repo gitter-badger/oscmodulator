@@ -5,7 +5,8 @@
             <div class="configRow">
                 <!-- Funny formatting to make sure no space characters appear between inputs. -->
                 <div class="configItem midiPort"><input id="midiPort{{key}}"
-                    name="midiPortEnabled" type="checkbox" ng-model="port.enabled"><label
+                    name="midiPortEnabled" type="checkbox" ng-model="port.enabled"
+                    ng-change="midiPortConfig.toggleMidiInput(key)"><label
                     name="midiPortName" for="midiPort{{key}}">{{port.name}}</label></div>
             </div>
         </div>

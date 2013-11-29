@@ -73,29 +73,6 @@ describe('Directive: oscOutput', function () {
     });
   };
 
-  it('should provide reasonable defaults to scope properties if none are passed.', inject(function($compile, $rootScope){
-    parentScope = $rootScope.$new();
-    parentScope.osc = {
-      id: {
-        input: 1,
-        output: 1
-      }
-    };
-
-    // Compile the DOM into an Angular view using using our test scope.
-    element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
-
-    expect(isolatedScope.config.host).toBeNull('The default host should be un-configured.');
-    expect(isolatedScope.config.path).toBeNull('The default path should be un-configured.');
-    expect(isolatedScope.config.parameters).toBeDefined('The default parameters list should exist.');
-    expect(isolatedScope.config.parameters.length).toBe(0, 'The default parameters list should be empty.');
-    expect(isolatedScope.config.id).toBeDefined('The input should have an id.');
-    expect(isolatedScope.config.id).toEqual({input:1, output:1}, 'The input should not modify its id.');
-    expect(isolatedScope.valid).toBe(false, 'The output should not be considered valid in its default state.');
-  }));
-
   it('should default to having no osc parameters.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;

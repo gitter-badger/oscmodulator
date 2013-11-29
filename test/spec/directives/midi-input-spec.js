@@ -1,20 +1,47 @@
 'use strict';
 
 describe('Directive: midiInput', function (){
-  var element, parentScope, isolatedScope, template, defaultConfig, backendMock, setupEventListeners;
+  var element, parentScope, isolatedScope, template, defaultConfig, messageMiddlewareMock,
+    setupEventListeners, inputConfigMock, midiPortConfigMock;
 
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/midi-input.html'));
   beforeEach(module('views/osc-output.html'));
 
   beforeEach(function(){
+    var portA = {
+      name:'a',
+      id: '/a',
+      index: 0,
+      enabled: true
+    }, portB = {
+      name:'b',
+      id:'/b',
+      index:1,
+      enabled:false
+    }, portAll = {
+      name:'All',
+      id:'/:',
+      index:null,
+      enabled:true
+    };
 
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
       '<div data-midi-input data-midi-input-config="input"></div>'
     );
 
-    backendMock = {
+    midiPortConfigMock = {
+      ports: [portA,portB],
+      enabledPorts: [portAll,portA],
+      defaultMidiPort: portAll
+    };
+
+    messageMiddlewareMock = {
+      availableMidiPorts: {
+        inputs:[],
+        outputs:[]
+      },
       setOSCParameters: function(){},
       setOSCPath: function(){},
       removeOSCOutput: function(){},
@@ -24,8 +51,14 @@ describe('Directive: midiInput', function (){
       removeInput: function(){}
     };
 
+    inputConfigMock = {
+      defaultMidiPort: portAll
+    };
+
     module(function($provide){
-      $provide.value('messageMiddleware', backendMock);
+      $provide.value('messageMiddleware', messageMiddlewareMock);
+      $provide.value('inputConfig', inputConfigMock);
+      $provide.value('midiPortConfig', midiPortConfigMock);
     });
 
     // Create a fresh scope for this test.
@@ -36,8 +69,16 @@ describe('Directive: midiInput', function (){
       mute: false,
       solo: false,
       midi: {
+        name: null,
         note: null,
-        type: 'on'
+        type: 'note',
+        port: {
+          name:'All',
+          id:'/:',
+          index: null,
+          enabled: true
+        },
+        channel: 'All'
       },
       osc: [{
         id:{input:1, output:1},
@@ -72,6 +113,24 @@ describe('Directive: midiInput', function (){
     });
   };
 
+  it('should have a map of midi note names to numbers.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.id = {input:10};
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.midiNoteMap.c0).toBe(0);
+    expect(isolatedScope.midiNoteMap['c#0']).toBe(1);
+    expect(isolatedScope.midiNoteMap.d0).toBe(2);
+    expect(isolatedScope.midiNoteMap['f#4']).toBe(54);
+    expect(isolatedScope.midiNoteMap.g10).toBe(127);
+    expect(isolatedScope.midiNoteMap['g#10']).not.toBeDefined();
+  }));
+
   it('should use the id passed from its parent.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.input = defaultConfig;
@@ -86,10 +145,24 @@ describe('Directive: midiInput', function (){
     expect(isolatedScope.config.id.input).toBe(10, 'The input should use the id value specified by the parent.');
   }));
 
+  it('should default to the All midi port.', inject(function($rootScope, $compile){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.id = {input:10};
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.port)
+      .toBe(inputConfigMock.defaultMidiPort, 'The input needs to reference the default midi port on the inputConfig.');
+  }));
+
   it('should send an update event when the midi note type changes.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.input = defaultConfig;
-    parentScope.input.midi.note = 'c7';
+    parentScope.input.midi.name = 'c7';
 
     setupEventListeners(parentScope);
 
@@ -101,11 +174,12 @@ describe('Directive: midiInput', function (){
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.type).toBe('on', 'The input should start with a midi note type of on.');
+    expect(isolatedScope.config.midi.type)
+      .toBe('note', 'The input should start with a midi note type of on.');
     expect(parentScope.add).toHaveBeenCalledWith({input:1});
     expect(parentScope.update).not.toHaveBeenCalled();
 
-    isolatedScope.config.midi.type = 'off';
+    isolatedScope.config.midi.type = 'cc';
     isolatedScope.$apply();
 
     expect(parentScope.add.calls.length).toBe(1, 'The input should only have been added once.');
@@ -148,6 +222,7 @@ describe('Directive: midiInput', function (){
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
+    expect(isolatedScope.config.midi.name).toBeNull();
     expect(isolatedScope.config.midi.note).toBeNull();
     expect(element.find('input[name=midiInNote]').val()).toBe('');
   }));
@@ -155,21 +230,102 @@ describe('Directive: midiInput', function (){
   it('should be able to configure the midi note through the scope.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.input = defaultConfig;
-    parentScope.input.midi.note = 'c7';
+    parentScope.input.midi.name = 'c0';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.note).toBe('c7');
-    expect(element.find('input[name=midiInNote]').val()).toBe('c7');
+    expect(isolatedScope.config.midi.name).toBe('c0');
+    expect(isolatedScope.config.midi.note).toBe(0);
+    expect(element.find('input[name=midiInNote]').val()).toBe('c0');
+  }));
+
+  it('should handle invalid midi note names.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.name = 'c50';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.name).toBe('c50');
+    expect(isolatedScope.config.midi.note).toBeNull();
+
+    isolatedScope.config.midi.name = 'c0';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(0);
+
+    isolatedScope.config.midi.name = null;
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+
+    isolatedScope.config.midi.name = '';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+  }));
+
+  it('should handle midi note numbers as the name.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.name = '0';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(0);
+
+    isolatedScope.config.midi.name = '75';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(75);
+
+    isolatedScope.config.midi.name = '128';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+
+    isolatedScope.config.midi.name = 'two';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBeNull();
+  }));
+
+  it('should be able to listen to any midi note number.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.name = ':';
+
+    // Compile the DOM into an Angular view using using our test scope.
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(':');
+
+    isolatedScope.config.midi.name = 'all';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(':');
+
+    isolatedScope.config.midi.name = 'any';
+    isolatedScope.$apply();
+
+    expect(isolatedScope.config.midi.note).toBe(':');
   }));
 
   it('should send update events when the midi note changes.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.input = defaultConfig;
-    parentScope.input.midi.note = 'c7';
+    parentScope.input.midi.name = 'c7';
 
     setupEventListeners(parentScope);
 
@@ -181,11 +337,11 @@ describe('Directive: midiInput', function (){
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.note).toBe('c7', 'The midi note should be set correctly to start.');
+    expect(isolatedScope.config.midi.name).toBe('c7', 'The midi note should be set correctly to start.');
     expect(parentScope.add).toHaveBeenCalledWith({input:1});
     expect(parentScope.update).not.toHaveBeenCalled();
 
-    isolatedScope.config.midi.note = 'b3';
+    isolatedScope.config.midi.name = 'b3';
     isolatedScope.$apply();
 
     expect(parentScope.add.calls.length).toBe(1, 'The input should only have been added once.');
@@ -369,10 +525,91 @@ describe('Directive: midiInput', function (){
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
   }));
 
+  it('should only be valid if note, type, port and channel are set.',
+    inject(function($compile, $rootScope){
+      parentScope = $rootScope.$new();
+      parentScope.input = defaultConfig;
+      parentScope.input.midi.note = null;
+      parentScope.input.midi.port = {name:'foo',id:'/foo',index:3,enabled:true};
+      parentScope.input.midi.channel = null;
+
+      setupEventListeners(parentScope);
+
+      spyOn(parentScope, 'add');
+
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      expect(parentScope.add).not.toHaveBeenCalled();
+
+      isolatedScope.config.midi.name = 'c3';
+      isolatedScope.$apply();
+
+      expect(parentScope.add).not.toHaveBeenCalled();
+
+      isolatedScope.config.midi.channel = '1';
+      isolatedScope.$apply();
+
+      expect(parentScope.add).not.toHaveBeenCalled();
+
+      isolatedScope.config.midi.port = midiPortConfigMock.defaultMidiPort;
+      isolatedScope.$apply();
+
+      expect(parentScope.add).toHaveBeenCalledWith({input:1});
+    }
+  ));
+
+  it('should send update events when the midi port changes.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.name = 'c3';
+
+    setupEventListeners(parentScope);
+
+    spyOn(parentScope, 'add');
+    spyOn(parentScope, 'update');
+
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(parentScope.add).toHaveBeenCalled();
+    expect(parentScope.update).not.toHaveBeenCalled();
+
+    isolatedScope.config.midi.port = midiPortConfigMock.enabledPorts[1];
+    isolatedScope.$apply();
+
+    expect(parentScope.update).toHaveBeenCalledWith({input:1});
+  }));
+
+  it('should send update events when the midi channel changes.', inject(function($compile, $rootScope){
+    parentScope = $rootScope.$new();
+    parentScope.input = defaultConfig;
+    parentScope.input.midi.name = 'c3';
+
+    setupEventListeners(parentScope);
+
+    spyOn(parentScope, 'add');
+    spyOn(parentScope, 'update');
+
+    element = $compile(template)(parentScope);
+    isolatedScope = element.scope();
+    isolatedScope.$apply();
+
+    expect(parentScope.add).toHaveBeenCalled();
+    expect(parentScope.update).not.toHaveBeenCalled();
+
+    isolatedScope.config.midi.channel = 10;
+    isolatedScope.$apply();
+
+    expect(parentScope.update).toHaveBeenCalledWith({input:1});
+  }));
+
   it('should send a remove event when it becomes invalid.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.input = defaultConfig;
-    parentScope.input.midi.note = 'c3';
+    parentScope.input.midi.name = 'c3';
 
     setupEventListeners(parentScope);
 
@@ -389,7 +626,7 @@ describe('Directive: midiInput', function (){
 
     expect(parentScope.remove).not.toHaveBeenCalled();
 
-    isolatedScope.config.midi.note = null;
+    isolatedScope.config.midi.name = null;
     isolatedScope.$apply();
 
     expect(parentScope.remove).toHaveBeenCalledWith({input:1});
