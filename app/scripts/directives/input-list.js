@@ -20,7 +20,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle midi input add events when an input becomes valid.
        */
       $scope.$on('input:midi:add', function(event, id){
-        messageMiddleware.setMidiInput(id);
+        messageMiddleware.setMidiInput(id.input);
       });
 
       /**
@@ -35,15 +35,24 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle midi update events when an input is modified.
        */
       $scope.$on('input:midi:update', function(event, id){
-        messageMiddleware.setMidiInput(id);
+        messageMiddleware.setMidiInput(id.input);
       });
 
       /**
        * Handle midi input remove requests when an input wants to be removed.
        */
-      $scope.$on('input:midi:remove', function(event, id){
+      $scope.$on('input:midi:disable', function(event, id){
+        messageMiddleware.removeInput(id.input);
+      });
+
+      /**
+       * Handle midi input remove requests when an input wants to be removed.
+       */
+      $scope.$on('input:midi:delete', function(event, id){
         // Tell the messageMiddleware before the input is removed from config.
-        messageMiddleware.removeInput(id);
+        if(inputConfig.inputs[id.input].valid){
+          messageMiddleware.removeInput(id.input);
+        }
 
         $scope.inputConfig.removeInput(id);
       });

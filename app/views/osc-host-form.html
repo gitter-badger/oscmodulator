@@ -5,11 +5,14 @@
             <div class="configRow">
                 <!-- Funny spacing to make sure no space characters appear between inputs. -->
                 <div class="configItem oscHostName"><input
-                        name="oscHostName" type="text" placeholder="Name" ng-model="host.name"></div
-                        ><div class="configItem oscHostAddress"><input
-                    name="oscHostAddress" type="text" placeholder="Address" ng-model="host.address"></div
+                    name="oscHostName" type="text" placeholder="Name"
+                    ng-change="oscHostConfig.updateOSCHost(key)" ng-model="host.name"></div
+                    ><div class="configItem oscHostAddress"><input
+                    name="oscHostAddress" type="text" placeholder="Address"
+                    ng-change="ŏscHostConfig.updateOSCHost(key)" ng-model="host.address"></div
                     ><div class="configItem oscHostPort"><input
-                    name="oscHostPort" type="text" placeholder="Port" ng-model="host.port"></div>
+                    name="oscHostPort" type="text" placeholder="Port"
+                    ng-change="oscHostConfig.updateOSCHost(key)" ng-model="host.port"></div>
             </div>
             <div class="removeConfigItem">
                 <button name="removeConfigItem{{ key }}" class="btn" ng-click="oscHostConfig.removeOSCHost(key)">

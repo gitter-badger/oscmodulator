@@ -219,6 +219,8 @@ describe('e2e: OSC Modulator', function () {
     expect(element('div.oscOutputItem select.oscHost option').count()).toBe(1);
     expect(element('div.oscOutputItem select.oscHost option').val()).toBe('');
     input('host.name').enter('live');
+    input('host.address').enter('localhost');
+    input('host.port').enter('9000');
     expect(element('input[name=oscHostName]').val()).toBe('live');
     expect(element('div.oscOutputItem select.oscHost option').count()).toBe(2);
   });

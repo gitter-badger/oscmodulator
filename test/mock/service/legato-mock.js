@@ -11,6 +11,11 @@ angular.module('oscmodulatorApp').config(function($provide){
       },
       in: function(){
         $log.info('MOCK legato.in called.');
+        ++inputsCreated;
+        return '/' + inputsCreated;
+      },
+      on: function(){
+        $log.info('MOCK legato.on called.');
         return ++routesCreated;
       },
       removeInput: function(){
@@ -22,7 +27,6 @@ angular.module('oscmodulatorApp').config(function($provide){
       midi:{
         In: function(){
           $log.info('MOCK legato.midi.In called');
-          return ++inputsCreated;
         },
         ins: function(){
           $log.info('MOCK legato.midi.ins called');
@@ -31,6 +35,15 @@ angular.module('oscmodulatorApp').config(function($provide){
         outs: function(){
           $log.info('MOCK legato.midi.outs called');
           return ['USB Trigger Finger', 'Rig Kontrol'];
+        }
+      },
+      osc:{
+        In: function(){
+          $log.info('MOCK legato.osc.In called');
+        },
+        Out: function(){
+          $log.info('MOCK legato.osc.Out called');
+          return function(){};
         }
       }
     };

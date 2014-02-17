@@ -10,6 +10,7 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
   service = $rootScope.$new();
 
   inputRules = {
+    valid: {type:'boolean', default:false, force:true},
     name: {type:'string', default:null},
     collapsed: {type:'boolean', default:false},
     mute: {type:'boolean', default:false},
@@ -34,6 +35,7 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
   };
 
   outputRules = {
+    valid:{type:'boolean', default:false, force:true},
     host:{type:'string', default:null},
     path:{type:'string', default:null},
     parameters:{type:'array', default:[]}
@@ -100,19 +102,28 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
     for(prop in rules){
       var useType = rules[prop].type === 'array' ? 'object' : rules[prop].type;
 
-      if(typeof(input[prop]) !== useType){
+      // If forcing the default value of this property, then do so.
+      if(rules[prop].force){
+        if(typeof(rules[prop].default) === 'object'){
+          input[prop] = jq.extend({}, rules[prop].default);
+        }
+        else{
+          input[prop] = rules[prop].default;
+        }
+      }
+      // If we are not forcing the value of this property, then test to see if the configured
+      // property is of the correct type and if it is not, then use the default.
+      else if(typeof(input[prop]) !== useType){
         $log.warn( prop + ' ' + input[prop] + ' is not a ' + rules[prop].type);
 
         if(rules[prop].type === 'array'){
           if(Object.prototype.toString.call(input[prop]) !== '[object Array]'){
-            input[prop] = [];
+            input[prop] = jq.extend({}, rules[prop].default);
           }
         }
         else{
-          // TODO test the type of the rule rather the rule type so we account for cases where
-          // the rule is {type:'object', default:null}. Do the same for type:'array'
           if(rules[prop].type === 'object'){
-            input[prop] = {};
+            input[prop] = jq.extend({}, rules[prop].default);
           }
           else{
             input[prop] = rules[prop].default;

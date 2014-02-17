@@ -94,7 +94,7 @@ angular.module('oscmodulatorApp').factory('midiPortConfig', function($rootScope,
       messageMiddleware.removeMidiPort(service.ports[index].id);
       service.ports[index].id = null;
       service.updateEnabledPorts();
-      // TODO Broadcast a disabled event so the midi-input can nullify it's select value.
+      // Need to broadcast this event in order to make sure midi-inputs clear their midi port.
       $rootScope.$broadcast('midiPortConfig:remove', service.ports[index].name);
     }
   };

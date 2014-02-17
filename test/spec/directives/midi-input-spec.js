@@ -92,6 +92,7 @@ describe('Directive: midiInput', function (){
   // Replicate the event listening that will happen in the app.
   setupEventListeners = function(parentScope){
     parentScope.add = function(){};
+    parentScope.delete = function(){};
     parentScope.update = function(){};
     parentScope.remove = function(){};
     parentScope.duplicate = function(){};
@@ -99,10 +100,13 @@ describe('Directive: midiInput', function (){
     parentScope.$on('input:midi:add',function(event, id){
       parentScope.add(id);
     });
+    parentScope.$on('input:midi:delete',function(event, id){
+      parentScope.delete(id);
+    });
     parentScope.$on('input:midi:update', function(event, id){
       parentScope.update(id);
     });
-    parentScope.$on('input:midi:remove', function(event, id){
+    parentScope.$on('input:midi:disable', function(event, id){
       parentScope.remove(id);
     });
     parentScope.$on('input:midi:duplicate', function(event, id){
@@ -638,16 +642,16 @@ describe('Directive: midiInput', function (){
 
     setupEventListeners(parentScope);
 
-    spyOn(parentScope, 'remove');
+    spyOn(parentScope, 'delete');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    isolatedScope.removeMe();
+    isolatedScope.deleteMe();
     isolatedScope.$apply();
 
-    expect(parentScope.remove).toHaveBeenCalledWith({input:1});
+    expect(parentScope.delete).toHaveBeenCalledWith({input:1});
   }));
 
   it('should send duplicate events.', inject(function($compile, $rootScope){

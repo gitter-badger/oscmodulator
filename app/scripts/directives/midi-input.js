@@ -17,10 +17,11 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
 
       // The list of events broadcast by this class.
       eventNames = {
-        remove: 'input:midi:remove',
         add: 'input:midi:add',
+        delete: 'input:midi:delete',
         update: 'input:midi:update',
         duplicate: 'input:midi:duplicate',
+        remove: 'input:midi:disable',
         createOSC: 'output:osc:create'
       };
 
@@ -95,8 +96,8 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
       /**
        * Remove this input from this input.
        */
-      $scope.removeMe = function(){
-        $scope.$emit(eventNames.remove, $scope.config.id);
+      $scope.deleteMe = function(){
+        $scope.$emit(eventNames.delete, $scope.config.id);
       };
 
       /**

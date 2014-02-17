@@ -61,6 +61,27 @@ describe('Service: inputConfig', function () {
     expect(validInput.array).toEqual(['bar','baz']);
   });
 
+  it('should be able to force the default values of an object.', function(){
+    var emptyInput = {},
+      rules = {
+        string:{type:'string', default:'a', force:true},
+        number:{type:'number', default:1, force:true},
+        boolean:{type:'boolean', default:true, force:true},
+        object:{type:'object', default:{}, force:true},
+        array:{type:'array', default:[], force:true}
+      };
+
+    inputConfig.validate(emptyInput, rules);
+
+    expect(emptyInput.string).toBe('a');
+    expect(emptyInput.number).toBe(1);
+    expect(emptyInput.boolean).toBe(true);
+    expect(emptyInput.object).toEqual({});
+    expect(emptyInput.object).not.toBe(rules.object);
+    expect(emptyInput.array).toEqual([]);
+    expect(emptyInput.array).not.toBe(rules.array);
+  });
+
   it('should be able to validate an output configuration.', function(){
     var config = {
       host:1,

@@ -1,6 +1,6 @@
 describe('Service: messageMiddleware', function () {
   'use strict';
-  var messageMiddleware, rootScope, legatoMock;
+  var messageMiddleware, rootScope, legatoMock, inputConfigMock;
 
   // load the service's module
   beforeEach(module('oscmodulatorApp'));
@@ -20,11 +20,41 @@ describe('Service: messageMiddleware', function () {
         outs:function(){
           return ['c','d'];
         }
+      },
+      osc:{
+        Out:function(){return function(){};}
       }
+    };
+
+    inputConfigMock = {
+      inputs:{
+        1:{
+          id:{input:1},
+          valid:true,
+          midi:{
+            note: '63',
+            type: 'note',
+            port:{
+              id:'/:'
+            },
+            channel:'All'
+          },
+          outputs:{
+            1:{
+              valid:true,
+              path:'/path',
+              host: 'a',
+              parameters:[]
+            }
+          }
+        }
+      },
+      init:function(){}
     };
 
     module(function($provide){
       $provide.value('legato', legatoMock);
+      $provide.value('inputConfig', inputConfigMock);
     });
 
     inject(function (_messageMiddleware_, $rootScope) {
@@ -56,7 +86,7 @@ describe('Service: messageMiddleware', function () {
     var result,
       midiListener = function(){};
 
-    spyOn(legatoMock, 'in').andReturn("/1");
+    spyOn(legatoMock, 'in').andReturn('/1');
     spyOn(legatoMock.midi, 'In').andReturn(midiListener);
 
     result = messageMiddleware.listenToMidiPort(0);
@@ -91,47 +121,69 @@ describe('Service: messageMiddleware', function () {
     expect(path).toBe('/1/:/cc/2');
   });
 
-  it('should be able to set a midi input.', inject(function(inputConfig){
-    inputConfig.init([{
-      midi:{
-        note: '63',
-        type: 'note'
-      }
-    }]);
-
+  it('should be able to set a midi input.', function(){
     spyOn(legatoMock, 'on').andReturn(22);
-    spyOn(legatoMock, 'removeRoute');
-    messageMiddleware.setMidiInput(inputConfig.inputs[1].id);
 
-    expect(legatoMock.on.calls[0].args[0]).toBe('/:/:/note/63', 'The path should have been called correctly.');
-    expect(inputConfig.inputs[1].routeId).toBe(22, 'It should have stored the input id from legato.');
-    expect(legatoMock.removeRoute).not.toHaveBeenCalled();
+    messageMiddleware.setMidiInput('/:', '63', 'note', ':');
 
-    inputConfig.inputs[1].midi.note = '64';
-    messageMiddleware.setMidiInput(inputConfig.inputs[1].id);
+    expect(legatoMock.on).toHaveBeenCalled();
+    expect(legatoMock.on.calls[0].args[0])
+      .toBe('/:/:/note/63', 'The path should have been called correctly.');
+
+    inputConfigMock.inputs[1].midi.note = '64';
+    messageMiddleware.setMidiInput('/:', '64', 'note', ':');
 
     expect(legatoMock.on.calls.length).toBe(2, 'The legato routes should have been updated.');
-    expect(legatoMock.removeRoute).toHaveBeenCalled();
-  }));
+  });
 
-  it('should be able to remove a midi input.', inject(function(inputConfig){
-    inputConfig.init([{
-      midi:{
-        note: '63',
-        type: 'note'
-      }
-    }]);
-
+  it('should be able to remove a midi input.', function(){
     spyOn(legatoMock, 'on').andReturn(22);
     spyOn(legatoMock, 'removeRoute');
-    messageMiddleware.setMidiInput(inputConfig.inputs[1].id);
+    messageMiddleware.setMidiInput(1, '/:', '63', 'note', ':');
 
-    expect(inputConfig.inputs[1].routeId).toBeDefined();
     expect(legatoMock.removeRoute).not.toHaveBeenCalled();
 
-    messageMiddleware.removeInput(inputConfig.inputs[1].id);
+    messageMiddleware.removeInput(1);
 
     expect(legatoMock.removeRoute).toHaveBeenCalledWith(22);
-    expect(inputConfig.inputs[1].routeId).toBeNull();
-  }));
+  });
+
+  it('should be able to add an OSC output host.', function(){
+    spyOn(legatoMock.osc, 'Out').andReturn(function(){});
+
+    var outputId = messageMiddleware.addOSCOutputHost('localhost', '9000');
+
+    expect(legatoMock.osc.Out).toHaveBeenCalledWith('localhost', '9000');
+    expect(outputId).toBe(1, 'An id should have been returned to access the new output.');
+  });
+
+  it('should be able to remove an existing OSC output host.', function(){
+    var result1, id1, result2, result3;
+    result1 = messageMiddleware.removeOSCOutputHost(1);
+
+    expect(result1).toBe(false, 'It should not be possible to remove hosts that do not exist.');
+
+    id1 = messageMiddleware.addOSCOutputHost('localhost', '9000');
+    result2 = messageMiddleware.removeOSCOutputHost(id1);
+
+    expect(result2).toBe(true);
+
+    result3 = messageMiddleware.removeOSCOutputHost(id1);
+
+    expect(result3).toBe(false, 'Cannot remove the same output multiple times.');
+  });
+
+  it('should be able to add an osc output.', function(){
+    var inputPortId, outputHostId, inputId, outputId;
+    inputPortId = messageMiddleware.listenToMidiPort(0);
+    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
+    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, 1, '/path', ['foo','bar']);
+
+    expect(outputId).not.toBeNull();
+  });
+
+  it('should send to all outputs on input events.', function(){
+    // TODO
+  });
 });
