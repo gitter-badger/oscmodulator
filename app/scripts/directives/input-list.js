@@ -20,7 +20,8 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle midi input add events when an input becomes valid.
        */
       $scope.$on('input:midi:add', function(event, id){
-        messageMiddleware.setMidiInput(id.input);
+        var midi = $scope.inputConfig.inputs[id.input].midi;
+        messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
       });
 
       /**

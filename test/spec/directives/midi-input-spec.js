@@ -313,17 +313,17 @@ describe('Directive: midiInput', function (){
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.note).toBe(':');
+    expect(isolatedScope.config.midi.note).toBe('All');
 
     isolatedScope.config.midi.name = 'all';
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.note).toBe(':');
+    expect(isolatedScope.config.midi.note).toBe('All');
 
     isolatedScope.config.midi.name = 'any';
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.midi.note).toBe(':');
+    expect(isolatedScope.config.midi.note).toBe('All');
   }));
 
   it('should send update events when the midi note changes.', inject(function($compile, $rootScope){

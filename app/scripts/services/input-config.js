@@ -22,7 +22,7 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
   midiRules = {
     name: {type:'string', default:null},
     note: {type:'string', default:null},
-    type: {type:'string', default:'note'},
+    type: {type:'string', default:'All'},
     port: {type:'object', default:{}},
     channel: {type:'string', default:'All'}
   };

@@ -79,7 +79,7 @@ describe('Directive: inputList', function () {
           midi:{
             name: null,
             note: 36,
-            type:'on',
+            type:'All',
             port:{
               name:'All',
               id: '/:',
@@ -120,6 +120,7 @@ describe('Directive: inputList', function () {
 
   it('should be able to add inputs when they become valid.', inject(function($rootScope, $compile){
     inputConfigMock.inputs[1].midi.name = null;
+    inputConfigMock.inputs[1].midi.note = null;
 
     parentScope = $rootScope.$new();
 
@@ -132,10 +133,11 @@ describe('Directive: inputList', function () {
     expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
 
     inputConfigMock.inputs[1].midi.name = 'c3';
+    inputConfigMock.inputs[1].midi.note = 36;
     inputConfigMock.inputs[1].valid = true;
     parentScope.$broadcast('input:midi:add', {input:1});
 
-    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith(1);
+    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
   }));
 
   it('should update the messageMiddleware when an input changes.', inject(function($rootScope, $compile){

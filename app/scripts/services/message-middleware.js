@@ -99,15 +99,19 @@ angular.module('oscmodulatorApp')
 
     /**
      * Create a new input on the messageMiddleware.
-     * @param port {int} The id of the midi port returned by listenToMidiPort() or '/:' for all ports.
-     * @param note {string} The note number for or ':' for all notes.
-     * @param noteType {string} either 'note' or 'cc'
+     * @param port {int} The id of the midi port returned by listenToMidiPort() or the id for "all ports".
+     * @param note {string} The note number for or 'All' for all notes.
+     * @param noteType {string} either 'All', 'Note' or 'CC'
      * @param channel {string} The channel number to listen to or 'All' for all channels.
      * @returns {number} The id of the newly created input.
      * TODO Pass through appropriate types instead of strings for everything.
      * TODO Pass through ':' for channel in order to match the note parameter.
      */
     service.setMidiInput = function(port, note, noteType, channel){
+      channel = channel === 'All' ? ':' : channel;
+      note = note === 'All' ? ':' : note;
+      noteType = noteType === 'All' ? ':' : noteType.toLowerCase();
+
       var path = service.getPath(port, channel, noteType, note);
 
       ++inputsCreated;

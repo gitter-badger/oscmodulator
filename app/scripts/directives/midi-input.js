@@ -58,7 +58,7 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
        * The list of midi note types displayed in the midi note type select box.
        * @type {Array}
        */
-      $scope.midiTypes = ['note', 'cc'];
+      $scope.midiTypes = ['All', 'Note', 'CC'];
 
       /**
        * The list of possible midi channels.
@@ -198,7 +198,9 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
        * Midi name value may be 0 - 127, 'c0' - 'g10', ':', 'any' or 'all'.
        */
       $scope.$watch('config.midi.name', function(newValue){
-        var valueAsNumber = parseInt(newValue, 10);
+        var valueAsNumber = parseInt(newValue, 10),
+          valueAsLower;
+
         if(!isNaN(valueAsNumber)){
           if(valueAsNumber >= 0 && valueAsNumber < Object.keys($scope.midiNoteMap).length){
             $scope.config.midi.note = valueAsNumber;
@@ -211,8 +213,9 @@ angular.module('oscmodulatorApp').directive('midiInput', function () {
           $scope.config.midi.note = null;
         }
         else{
-          if(newValue === ':' || newValue === 'all' || newValue === 'any'){
-            $scope.config.midi.note = ':';
+          valueAsLower = newValue !== null ? newValue.toLowerCase() : newValue;
+          if(valueAsLower === ':' || valueAsLower === 'all' || valueAsLower === 'any'){
+            $scope.config.midi.note = 'All';
           }
           else if($scope.midiNoteMap[newValue] === undefined){
             $scope.config.midi.note = null;

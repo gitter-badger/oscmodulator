@@ -116,7 +116,7 @@ describe('Service: inputConfig', function () {
     expect(config.solo).toBe(false, 'The solo state should have been reset.');
     expect(config.mute).toBe(false, 'The mute state should have been reset.');
     expect(config.midi.note).toBeNull('The midi note should have been reset.');
-    expect(config.midi.type).toBe('note', 'The midi note event should have been reset.');
+    expect(config.midi.type).toBe('All', 'The midi note event should have been reset.');
     expect(config.outputs).toEqual({}, 'The outputs should have been reset.');
   });
 
