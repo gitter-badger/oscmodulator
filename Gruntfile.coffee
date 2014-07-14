@@ -15,6 +15,7 @@ module.exports = (grunt) ->
   require('load-grunt-tasks') grunt
   require('time-grunt') grunt
   path = require 'path'
+  appPkg = require './app/package.json'
   coffeelint = require './coffeelint.json'
 
   # configurable paths
@@ -40,7 +41,7 @@ module.exports = (grunt) ->
 
   nwConfig =
     root: 'node-webkit'
-    version: '0.8.0'
+	version: '0.8.5'
     osx:
       nwpath: 'node-webkit.app/Contents/MacOS/node-webkit'
 
@@ -351,7 +352,7 @@ module.exports = (grunt) ->
         stdout: true
       'init-node':
         command: [
-          'npm install -g bower@1.2.7 nw-gyp@0.10.9'
+		  'npm install -g bower@1.3.8 nw-gyp@0.12.2'
           'bower install'
         ].join '&&'
       'init-nw':
@@ -359,6 +360,9 @@ module.exports = (grunt) ->
           'cd app'
           'npm install --arch=ia32' # Force 32 bit until Chromium supports 64 bit.
         ].join '&&'
+
+	  'nw-open-mac':
+		command: "open #{nwConfig.root}/releases/#{appPkg.name}/mac/#{appPkg.name}.app"
 
     replace:
       dist:
@@ -374,6 +378,16 @@ module.exports = (grunt) ->
           src: '<%= yeoman.dist %>/index.html'
           dest: '<%= yeoman.dist %>/index.html'
         ]
+
+	nodewebkit:
+	  options:
+		version: nwConfig.version
+		build_dir: nwConfig.root
+		mac: true
+		win: false
+		linux32: false
+		linux64: false
+	  src: ["#{yeomanConfig.dist}/**/*"]
 
   grunt.registerTask 'server', (target) ->
     return grunt.task.run(['build', 'open', 'connect:dist:keepalive']) if target is 'dist'
@@ -398,14 +412,19 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'nw-run', (target)  ->
-    nw = [nwConfig.root, platform, nwConfig[platform].nwpath].join path.sep
-
     buildTask = if target is 'debug' then 'nw-build-debug' else 'nw-build'
-    grunt.task.run buildTask
-    grunt.config 'shell.nwrun.command', "#{nw} #{yeomanConfig.dist}"
-    grunt.task.run 'shell:nwrun'
+	grunt.task.run [
+	  buildTask
+	  'nodewebkit'
+	  #TODO Add support for running on Windows and Linux
+	  'shell:nw-open-mac'
+	]
+
+  #TODO Add support for running on Windows and Linux
+  grunt.registerTask 'nw-open', ['shell:nw-open-mac']
 
   grunt.registerTask 'nw-prep', ->
+	# Recompile any native Node modules to run in Node Webkit.
     grunt.file.expand('app/node_modules/**/package.json').forEach (filePath) ->
       config = grunt.file.readJSON filePath
       return if not config?.gypfile
