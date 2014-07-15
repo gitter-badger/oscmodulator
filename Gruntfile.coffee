@@ -403,19 +403,20 @@ module.exports = (grunt) ->
   grunt.registerTask 'nw-build', [
     'default'
     'replace:dist'
+    'nodewebkit'
   ]
 
   grunt.registerTask 'nw-build-debug', [
     'clean:dist'
     'copy:debug'
     'replace:dist'
+    'nodewebkit'
   ]
 
   grunt.registerTask 'nw-run', (target)  ->
     buildTask = if target is 'debug' then 'nw-build-debug' else 'nw-build'
     grunt.task.run [
       buildTask
-      'nodewebkit'
       #TODO Add support for running on Windows and Linux
       'shell:nw-open-mac'
     ]
