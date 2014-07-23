@@ -12,10 +12,16 @@
         </div>
         <div class="rightCol midiInputConfig">
             <div class="inline-input-append midiNoteConfig">
-                <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Midi"
-                       ng-model="config.midi.note">
-                <select class="midiNoteType" name="midiNoteType" required="true" ng-model="config.midi.type"
-                        ng-options="type for type in midiTypes">
+                <input class="input-mini midiNote" type="text" name="midiInNote" placeholder="Note"
+                    ng-model="config.midi.name"
+                ><select class="midiNoteType" name="midiNoteType" required="true"
+                    ng-model="config.midi.type" ng-options="type for type in midiTypes">
+                </select
+                ><select class="midiChannel" name="midiChannel" required="true"
+                    ng-model="config.midi.channel" ng-options="chan for chan in midiChannels">
+                </select
+                ><select class="midiPort" name="midiPort" required="true"
+                    ng-model="config.midi.port" ng-options="port.name for port in midiPortConfig.enabledPorts">
                 </select>
             </div>
             <div class="btn-group">
@@ -28,7 +34,7 @@
                 <i class="icon-copy"></i>
             </button>
             <button class="btn removeMidiInput" type="button" name="removeMidiInput" title="Remove Midi Input"
-                    ng-click="removeMe()">
+                    ng-click="deleteMe()">
                 <i class="icon-remove"></i>
             </button>
         </div>

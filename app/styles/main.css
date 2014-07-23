@@ -25,7 +25,6 @@ select, input
 /* Title */
 .title
 {
-    background-color: #555;
     z-index: -100;
     position: fixed;
     margin-top: 2px;
@@ -36,6 +35,19 @@ select, input
 {
     margin-top: 0;
     font-size: 100px;
+}
+
+/* Logo */
+.logo
+{
+    background-color: transparent;
+    background-image: url('../img/logo-99x50.png');
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: -101;
+    width: 99px;
+    height: 50px;
 }
 
 /* Header */
@@ -51,22 +63,21 @@ select, input
 }
 
 /* OSC Host Config */
-.configPanel
+.configForm
 {
     padding: 10px 10px 5px 10px;
     position: relative;
 }
 
-.oscPanel
+.configPanel
 {
-    margin-top: 40px;
     z-index: 90;
     background-color: #92A7B4;
     background-image: url('../img/blue-stripe.png');
     box-shadow: 0 0 20px 6px #6F8491 inset;
 }
 
-.oscPanel h2
+.configPanel h2
 {
     color: #657F8F;
     font-size: 60px;
@@ -76,11 +87,16 @@ select, input
     margin-left: 10px;
 }
 
-.oscHostName, .oscHostAddress, .oscHostPort, .oscPanel, .configPanel, .configRow, .configItem, .configItem input
+.oscHostName, .oscHostAddress, .oscHostPort, .oscPanel, .configForm, .configPanel, .configRow, .configItem, .configItem input
 {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+}
+
+.oscPanel
+{
+    margin-top: 40px;
 }
 
 .configRow
@@ -103,18 +119,18 @@ select, input
     width: 30%;
 }
 
-.configItem
+.oscPanel .configItem
 {
     display: inline-block;
     border-right: 5px solid transparent;
 }
 
-.configItem:last-child
+.oscPanel .configItem:last-child
 {
     padding-right: 40px;
 }
 
-.configItem input
+.oscPanel .configItem input
 {
     width: 100%;
     margin: 0;
@@ -131,6 +147,17 @@ select, input
     position: absolute;
     right: 10px;
     margin-top: -35px;
+}
+
+.midiPanel input
+{
+    margin: 0 10px 0 0;
+}
+
+.midiPanel label
+{
+    display: inline;
+    color: white;
 }
 
 /* Input items*/
@@ -178,12 +205,13 @@ button.midiNoteType
 .midiNote
 {
     width: 30px;
+    margin-right: 5px;
 }
 
 .container3Col.midiInputHeader .centerCol
 {
     margin-left: 60px;
-    margin-right: 288px;
+    margin-right: 425px;
 }
 
 .container3Col.midiInputHeader
@@ -217,6 +245,18 @@ button.midiNoteType
 }
 
 select.midiNoteType
+{
+    width: 76px;
+    margin-right: 5px;
+}
+
+select.midiChannel
+{
+    width: 50px;
+    margin-right: 5px;
+}
+
+select.midiPort
 {
     width: 76px;
 }

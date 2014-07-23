@@ -21,18 +21,6 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
           remove: 'output:osc:remove'
         };
 
-        if(!$scope.config.host){
-          $scope.config.host = null;
-        }
-
-        if(!$scope.config.path){
-          $scope.config.path = null;
-        }
-
-        if(!$scope.config.parameters){
-          $scope.config.parameters = [];
-        }
-
         /**
          * True = This output has enough information to send messages.
          * False = This output is missing required information for sending messages.

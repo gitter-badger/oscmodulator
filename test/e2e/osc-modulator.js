@@ -163,30 +163,65 @@ describe('e2e: OSC Modulator', function () {
   });
 
   it('should be possible to add OSC Host configurations.', function(){
-    expect(element('div.configRow').count()).toBe(1);
+    expect(element('.oscPanel div.configRow').count()).toBe(1);
 
     element('button[name=addOSCHost]').click();
 
-    expect(element('div.configRow').count()).toBe(2);
+    expect(element('.oscPanel div.configRow').count()).toBe(2);
   });
 
   it('should be possible to remove OSC Host configurations.', function(){
-    expect(element('div.configRow').count()).toBe(1);
+    expect(element('.oscPanel div.configRow').count()).toBe(1);
 
     element('button[name=addOSCHost]').click();
     element('button[name=addOSCHost]').click();
 
-    expect(element('div.configRow').count()).toBe(3);
+    expect(element('.oscPanel div.configRow').count()).toBe(3);
 
     element('button[name=removeConfigItem1]').click();
 
-    expect(element('div.configRow').count()).toBe(2);
+    expect(element('.oscPanel div.configRow').count()).toBe(2);
   });
 
-  // TODO Test adding a host and verifying that it shows up in the list of hosts for an OSC Output row.
-  // Wasn't able to get this working but it looks like e2e testing may be changing in future versions of Angular
-  // and maybe this test will get easier.
+  it('should be possible to expand the Midi Port panel.', function(){
+    expect(element('div.midiPanel').height()).toBeLessThan(1);
 
-  // TODO Test adding a host, selecting it in an output, removing that host, verify that the output host is null,
-  // add a new host with the same name, verify that the output host is still null.
+    element('button[name=showMidiPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.2);
+
+    expect(element('div.midiPanel').height()).toBeGreaterThan(1);
+
+    element('button[name=showMidiPanel]').click();
+
+    // Give the animation a second to run.
+    sleep(0.5);
+
+    expect(element('div.midiPanel').height()).toBeLessThan(1);
+  });
+
+  it('should show all of the available midi ports', function(){
+    element('button[name=showMidiPanel]').click();
+
+    expect(element('.midiPanel .configRow').count())
+      .toBe(2, 'It should show all of the available midi input ports.');
+  });
+
+  it('should show available midi ports in midi inputs.', function(){
+    expect(element('div.midiInputConfig select[name=midiPort] option').count()).toBe(1);
+    element('button[name=showMidiPanel]').click();
+    element('input[id=midiPort0]').click();
+    expect(element('div.midiInputConfig select[name=midiPort] option').count()).toBe(2);
+  });
+
+  it('should show available osc output servers in osc output forms.', function(){
+    expect(element('div.oscOutputItem select.oscHost option').count()).toBe(1);
+    expect(element('div.oscOutputItem select.oscHost option').val()).toBe('');
+    input('host.name').enter('live');
+    input('host.address').enter('localhost');
+    input('host.port').enter('9000');
+    expect(element('input[name=oscHostName]').val()).toBe('live');
+    expect(element('div.oscOutputItem select.oscHost option').count()).toBe(2);
+  });
 });

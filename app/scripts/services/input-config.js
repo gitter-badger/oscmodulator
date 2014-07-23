@@ -5,7 +5,41 @@
 angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq, $log) {
   'use strict';
 
-  var service = $rootScope.$new();
+  var service, inputRules, midiRules, portRules, outputRules;
+
+  service = $rootScope.$new();
+
+  inputRules = {
+    valid: {type:'boolean', default:false, force:true},
+    name: {type:'string', default:null},
+    collapsed: {type:'boolean', default:false},
+    mute: {type:'boolean', default:false},
+    solo: {type:'boolean', default:false},
+    midi: {type:'object', default:{}},
+    outputs: {type:'object', default:{}}
+  };
+
+  midiRules = {
+    name: {type:'string', default:null},
+    note: {type:'string', default:null},
+    type: {type:'string', default:'All'},
+    port: {type:'object', default:{}},
+    channel: {type:'string', default:'All'}
+  };
+
+  portRules = {
+    name: {type:'string', default:'All'},
+    id: {type:'string', default:'/:'},
+    index: {type:'number', default:null},
+    enabled: {type:'boolean', default:true}
+  };
+
+  outputRules = {
+    valid:{type:'boolean', default:false, force:true},
+    host:{type:'string', default:null},
+    path:{type:'string', default:null},
+    parameters:{type:'array', default:[]}
+  };
 
   /**
    * The list of inputs for the application.
@@ -18,9 +52,15 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    *   collapsed: false,
    *   mute: false,
    *   solo: false,
+   *   routeId: null,
    *   midi: {
    *     note: null,
-   *     type: null
+   *     type: null,
+   *     port: {
+   *       name: 'All',
+   *       id: '/:'
+   *     },
+   *     channel: 'All'
    *   },
    *   outputs: {
    *     id:{
@@ -51,86 +91,66 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
   service.outputsCreated = 0;
 
   /**
-   * Make sure that the input has all of the required properties.
-   * @param {Object} input The input object with some properties set.
+   * Validate the input object using the given validation rules. If properties are missing or invalid
+   * the input will be modified.
+   * @param input {Object} The object to validate.
+   * @param rules {Object} An object with the properties expected to be on input.
+   * TODO Test this method. Be sure to test that objects are copied and not referenced.
    */
-  service.initInput = function(input){
-    var template = {
-      name:null,
-      collapsed:false,
-      mute:false,
-      solo:false,
-      midi:{
-        note:null,
-        type:'on'
-      },
-      outputs:{}
-    };
-    service.validateInput(input);
-    jq.extend(template, input);
-    return template;
+  service.validate = function(input, rules){
+    var prop;
+    for(prop in rules){
+      var useType = rules[prop].type === 'array' ? 'object' : rules[prop].type;
+
+      // If forcing the default value of this property, then do so.
+      if(rules[prop].force){
+        if(typeof(rules[prop].default) === 'object'){
+          input[prop] = jq.extend({}, rules[prop].default);
+        }
+        else{
+          input[prop] = rules[prop].default;
+        }
+      }
+      // If we are not forcing the value of this property, then test to see if the configured
+      // property is of the correct type and if it is not, then use the default.
+      else if(typeof(input[prop]) !== useType){
+        $log.warn( prop + ' ' + input[prop] + ' is not a ' + rules[prop].type);
+
+        if(rules[prop].type === 'array'){
+          if(Object.prototype.toString.call(input[prop]) !== '[object Array]'){
+            input[prop] = jq.extend({}, rules[prop].default);
+          }
+        }
+        else{
+          if(rules[prop].type === 'object'){
+            input[prop] = jq.extend({}, rules[prop].default);
+          }
+          else{
+            input[prop] = rules[prop].default;
+          }
+        }
+      }
+    }
+
+    return input;
   };
+
+  /**
+   * The default midi port that all midi inputs listen on by default.
+   * @type {Object} Matches the rules defiled in portRules.
+   */
+  service.defaultMidiPort = service.validate({}, portRules);
 
   /**
    * Validate all of the properties of an input object. This will be used to make sure that input configurations
    * from external files are valid. Any invalid properties will be logged and reset to a default state.
-   * @param {Object} input The input configuration to validate.
+   * @param {Object} input The input configuration to validate. Ex: { name: {type:'string', default:'foo'}}
    */
   service.validateInput = function(input){
-    if(typeof(input.name) !== 'string'){
-      $log.warn('Input.name is not a string.');
-      input.name = null;
-    }
-
-    if(typeof(input.collapsed) !== 'boolean'){
-      $log.warn('Input.collapsed is not a boolean.');
-      input.collapsed = false;
-    }
-
-    if(typeof(input.mute) !== 'boolean'){
-      $log.warn('Input.mute is not a boolean.');
-      input.mute = false;
-    }
-
-    if(typeof(input.solo) !== 'boolean'){
-      $log.warn('Input.solo is not a boolean.');
-      input.solo = false;
-    }
-
-    if(typeof(input.midi) !== 'object'){
-      $log.warn('Input.midi is not an object.');
-      input.midi = {};
-    }
-
-    if(typeof(input.midi.note) !== 'string'){
-      $log.warn('Input.midi.note is not a string.');
-      input.midi.note = null;
-    }
-
-    if(typeof(input.midi.type) !== 'string'){
-      $log.warn('Input.midi.type is not a string.');
-      input.midi.type = 'on';
-    }
-
-    if(typeof(input.outputs) !== 'object'){
-      $log.warn('Input.outputs is not an object.');
-      input.outputs = {};
-    }
-  };
-
-  /**
-   * Make sure that the output has all of the required properties.
-   * @param {Object} output The output object with some properties set.
-   */
-  service.initOutput = function(output){
-    var template = {
-      host:null,
-      path:null,
-      parameters:[]
-    };
-    service.validateOutput(output);
-    jq.extend(template, output);
-    return template;
+    service.validate(input, inputRules);
+    service.validate(input.midi, midiRules);
+    service.validate(input.midi.port, portRules);
+    return input;
   };
 
   /**
@@ -139,21 +159,8 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    * @param {Object} output The output configuration to validate.
    */
   service.validateOutput = function(output){
-    if(typeof(output.host) !== 'string'){
-      $log.warn('Output.host is not a String.');
-      output.host = null;
-    }
-
-    if(typeof(output.path) !== 'string'){
-      $log.warn('Output.path is not a String.');
-      output.path = null;
-    }
-
-    if(typeof(output.parameters) !== 'object' ||
-      typeof(output.parameters) === 'object' && Object.prototype.toString.call(output.parameters) !== '[object Array]'){
-      $log.warn('Output.parameters is not an Array.');
-      output.parameters = [];
-    }
+    service.validate(output, outputRules);
+    return output;
   };
 
   /**
@@ -167,11 +174,14 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
 
     ++service.outputsCreated;
     if(!output){
-      output = {};
+      newOutput = {};
+    }
+    else{
+      newOutput = jq.extend({}, output);
     }
 
     // Setup the output object.
-    newOutput = service.initOutput(output);
+    newOutput = service.validateOutput(newOutput);
     newOutput.id = {
       input: id.input,
       output: service.outputsCreated
@@ -187,15 +197,18 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
    * Add a Midi Input to the list of inputs.
    */
   service.addInput = function(input){
-    var newInput, prop;
+    var prop, newInput;
 
     ++service.inputsCreated;
     if(!input){
-      input = {};
+      newInput = {};
+    }
+    else{
+      newInput = jq.extend({}, input);
     }
 
     // Setup the input object.
-    newInput = service.initInput(input);
+    service.validateInput(newInput);
     newInput.id = {
       input: service.inputsCreated
     };
@@ -203,13 +216,13 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
     // Store the initialized input.
     service.inputs[service.inputsCreated] = newInput;
 
-    // Setup all of the output object.
+    // Setup all of the outputs.
     if(Object.keys(newInput.outputs).length === 0){
       service.addOutput(newInput.id);
     }
     else{
-      for(prop in input.outputs){
-        service.addOutput(newInput.id, input.outputs[prop]);
+      for(prop in newInput.outputs){
+        service.addOutput(newInput.id, newInput.outputs[prop]);
       }
     }
 

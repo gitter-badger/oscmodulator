@@ -2,7 +2,7 @@
  * Provides the list of OSC Hosts for consumers of that information.
  * The service is a scope object so its properties can be $watch-ed.
  */
-angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) {
+angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, messageMiddleware) {
   'use strict';
 
   // The service instance is a scope object so that its properties can be $watch-ed.
@@ -24,7 +24,7 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) 
    * Add an empty OSC Host configuration to the list of hosts.
    */
   service.addOSCHost = function(){
-    service.hosts.push({name:null, address:null, port:null});
+    service.hosts.push({name:null, address:null, port:null, id:null});
   };
 
   /**
@@ -45,14 +45,34 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) 
   };
 
   /**
+   * Handle update events from OSC Host inputs and create the OSC Host object when a host
+   * configuration is ready.
+   * @param index {int} The index of the host that was updated.
+   */
+  service.updateOSCHost = function(index){
+    var host = service.hosts[index];
+    if(host.name && host.address && host.port){
+      if(host.id){
+        messageMiddleware.removeOSCOutputHost(host.id);
+        host.id = null;
+      }
+
+      host.id = messageMiddleware.addOSCOutputHost(host.address, host.port);
+    }
+    else if(host.id){
+      messageMiddleware.removeOSCOutputHost(host.id);
+      host.id = null;
+    }
+
+    service.updateHostIds();
+  };
+
+  /**
    * Keep the hosts list in sync with the oscHosts list.
    * TODO Need to validate that the host name is unique and prompt the user if it is not.
-   * TODO Only add items to the ids list if they have a valid name, address and port.
-   * TODO Update the messageMiddleware service when a new host is ready to be used.
-   * TODO Can we remove this in favor of the list of objects?
    */
-  service.$watch('hosts', function(){
-    var j;
+  service.updateHostIds = function(){
+    var j, host;
 
     if(service.hosts.length === 1 && !service.hosts[0].name ){
       service.ids = [];
@@ -60,12 +80,13 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope) 
     else{
       service.ids = [];
       for(j = 0; j < service.hosts.length; j++){
-        if(service.hosts[j].name){
+        host = service.hosts[j];
+        if(host.name && host.address && host.port){
           service.ids.push(service.hosts[j].name);
         }
       }
     }
-  }, true);
+  };
 
   // Initialize the OSC Host list.
   service.addOSCHost();
