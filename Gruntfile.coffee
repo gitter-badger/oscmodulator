@@ -332,6 +332,20 @@ module.exports = (grunt) ->
         autoWatch: true
         browsers: ['Chrome']
 
+    protractor:
+      options:
+        keepAlive: false
+        configFile: 'test/protractor.conf.js'
+      start:{}
+      debug:
+        options:
+          debug: true
+
+    protractor_webdriver:
+      start:
+        options:
+          path: 'node_modules/protractor/bin/'
+
     ngmin:
       dist:
         files: [
@@ -363,6 +377,12 @@ module.exports = (grunt) ->
 
       'nw-open-mac':
         command: "open #{nwConfig.root}/releases/#{appPkg.name}/mac/#{appPkg.name}.app"
+
+      'stop-selenium':
+        command:'curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer'
+
+      'start-element-finder':
+        command:'node node_modules/protractor/bin/elementexplorer.js http://localhost:9001'
 
     replace:
       dist:
@@ -461,6 +481,25 @@ module.exports = (grunt) ->
     'build'
     'connect:dist'
     'karma:e2e'
+  ]
+
+  grunt.registerTask 'e2e-protractor', [
+    'build'
+    'connect:dist'
+    'protractor:start'
+  ]
+
+  grunt.registerTask 'e2e-protractor-debug', [
+    'build'
+    'connect:dist'
+    'protractor:debug'
+  ]
+
+  grunt.registerTask 'e2e-protractor-element-finder', [
+    'build'
+    'connect:dist'
+    'protractor_webdriver:start'
+    'shell:start-element-finder'
   ]
 
   grunt.registerTask 'e2e-watch', [
