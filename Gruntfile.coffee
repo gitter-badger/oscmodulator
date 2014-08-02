@@ -632,6 +632,10 @@ module.exports = (grunt) ->
     'test:e2e:dist'
   ]
 
+  grunt.registerTask 'ci-init', [
+    'bower:install'
+  ]
+
   grunt.registerTask 'default', [
     'clean:dist'
     'lint'
