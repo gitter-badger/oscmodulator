@@ -493,9 +493,10 @@ module.exports = (grunt) ->
         autoWatch: true
         browsers: ['Chrome']
 
-    'bower-install-simple':
-      options:
-        directory: bowerrc.directory
+    bower:
+      install:
+        options:
+          targetDir: bowerrc.directory
 
     shell:
       options:
@@ -645,7 +646,7 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'init', [
-    'bower-install-simple'
+    'bower:install'
     'concurrent:init'
     'nw-prep'
   ]
