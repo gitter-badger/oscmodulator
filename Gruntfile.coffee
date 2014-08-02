@@ -501,7 +501,7 @@ module.exports = (grunt) ->
       'init-nw':
         command: [
           'cd app'
-          'npm install --arch=ia32' # Force 32 bit until Chromium supports 64 bit.
+          'npm install'
         ].join '&&'
 
       'nw-open-mac':
