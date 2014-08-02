@@ -2,8 +2,7 @@ language: node_js
 node_js:
   - '0.10'
 
-before_script: 
-  - 'npm install -g grunt-cli@0.1.9'
-  - 'grunt init'
+before_script:
+  - './node_modules/.bin/grunt init'
 
-script: 'grunt'
+script: './node_modules/.bin/grunt ci'

@@ -1,3 +1,5 @@
+@import "variables.less";
+
 *:focus
 {
     /* TODO Find a more subtle highlight indicator than the Chrome default blue. */
@@ -174,12 +176,11 @@ select, input
 
 .container3Col .leftCol
 {
-    float:left;
+    float: left;
 }
 
 .container3Col .rightCol
 {
-    /*float:right;*/
     position: absolute;
     right: 0;
     padding-right: 5px;
@@ -244,24 +245,24 @@ button.midiNoteType
     width: 100%;
 }
 
-select.midiNoteType
+.midiNoteType
 {
     width: 76px;
     margin-right: 5px;
 }
 
-select.midiChannel
+.midiChannel
 {
     width: 50px;
     margin-right: 5px;
 }
 
-select.midiPort
+.midiPort
 {
     width: 76px;
 }
 
-select.oscHost
+.oscHost
 {
     width: 100px;
 }
@@ -297,11 +298,6 @@ select.oscHost
 .oscParam
 {
     margin-right: 5px;
-}
-
-.addOSCParam
-{
-    /*margin-bottom: 5px;*/
 }
 
 .treeContent
@@ -424,7 +420,7 @@ select.oscHost
   left: 3px;
   top: 3px;
 
-  box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,1);
   background: -webkit-linear-gradient(top, #222 0%, #45484d 100%);
 }
 

@@ -30,7 +30,7 @@
     "level": "error"
   },
   "cyclomatic_complexity": {
-    "value": 10,
+    "value": 11,
     "level": "error"
   },
   "no_backticks": {
