@@ -458,10 +458,6 @@ module.exports = (grunt) ->
         'imagemin'
         'svgmin'
       ]
-      init: [
-        'shell:init-node'
-        'shell:init-nw'
-      ]
 
 
     karma:
@@ -502,8 +498,6 @@ module.exports = (grunt) ->
       options:
         stderr: true
         stdout: true
-      'init-node':
-        command: 'npm install -g nw-gyp@0.12.2'
       'init-nw':
         command: [
           'cd app'
@@ -570,7 +564,7 @@ module.exports = (grunt) ->
       dir = path.dirname filePath
       grunt.config 'shell.nwgyp.command', [
         "cd #{dir}"
-        "nw-gyp rebuild --target=#{nwConfig.version}"
+        "#{path.resolve('./node_modules/.bin/nw-gyp')} rebuild --target=#{nwConfig.version}"
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
 
@@ -647,6 +641,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'init', [
     'bower:install'
-    'concurrent:init'
+    'shell:init-nw'
     'nw-prep'
   ]
