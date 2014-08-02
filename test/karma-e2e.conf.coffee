@@ -15,24 +15,24 @@ module.exports = (config) ->
     reporters: ['spec']
 
     # list of files / patterns to load in the browser
-    files: [{
+    files: [
       pattern: 'app/scripts/**/*.*'
       watched: true
       included: false
       served: false
-    },{
+    ,
       pattern: 'app/views/**/*.html'
       watched: true
       included: false
       served: false
-    },{
+    ,
       pattern: 'test/mock/**/*.js'
       watched: true
       included: false
       served: false
-    },
-    'test/e2e/**/*.js'
-    'test/mock/**/*.js'
+    ,
+      'test/e2e/**/*.js'
+      'test/mock/**/*.js'
     ]
 
     # list of files / patterns to exclude
