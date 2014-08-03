@@ -141,7 +141,7 @@ module.exports = (grunt) ->
 
 
     open:
-      server:
+      serve:
         path: 'http://localhost:<%= connect.options.port %>'
 
       test:
@@ -381,12 +381,6 @@ module.exports = (grunt) ->
         ]
 
 
-    # Replace Google CDN references
-    cdnify:
-      dist:
-        html: ['<%= yeoman.dist %>/*.html']
-
-
     # Copies remaining files to places other tasks can use
     copy:
       dist:
@@ -483,7 +477,7 @@ module.exports = (grunt) ->
         configFile: 'test/karma-e2e.conf.coffee'
         singleRun: true
         proxies:
-          '/':  '<%= open.server.path %>'
+          '/':  '<%= open.serve.path %>'
       'e2e-watch':
         configFile: 'test/karma-e2e.conf.coffee'
         autoWatch: true
@@ -505,53 +499,23 @@ module.exports = (grunt) ->
         ].join '&&'
 
       'nw-open-mac':
-        command: "open #{nwConfig.root}/releases/#{appPkg.name}/mac/#{appPkg.name}.app"
+        command: "open #{nwConfig.root}/releases/#{appPkg.name}/osx/#{appPkg.name}.app"
 
-    replace:
+    processhtml:
+      options:
+        commentMarker: 'process'
       dist:
-        options:
-          patterns: [
-            match: /<!-- MOCKS -->[\s\S]+<!-- ENDMOCKS -->/gi,
-            replacement: ''
-            expression: true
-          ]
-        files: [
-          expand: false
-          flatten: true
-          src: '<%= yeoman.dist %>/index.html'
-          dest: '<%= yeoman.dist %>/index.html'
-        ]
+        files:
+          '<%= yeoman.dist %>/index.html': ['<%= yeoman.dist %>/index.html']
 
     nodewebkit:
       options:
         version: nwConfig.version
-        build_dir: nwConfig.root
-        mac: true
-        win: false
-        linux32: false
-        linux64: false
+        buildDir: "#{nwConfig.root}/releases"
+        cacheDir: "#{nwConfig.root}/cache"
+        platforms: ['osx']
       src: ["#{yeomanConfig.dist}/**/*"]
 
-  grunt.registerTask 'nw-build', [
-    'default'
-    'replace:dist'
-    'nodewebkit'
-  ]
-
-  grunt.registerTask 'nw-build-debug', [
-    'clean:dist'
-    'copy:debug'
-    'replace:dist'
-    'nodewebkit'
-  ]
-
-  grunt.registerTask 'nw-run', (target)  ->
-    buildTask = if target is 'debug' then 'nw-build-debug' else 'nw-build'
-    grunt.task.run [
-      buildTask
-      #TODO Add support for running on Windows and Linux
-      'shell:nw-open-mac'
-    ]
 
   #TODO Add support for running on Windows and Linux
   grunt.registerTask 'nw-open', ['shell:nw-open-mac']
@@ -570,11 +534,11 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'serve', (target) ->
     if target is 'dist'
-      return grunt.task.run([
+      return grunt.task.run [
         'clean:dist'
         'build'
         'connect:dist:keepalive'
-      ])
+      ]
     grunt.task.run [
       'clean:server'
       'copy:fonts'
@@ -616,7 +580,7 @@ module.exports = (grunt) ->
     'concat'
     'ngmin'
     'copy:dist'
-    'cdnify'
+    'processhtml:dist'
     'cssmin'
     'uglify'
     'rev'
@@ -641,6 +605,7 @@ module.exports = (grunt) ->
     'lint'
     'test'
     'build'
+    'nodewebkit'
   ]
 
   grunt.registerTask 'init', [
