@@ -35,7 +35,7 @@
     "grunt-node-webkit-builder": "^0.2.0",
     "grunt-notify": "^0.3.0",
     "grunt-open": "^0.2.3",
-    "grunt-processhtml": "^0.3.3",
+    "grunt-replace": "^0.7.8",
     "grunt-rev": "^0.1.0",
     "grunt-shell": "^0.7.0",
     "grunt-svgmin": "^0.4.0",

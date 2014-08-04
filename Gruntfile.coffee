@@ -501,12 +501,20 @@ module.exports = (grunt) ->
       'nw-open-mac':
         command: "open #{nwConfig.root}/releases/#{appPkg.name}/osx/#{appPkg.name}.app"
 
-    processhtml:
-      options:
-        commentMarker: 'process'
+    replace:
       dist:
-        files:
-          '<%= yeoman.dist %>/index.html': ['<%= yeoman.dist %>/index.html']
+        options:
+          patterns: [
+            match: /<!-- MOCKS -->[\s\S]+<!-- ENDMOCKS -->/gi,
+            replacement: ''
+            expression: true
+          ]
+        files: [
+          expand: false
+          flatten: true
+          src: '<%= yeoman.dist %>/index.html'
+          dest: '<%= yeoman.dist %>/index.html'
+        ]
 
     nodewebkit:
       options:
@@ -580,7 +588,6 @@ module.exports = (grunt) ->
     'concat'
     'ngmin'
     'copy:dist'
-    'processhtml:dist'
     'cssmin'
     'uglify'
     'rev'
@@ -605,6 +612,7 @@ module.exports = (grunt) ->
     'lint'
     'test'
     'build'
+    'replace:dist'
     'nodewebkit'
   ]
 
