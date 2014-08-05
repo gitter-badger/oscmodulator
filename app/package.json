@@ -7,7 +7,7 @@
     "Midi",
     "OSC"
   ],
-  "node-remote": "http://localhost:9000",
+  "node-remote": "<local>",
   "window": {
     "icon": "link.png",
     "toolbar": true,
