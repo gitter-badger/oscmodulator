@@ -74,7 +74,7 @@ module.exports = (grunt) ->
 
       coffee:
         files: ['<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}']
-        tasks: ['newer:coffeelint:dist', "newer:coffee:dist"]
+        tasks: ['newer:coffeelint:dist', 'newer:coffee:dist']
 
       coffeeTest:
         files: [
@@ -89,7 +89,7 @@ module.exports = (grunt) ->
 
       less:
         files: ['<%= yeoman.app %>/styles/{,*/}*.less']
-        tasks: ['less', "autoprefixer"]
+        tasks: ['less', 'autoprefixer']
 
       styles:
         files: ['<%= yeoman.app %>/styles/{,*/}*.css']
@@ -119,7 +119,7 @@ module.exports = (grunt) ->
     # The actual grunt server settings
     connect:
       options:
-        port: grunt.option("port") or SERVER_PORT
+        port: grunt.option('port') or SERVER_PORT
         # Change this to '0.0.0.0' to access the server from outside.
         hostname: '0.0.0.0'
 
@@ -145,7 +145,7 @@ module.exports = (grunt) ->
         path: 'http://localhost:<%= connect.options.port %>'
 
       test:
-        path: "http://localhost:9876"
+        path: 'http://localhost:9876'
 
 
     # Empties folders to start fresh
@@ -160,7 +160,7 @@ module.exports = (grunt) ->
           ]
         ]
 
-      server: ".tmp"
+      server: '.tmp'
 
 
     # Add vendor prefixed styles
@@ -204,7 +204,7 @@ module.exports = (grunt) ->
 
       test:
         options:
-          jshintrc: "test/.jshintrc"
+          jshintrc: 'test/.jshintrc'
         files:
           src: [
             'test/spec/**/*.js'
@@ -293,22 +293,18 @@ module.exports = (grunt) ->
         flow:
           html:
             steps:
-              js: [
-                "concat"
-                "uglifyjs"
-              ]
-              css: ["cssmin"]
+              js: ['concat']
+              css: []
 
             post: {}
 
 
     # Performs rewrites based on rev and the useminPrepare configuration
     usemin:
-      html: ['<%= yeoman.dist %>/**/*.html', '!<%= yeoman.dist %>/node_modules/**/*.html']
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css']
-      js: ["<%= yeoman.dist %>/scripts/*.js"]
+      html: ['<%= yeoman.dist %>/index.html']
+      js: ['<%= yeoman.dist %>/scripts/vendor.js']
       options:
-        assetsDirs: ["<%= yeoman.dist %>", '<%= yeoman.dist %>/img']
+        assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/img']
         patterns:
           js: [ [/(img\/.*?\.(?:gif|jpeg|jpg|png|webp))/gm, 'Update the JS to reference our revved images'] ]
           ###
@@ -396,8 +392,18 @@ module.exports = (grunt) ->
               'views/{,*/}*.html'
               'img/{,*/}*.{webp}'
               'styles/fonts/*'
+              'scripts/**/*.{js,coffee}'
               'package.json'
               'node_modules/**/*'
+            ]
+          ,
+            expand: true
+            cwd: '.tmp'
+            dest: '<%= yeoman.dist %>'
+            src: [
+              'scripts/**/*.{js,js.map}'
+              'styles/**/*.{css,css.map}'
+              '!styles/variables.css'
             ]
           ,
             expand: true
@@ -438,7 +444,7 @@ module.exports = (grunt) ->
       server: [
         'coffee:dist'
         'less:dist'
-        "copy:styles"
+        'copy:styles'
       ]
       test: [
         'coffee'
@@ -515,6 +521,19 @@ module.exports = (grunt) ->
           src: '<%= yeoman.dist %>/index.html'
           dest: '<%= yeoman.dist %>/index.html'
         ]
+      dev:
+        options:
+          patterns: [
+            match: /<!-- MOCKS -->[\s\S]+<!-- ENDMOCKS -->/gi,
+            replacement: ''
+            expression: true
+          ]
+        files: [
+          expand: false
+          flatten: true
+          src: '<%= yeoman.app %>/index.html'
+          dest: '.tmp/index.html'
+        ]
 
     nodewebkit:
       options:
@@ -545,9 +564,10 @@ module.exports = (grunt) ->
       return grunt.task.run [
         'clean:dist'
         'build'
+        'replace:dist'
         'connect:dist:keepalive'
       ]
-    grunt.task.run [
+    tasks = [
       'clean:server'
       'copy:fonts'
       'concurrent:server'
@@ -556,6 +576,8 @@ module.exports = (grunt) ->
       'karma:unit-watch:start'
       'watch'
     ]
+    tasks.splice 4, 0, 'replace:dev' if grunt.option 'no-mocks'
+    grunt.task.run tasks
 
   grunt.registerTask 'test', (target='unit', env='dev') ->
     if target is 'e2e'
@@ -586,13 +608,9 @@ module.exports = (grunt) ->
     'concurrent:dist'
     'autoprefixer'
     'concat'
-    'ngmin'
-    'copy:dist'
     'cssmin'
-    'uglify'
-    'rev'
+    'copy:dist'
     'usemin'
-    'htmlmin'
   ]
 
   grunt.registerTask 'ci', [
