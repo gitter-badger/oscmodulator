@@ -51,6 +51,7 @@ Run the following commands to install the correct version of Node.js for develop
     >nvm use 0.10.29
     >npm update -g
     >npm install -g npm@1.4.14
+    >npm install -g grunt-cli@0.1.13
 
 Optionally, set your default Node.js version so you don't have to specifiy it every time you login.
 
