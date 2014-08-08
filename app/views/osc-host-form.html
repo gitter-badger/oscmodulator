@@ -5,13 +5,13 @@
             <div class="configRow">
                 <!-- Funny spacing to make sure no space characters appear between inputs. -->
                 <div class="configItem oscHostName"><input
-                    name="oscHostName" type="text" placeholder="Name"
+                    id="oscHostName{{key}}" name="oscHostName" type="text" placeholder="Name"
                     ng-change="oscHostConfig.updateOSCHost(key)" ng-model="host.name"></div
                     ><div class="configItem oscHostAddress"><input
-                    name="oscHostAddress" type="text" placeholder="Address"
+                    id="oscHostAddress{{key}}" name="oscHostAddress" type="text" placeholder="Address"
                     ng-change="oscHostConfig.updateOSCHost(key)" ng-model="host.address"></div
                     ><div class="configItem oscHostPort"><input
-                    name="oscHostPort" type="text" placeholder="Port"
+                    id="oscHostPort{{key}}" name="oscHostPort" type="text" placeholder="Port"
                     ng-change="oscHostConfig.updateOSCHost(key)" ng-model="host.port"></div>
             </div>
             <div class="removeConfigItem">

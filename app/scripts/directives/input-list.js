@@ -70,9 +70,12 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle output add events when an output becomes valid.
        */
       $scope.$on('output:osc:add', function(event, id){
+        var output;
+
         // If the output's parent input is valid, tell the messageMiddleware.
         if($scope.inputConfig.inputs[id.input].valid){
-          messageMiddleware.setOSCOutput(id);
+          output = $scope.inputConfig.inputs[id.input].outputs[id.output];
+          messageMiddleware.setOSCOutput(id.input, id.output, output.path, output.parameters);
         }
       });
 
@@ -80,9 +83,12 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle output update events when an output is modified.
        */
       $scope.$on('output:osc:update', function(event, id){
+        var output;
+
         if($scope.inputConfig.inputs[id.input].valid){
-          messageMiddleware.removeOutput(id);
-          messageMiddleware.setOSCOutput(id);
+          output = $scope.inputConfig.inputs[id.input].outputs[id.output];
+          messageMiddleware.removeOSCOutput(id.output);
+          messageMiddleware.setOSCOutput(id.input, id.output, output.path, output.parameters);
         }
       });
 
@@ -92,7 +98,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       $scope.$on('output:osc:remove', function(event, id){
         if($scope.inputConfig.inputs[id.input].valid){
           // Remove from the messageMiddleware before removing it from config.
-          messageMiddleware.removeOutput(id);
+          messageMiddleware.removeOSCOutput(id.output);
         }
 
         $scope.inputConfig.removeOutput(id);

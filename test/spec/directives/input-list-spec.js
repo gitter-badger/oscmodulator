@@ -24,7 +24,7 @@ describe('Directive: inputList', function () {
       setMidiInput: function(){},
       removeInput: function(){},
       setOSCOutput: function(){},
-      removeOutput: function(){}
+      removeOSCOutput: function(){}
     };
 
     module(function($provide){
@@ -240,7 +240,7 @@ describe('Directive: inputList', function () {
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith({input:1, output:1});
+    expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith(1, 1, '/path', []);
   }));
 
   it('should not tell the messageMiddleware if an output is added to an invalid input.', inject(function($compile, $rootScope){
@@ -263,20 +263,21 @@ describe('Directive: inputList', function () {
     parentScope = $rootScope.$new();
 
     spyOn(messageMiddlewareMock, 'setOSCOutput');
-    spyOn(messageMiddlewareMock, 'removeOutput');
+    spyOn(messageMiddlewareMock, 'removeOSCOutput');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
     expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalled();
-    expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
+    expect(messageMiddlewareMock.removeOSCOutput).not.toHaveBeenCalled();
 
     inputConfigMock.inputs[1].outputs[1].path = '/new/path';
     $rootScope.$apply();
 
-    expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(2, 'The messageMiddleware should be updated when the output path changes.');
-    expect(messageMiddlewareMock.removeOutput).toHaveBeenCalledWith({input:1, output:1});
+    expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(2,
+      'The messageMiddleware should be updated when the output path changes.');
+    expect(messageMiddlewareMock.removeOSCOutput).toHaveBeenCalledWith(1);
   }));
 
   it('should not update the messageMiddleware if outputs are modified on an invalid input.',
@@ -305,17 +306,17 @@ describe('Directive: inputList', function () {
     inputConfigMock.inputs[1].midi.name = 'c3';
     parentScope = $rootScope.$new();
 
-    spyOn(messageMiddlewareMock, 'removeOutput');
+    spyOn(messageMiddlewareMock, 'removeOSCOutput');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
+    expect(messageMiddlewareMock.removeOSCOutput).not.toHaveBeenCalled();
 
     $rootScope.$broadcast('output:osc:remove', {input:1,output:1});
 
-    expect(messageMiddlewareMock.removeOutput).toHaveBeenCalledWith({input:1,output:1});
+    expect(messageMiddlewareMock.removeOSCOutput).toHaveBeenCalledWith(1);
   }));
 
   it('should not update the messageMiddleware if outputs are removed from invalid inputs but should update the input config.',
@@ -326,7 +327,7 @@ describe('Directive: inputList', function () {
       parentScope = $rootScope.$new();
 
       spyOn(messageMiddlewareMock, 'setOSCOutput');
-      spyOn(messageMiddlewareMock, 'removeOutput');
+      spyOn(messageMiddlewareMock, 'removeOSCOutput');
       spyOn(inputConfigMock, 'removeOutput').andCallThrough();
 
       element = $compile(template)(parentScope);
@@ -334,12 +335,12 @@ describe('Directive: inputList', function () {
       isolatedScope.$apply();
 
       expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
-      expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.removeOSCOutput).not.toHaveBeenCalled();
       expect(inputConfigMock.removeOutput).not.toHaveBeenCalled();
 
       $rootScope.$broadcast('output:osc:remove', {input:1, output:1});
 
-      expect(messageMiddlewareMock.removeOutput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.removeOSCOutput).not.toHaveBeenCalled();
       expect(inputConfigMock.removeOutput).toHaveBeenCalledWith({input:1, output:1});
     })
   );

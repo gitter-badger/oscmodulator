@@ -40,6 +40,8 @@
     "sleep": false,
     "input": false,
     "element": false,
-    "by": false
+    "by": false,
+    "$": false,
+    "$$": false
   }
 }

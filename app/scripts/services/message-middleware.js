@@ -125,6 +125,24 @@ angular.module('oscmodulatorApp')
 
         for(output in config[inputsCreated].outputs){
           $log.info('Sending an output message.');
+
+
+          // LEFT OFF HERE
+          // Getting an exception when calling outputHosts[output.hostId]() below because
+          // output is the output id "1" and is not an object with hostId, path and params
+          // properties. I'm guessing this is due to the refactor to pass id strings into
+          // the message middleware.
+
+          // I also noticed that if I type the osc output path of "/so", I end up with 3 outputs
+          // on config.outputs (ie. "/", "/s", and "/so"). I believe there should only be one
+          // output listed and that the outputs should be replaced as I type in the address field.
+
+          // I'm also wondering if this for loop is working the way I intended. Is inputsCreated
+          // unique per instance of this function or is it always going to be the latest value
+          // of inputsCreated? I think the current code is expecting it to be unique to the
+          // context of this function so that calling the function accesses the input it's related
+          // to.
+          // LEFT OFF HERE
           outputHosts[output.hostId](output.path, output.params);
         }
       });

@@ -334,12 +334,17 @@ module.exports = (grunt) ->
 
     protractor:
       options:
-        keepAlive: false
-        configFile: 'test/protractor.conf.js'
+        keepAlive: true
+        configFile: 'test/protractor.conf.coffee'
+        debug: false
+        args:
+          baseUrl: '<%= open.server.path %>'
       start:{}
       debug:
         options:
           debug: true
+          args:
+            browser: 'chrome'
 
     protractor_webdriver:
       start:
@@ -490,8 +495,10 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'e2e-protractor-debug', [
-    'build'
-    'connect:dist'
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
     'protractor:debug'
   ]
 
