@@ -335,7 +335,7 @@ module.exports = (grunt) ->
     protractor:
       options:
         keepAlive: true
-        configFile: 'test/protractor.conf.coffee'
+        configFile: 'test/protractor.conf.js'
         debug: false
         args:
           baseUrl: '<%= open.server.path %>'
