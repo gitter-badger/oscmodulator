@@ -339,7 +339,7 @@ module.exports = (grunt) ->
         debug: false
         args:
           baseUrl: '<%= open.server.path %>'
-      start:{}
+      ci:{}
       debug:
         options:
           debug: true
@@ -493,7 +493,7 @@ module.exports = (grunt) ->
     'concurrent:server'
     'autoprefixer'
     'connect:livereload'
-    'protractor:start'
+    'protractor:ci'
   ]
 
   grunt.registerTask 'e2e-protractor-debug', [
@@ -523,6 +523,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', [
     'unit'
     'e2e'
+    'e2e-protractor'
   ]
 
   grunt.registerTask 'lint', [
