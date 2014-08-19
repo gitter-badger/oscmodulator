@@ -2,6 +2,8 @@ describe('angularjs homepage', function() {
   'use strict';
 
   var homepage = 'http://localhost:9000',
+    // TODO Convert these into PageObjects
+    // http://www.thoughtworks.com/insights/blog/using-page-objects-overcome-protractors-shortcomings
     // Config Panels
     configPanelRow = '.configRow',
     midiConfigPanel = '.midiPanel',
@@ -22,6 +24,9 @@ describe('angularjs homepage', function() {
     midiInputNote = 'input[name=midiInNote]',
     midiInputOSCHost = 'select.oscHost',
     midiInputOSCPath = 'input[name=oscPath]',
+    // Mock Output Debug
+    mockDebugPanelSendMidi = '#mock-debug-panel button',
+    mockDebugPanelOutput = '#mock-debug-panel .output',
     openOSCPanel,
     addOSCPort,
     openMidiPanel;
@@ -43,7 +48,7 @@ describe('angularjs homepage', function() {
   };
 
   addOSCPort = function(name, address, port){
-    $(oscConfigPanelAddHostButton).click();
+//    $(oscConfigPanelAddHostButton).click();
 
     var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
     hostRow.$(oscConfigHostName).sendKeys(name);
@@ -90,7 +95,7 @@ describe('angularjs homepage', function() {
     expect(options.last().getText()).toBe(firstMidiPortName);
   });
 
-  it('should be able to select an osc port.', function(){
+  it('should be able to setup an osc port.', function(){
     var options;
 
     openOSCPanel();
@@ -99,11 +104,12 @@ describe('angularjs homepage', function() {
 
     options = $(midiInputRow).$$('.oscHost option');
     expect(options.count()).toBe(2);
-    expect(options.first().getText()).toBe('');
     expect(options.last().getText()).toBe('name');
   });
 
-  iit('should be able to receive midi events.', function(){
+  it('should be able to receive midi events.', function(){
+    var inputObject, outputNodes;
+
     openMidiPanel();
 
     // turn on the first midi input port
@@ -113,11 +119,9 @@ describe('angularjs homepage', function() {
     openOSCPanel();
 
     // add an osc output port
-    addOSCPort('live', 'localhost', '9876');
+    addOSCPort('a', 'l', '9');
 
-    // select the midi port
-    var inputObject = $$(midiInputRow).first();
-    inputObject.$$(midiInputPortSelect + ' option').last().click();
+    inputObject = $$(midiInputRow).first();
 
     // specify a midi note
     inputObject.$(midiInputNote).sendKeys(':');
@@ -125,14 +129,15 @@ describe('angularjs homepage', function() {
     // select the osc output port
     inputObject.$$(midiInputOSCHost + ' option').last().click();
 
-    browser.debugger();
-
     // set an osc output path
-    inputObject.$(midiInputOSCPath).sendKeys('/path/to/something');
+    inputObject.$(midiInputOSCPath).sendKeys('/');
 
-    // trigger a midi event on the correct port.
-    browser.executeScript('window.sendMidi(\':\', 5);');
+    outputNodes = mockDebugPanelOutput + ' p';
+    expect($$(outputNodes).count()).toBe(0);
 
-    // make sure the correct osc output was sent.
+    $(mockDebugPanelSendMidi).click();
+
+    expect($$(outputNodes).count()).toBe(1);
+    expect($(outputNodes).getText()).toEqual('OSC -> /?');
   });
 });

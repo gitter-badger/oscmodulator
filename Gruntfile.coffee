@@ -489,8 +489,10 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'e2e-protractor', [
-    'build'
-    'connect:dist'
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
     'protractor:start'
   ]
 

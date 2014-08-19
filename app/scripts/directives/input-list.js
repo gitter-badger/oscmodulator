@@ -1,8 +1,6 @@
 /**
- * The inputList directive provides the HTML for the list of inputs.
- *
- * @internal This directive is intended to simplify the main.html file by moving the list code into a template. If we
- * feel this is unnecessary, we can put the html directly in the main.html file.
+ * The inputList directive provides the HTML for the list of inputs. It manages all events broadcast
+ * from the inputs and outputs and then translates those into calles to the Message Middleware.
  */
 angular.module('oscmodulatorApp').directive('inputList', function (){
   'use strict';
@@ -36,7 +34,8 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle midi update events when an input is modified.
        */
       $scope.$on('input:midi:update', function(event, id){
-        messageMiddleware.setMidiInput(id.input);
+        var midi = $scope.inputConfig.inputs[id.input].midi;
+        messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
       });
 
       /**
@@ -60,6 +59,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
 
       /**
        * Handle output create events when an input asks to create a new output.
+       * TODO I don't think this ever gets triggered.
        */
       $scope.$on('output:osc:create', function(event, id){
         // No need to tell the messageMiddleware as it will be notified once the output becomes valid.

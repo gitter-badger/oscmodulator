@@ -153,10 +153,11 @@ describe('Directive: inputList', function () {
     expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
 
     inputConfigMock.inputs[1].midi.name = 'c3';
+    inputConfigMock.inputs[1].midi.note = 36;
     inputConfigMock.inputs[1].valid = true;
     parentScope.$broadcast('input:midi:update', {input:1});
 
-    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith(1);
+    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
   }));
 
   it('should be able to delete midi inputs.', inject(function($rootScope, $compile){

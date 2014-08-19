@@ -25,7 +25,8 @@ angular.module('oscmodulatorApp')
     // Used to create ids for input objects.
     inputsCreated = 0;
 
-    // Used to create ids for output objects.
+    // Used to create ids for output objects. outputHostsCreated is always <= outputsCreated
+    // since multiple outputs can use the same output host.
     outputsCreated = 0;
 
     /**
@@ -33,11 +34,11 @@ angular.module('oscmodulatorApp')
      * Each entry has the following structure:
      * {
      *   routeId:'/1', // this is the id returned from legato.on()
-     *   outputs:{
+     *   outputs:[{
      *     hostId:1, // this maps to one of the items in outputHosts.
      *     path:'/my/path',
      *     parameters:[]
-     *   }
+     *   }]
      * }
      * @type {Object}
      */
@@ -45,7 +46,7 @@ angular.module('oscmodulatorApp')
 
     /**
      * The list of objects that can be used to send output messages. Each property is
-     * a callback function returned from legato.osc.In().
+     * a callback function returned from legato.osc.Out().
      * @type {Object}
      */
     outputHosts = {};
@@ -69,10 +70,9 @@ angular.module('oscmodulatorApp')
 
     /**
      * Start listening to a midi input port.
-     * @param index {String} The name of the port to listen to.
+     * @param index {String} The id of the port to listen to. This is returned from
+     * updateAvailableMidiPorts().
      * @return The id of the midi port created so it can be removed at a later point.
-     * TODO Do we just want to store the midi port id from legato in this class like we do the
-     * osc output ids? How will that impact removeMidiPort?
      */
     service.listenToMidiPort = function(index){
       return legato.in(legato.midi.In(index));
@@ -119,31 +119,14 @@ angular.module('oscmodulatorApp')
 
       // Configure a new note listener for the specified config.
       config[inputsCreated].routeId = legato.on(path, function(){
-        var output;
+        var output, property;
 
         $log.info('Backend midi input callback, Jack!');
 
-        for(output in config[inputsCreated].outputs){
-          $log.info('Sending an output message.');
+        for(property in config[inputsCreated].outputs){
+          output = config[inputsCreated].outputs[property];
 
-
-          // LEFT OFF HERE
-          // Getting an exception when calling outputHosts[output.hostId]() below because
-          // output is the output id "1" and is not an object with hostId, path and params
-          // properties. I'm guessing this is due to the refactor to pass id strings into
-          // the message middleware.
-
-          // I also noticed that if I type the osc output path of "/so", I end up with 3 outputs
-          // on config.outputs (ie. "/", "/s", and "/so"). I believe there should only be one
-          // output listed and that the outputs should be replaced as I type in the address field.
-
-          // I'm also wondering if this for loop is working the way I intended. Is inputsCreated
-          // unique per instance of this function or is it always going to be the latest value
-          // of inputsCreated? I think the current code is expecting it to be unique to the
-          // context of this function so that calling the function accesses the input it's related
-          // to.
-          // LEFT OFF HERE
-          outputHosts[output.hostId](output.path, output.params);
+          outputHosts[output.hostId](output.path, output.parameters);
         }
       });
 
@@ -221,7 +204,7 @@ angular.module('oscmodulatorApp')
       $log.info('Set OSC Output: ' + inputId + '|' + outputHostId + '|' + path + '|' + parameters);
 
       config[inputId].outputs[outputsCreated] = {
-        ḫostId: outputHostId,
+        hostId: outputHostId,
         path: path,
         parameters: parameters
       };
