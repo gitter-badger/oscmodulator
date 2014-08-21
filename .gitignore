@@ -9,3 +9,4 @@ app/components
 npm-debug.log
 cache
 releases
+phantomjsdriver.log

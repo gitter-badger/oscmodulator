@@ -38,6 +38,10 @@
     "waitsFor": false,
     "xdescribe": false,
     "sleep": false,
-    "input": false
+    "input": false,
+    "element": false,
+    "by": false,
+    "$": false,
+    "$$": false
   }
 }

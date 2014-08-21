@@ -332,6 +332,25 @@ module.exports = (grunt) ->
         autoWatch: true
         browsers: ['Chrome']
 
+    protractor:
+      options:
+        keepAlive: true
+        configFile: 'test/protractor.conf.js'
+        debug: false
+        args:
+          baseUrl: '<%= open.server.path %>'
+      ci:{}
+      debug:
+        options:
+          debug: true
+          args:
+            browser: 'chrome'
+
+    protractor_webdriver:
+      start:
+        options:
+          path: 'node_modules/protractor/bin/'
+
     ngmin:
       dist:
         files: [
@@ -363,6 +382,12 @@ module.exports = (grunt) ->
 
       'nw-open-mac':
         command: "open #{nwConfig.root}/releases/#{appPkg.name}/mac/#{appPkg.name}.app"
+
+      'stop-selenium':
+        command:'curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer'
+
+      'start-element-finder':
+        command:'node node_modules/protractor/bin/elementexplorer.js http://localhost:9001'
 
     replace:
       dist:
@@ -463,6 +488,29 @@ module.exports = (grunt) ->
     'karma:e2e'
   ]
 
+  grunt.registerTask 'e2e-protractor', [
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'protractor:ci'
+  ]
+
+  grunt.registerTask 'e2e-protractor-debug', [
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'protractor:debug'
+  ]
+
+  grunt.registerTask 'e2e-protractor-element-finder', [
+    'build'
+    'connect:dist'
+    'protractor_webdriver:start'
+    'shell:start-element-finder'
+  ]
+
   grunt.registerTask 'e2e-watch', [
     'clean:server'
     'concurrent:server'
@@ -475,6 +523,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', [
     'unit'
     'e2e'
+    'e2e-protractor'
   ]
 
   grunt.registerTask 'lint', [
