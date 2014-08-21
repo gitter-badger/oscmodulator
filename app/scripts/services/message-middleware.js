@@ -3,7 +3,7 @@
  * in the browser and the code running outside of the browser (Node or C code).
  */
 angular.module('oscmodulatorApp')
-  .factory('messageMiddleware', function($rootScope, legato, inputConfig, $log) {
+  .factory('messageMiddleware', function($rootScope, legato, $log) {
     'use strict';
 
     var service, config, inputsCreated, outputsCreated, outputHostsCreated, outputHosts;

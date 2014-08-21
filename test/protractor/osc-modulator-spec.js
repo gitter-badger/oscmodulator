@@ -119,7 +119,7 @@ describe('angularjs homepage', function() {
     openOSCPanel();
 
     // add an osc output port
-    addOSCPort('a', 'l', '9');
+    addOSCPort('live', 'localhost', '9');
 
     inputObject = $$(midiInputRow).first();
 
