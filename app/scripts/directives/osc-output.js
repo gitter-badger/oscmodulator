@@ -18,7 +18,8 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
         eventNames = {
           add: 'output:osc:add',
           update: 'output:osc:update',
-          remove: 'output:osc:remove'
+          remove: 'output:osc:remove',
+          disable: 'output:osc:disable'
         };
 
         /**
@@ -58,8 +59,6 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
         /**
          * Add an empty parameter to the list of OSC parameters. The messageMiddleware service will not be updated
          * until the parameter becomes valid.
-         *
-         * @internal The messageMiddleware service will be updated by the watch expression.
          */
         $scope.addOSCParameter = function(){
           $scope.parameterInputs.push({value:null});
@@ -69,8 +68,6 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
         /**
          * Remove a parameter from the list of OSC parameters.
          * @param index The index of the parameter to remove.
-         *
-         * @internal The messageMiddleware service will be updated by the watch expression.
          */
         $scope.removeOSCParameter = function(index){
           $scope.parameterInputs.splice(index, 1);
@@ -141,10 +138,10 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
               $scope.$emit(eventNames.update, $scope.config.id);
             }
           }
-          // If the scope was previously valid and just became invalid, emit a remove event.
+          // If the scope was previously valid and just became invalid, emit an update event.
           else if($scope.valid){
             $scope.valid = false;
-            $scope.$emit(eventNames.remove, $scope.config.id);
+            $scope.$emit(eventNames.disable, $scope.config.id);
           }
 
           return $scope.valid;
@@ -155,7 +152,7 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
          * from the config. Unfortunately, Angular will not take care of this for us automatically.
          */
         $scope.$on('oscHostConfig:remove', function(event, id){
-          if(id === $scope.config.host){
+          if(id === $scope.config.host.name){
             $scope.config.host = null;
             $scope.save();
           }

@@ -51,13 +51,14 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, 
    */
   service.updateOSCHost = function(index){
     var host = service.hosts[index];
+
     if(host.name && host.address && host.port){
       if(host.id){
-        messageMiddleware.removeOSCOutputHost(host.id);
-        host.id = null;
+        messageMiddleware.updateOSCOutputHost(host.id, host.address, host.port);
       }
-
-      host.id = messageMiddleware.addOSCOutputHost(host.address, host.port);
+      else{
+        host.id = messageMiddleware.addOSCOutputHost(host.address, host.port);
+      }
     }
     else if(host.id){
       messageMiddleware.removeOSCOutputHost(host.id);
@@ -69,7 +70,8 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, 
 
   /**
    * Keep the hosts list in sync with the oscHosts list.
-   * TODO Need to validate that the host name is unique and prompt the user if it is not.
+   * TODO Need to make the structure of service.ids include the name and id.
+   * TODO Need to validate that the host name is unique and prompt the user if it is not?
    */
   service.updateHostIds = function(){
     var j, host;
@@ -82,11 +84,15 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, 
       for(j = 0; j < service.hosts.length; j++){
         host = service.hosts[j];
         if(host.name && host.address && host.port){
-          service.ids.push(service.hosts[j].name);
+          service.ids.push({
+            'name':host.name,
+            'id':host.id
+          });
         }
       }
     }
   };
+  
 
   // Initialize the OSC Host list.
   service.addOSCHost();

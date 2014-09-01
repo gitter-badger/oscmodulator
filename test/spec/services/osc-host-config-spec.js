@@ -9,7 +9,8 @@ describe('Service: oscHostConfig', function () {
   beforeEach(function(){
     messageMiddlewareMock = {
       removeOSCOutputHost:function(){},
-      addOSCOutputHost:function(){}
+      addOSCOutputHost:function(){},
+      updateOSCOutputHost:function(){}
     };
 
     module(function($provide){
@@ -72,6 +73,7 @@ describe('Service: oscHostConfig', function () {
     oscHostConfig.updateHostIds();
 
     expect(oscHostConfig.ids.length).toBe(2, 'Adding two host configs should result in two host ids.');
+    expect(oscHostConfig.hosts.length).toBe(3);
 
     var listener = $rootScope.$new();
     listener.change = function(){};
@@ -117,11 +119,11 @@ describe('Service: oscHostConfig', function () {
   });
 
   it('should keep the OSC Host ids in sync with the OSC Hosts.', function(){
-    oscHostConfig.hosts[0] = {name:'a', address:'localhost', port:'9000'};
+    oscHostConfig.hosts[0] = {name:'a', address:'localhost', port:'9000', id:0};
     oscHostConfig.updateHostIds();
 
     expect(oscHostConfig.ids.length).toBe(1);
-    expect(oscHostConfig.ids[0]).toBe('a');
+    expect(oscHostConfig.ids[0]).toEqual({name:'a',id:0});
 
     oscHostConfig.hosts.push({name:'b'});
     oscHostConfig.updateHostIds();
@@ -130,16 +132,17 @@ describe('Service: oscHostConfig', function () {
 
     oscHostConfig.hosts[1].address = 'localhost';
     oscHostConfig.hosts[1].port = '9001';
+    oscHostConfig.hosts[1].id = 1;
     oscHostConfig.updateHostIds();
 
     expect(oscHostConfig.ids.length).toBe(2, 'Now the host is fully configured it should be in the list.');
-    expect(oscHostConfig.ids[1]).toBe('b');
+    expect(oscHostConfig.ids[1]).toEqual({name:'b',id:1});
 
     oscHostConfig.removeOSCHost(0);
     oscHostConfig.updateHostIds();
 
     expect(oscHostConfig.ids.length).toBe(1);
-    expect(oscHostConfig.ids[0]).toBe('b');
+    expect(oscHostConfig.ids[0]).toEqual({name:'b',id:1});
 
     oscHostConfig.removeOSCHost(0);
     oscHostConfig.updateHostIds();
@@ -147,7 +150,7 @@ describe('Service: oscHostConfig', function () {
     expect(oscHostConfig.ids.length).toBe(0);
   });
 
-  it('should handle invalid OSC Host ids.', function(){
+  it('should handle invalid OSC Hosts.', function(){
     oscHostConfig.hosts = [
       {
         name: '',
@@ -165,12 +168,14 @@ describe('Service: oscHostConfig', function () {
     oscHostConfig.updateHostIds();
 
     expect(oscHostConfig.ids.length).toBe(1);
-    expect(oscHostConfig.ids[0]).toBe('b');
+    // TODO We shouldn't allow items with no id in the ids property.
+    expect(oscHostConfig.ids[0]).toEqual({name:'b',id:null});
   });
 
   it('should tell the messageMiddleware when hosts become valid.', function(){
     spyOn(messageMiddlewareMock, 'removeOSCOutputHost');
     spyOn(messageMiddlewareMock, 'addOSCOutputHost').andReturn(10);
+    spyOn(messageMiddlewareMock, 'updateOSCOutputHost').andReturn(true);
     spyOn(oscHostConfig, 'updateHostIds').andCallThrough();
 
     oscHostConfig.hosts[0].name = 'a';
@@ -178,7 +183,6 @@ describe('Service: oscHostConfig', function () {
     oscHostConfig.updateOSCHost(0);
 
     expect(messageMiddlewareMock.addOSCOutputHost).not.toHaveBeenCalled();
-    expect(oscHostConfig.updateHostIds).toHaveBeenCalled();
 
     oscHostConfig.hosts[0].port = '9000';
     oscHostConfig.updateOSCHost(0);
@@ -190,9 +194,8 @@ describe('Service: oscHostConfig', function () {
     oscHostConfig.hosts[0].port = '9001';
     oscHostConfig.updateOSCHost(0);
 
-    expect(messageMiddlewareMock.addOSCOutputHost).toHaveBeenCalledWith('localhost', '9001');
-    expect(messageMiddlewareMock.removeOSCOutputHost).toHaveBeenCalledWith(10);
     expect(oscHostConfig.updateHostIds.calls.length).toBe(3);
+    expect(messageMiddlewareMock.updateOSCOutputHost).toHaveBeenCalledWith(10, 'localhost', '9001');
   });
 
   it('should tell the messageMiddleware to remove hosts that become invalid.', function(){

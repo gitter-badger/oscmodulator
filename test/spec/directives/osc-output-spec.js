@@ -46,8 +46,7 @@ describe('Directive: oscOutput', function () {
           address: 'localhost',
           port: 9002
         }
-      ],
-      ids:['a','b','c']
+      ]
     };
 
     // Provide a mock version of the oscHostConfig service.
@@ -62,6 +61,7 @@ describe('Directive: oscOutput', function () {
     parentScope.add = function(){};
     parentScope.update = function(){};
     parentScope.remove = function(){};
+    parentScope.disable = function(){};
     parentScope.$on('output:osc:add',function(event, id){
       parentScope.add(id);
     });
@@ -70,6 +70,9 @@ describe('Directive: oscOutput', function () {
     });
     parentScope.$on('output:osc:remove', function(event, id){
       parentScope.remove(id);
+    });
+    parentScope.$on('output:osc:disable', function(event, id){
+      parentScope.disable(id);
     });
   };
 
@@ -203,7 +206,7 @@ describe('Directive: oscOutput', function () {
   it('Should be possible to configure the OSC host list but should not set a default.', function(){
       // Provide a mock version of the oscHostConfig service.
       module(function($provide){
-        $provide.value('oscHostConfig', {hosts:[], ids:['a','b','c']});
+        $provide.value('oscHostConfig', oscHostConfigMock);
       });
 
       // Have to perform dependency injection after creating the mocks.
@@ -217,7 +220,7 @@ describe('Directive: oscOutput', function () {
         isolatedScope.$apply();
 
         expect(isolatedScope.config.host).toBeNull();
-        expect(isolatedScope.hosts.ids.length).toBe(3);
+        expect(isolatedScope.hosts.hosts.length).toBe(3);
 
         // Should have the 3 options set in the scope and an empty option.
         expect(element.find('select.oscHost option').length).toEqual(4);
@@ -230,26 +233,26 @@ describe('Directive: oscOutput', function () {
   it('should be possible to set the default OSC host through config.', function() {
     // Provide a mock version of the oscHostConfig service.
     module(function($provide){
-      $provide.value('oscHostConfig', {hosts:[], ids:['host 1','host 2','host 3']});
+      $provide.value('oscHostConfig', oscHostConfigMock);
     });
 
     inject(function($compile, $rootScope){
       parentScope = $rootScope.$new();
       parentScope.osc = defaultOSC;
-      parentScope.hosts = ['host 1', 'host 2', 'host 3'];
-      parentScope.osc.host = 'host 2';
+      parentScope.hosts = oscHostConfigMock;
+      parentScope.osc.host = oscHostConfigMock.hosts[1];
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(isolatedScope.config.host).toBe('host 2');
+      expect(isolatedScope.config.host).toBe(oscHostConfigMock.hosts[1]);
 
       // Should only have the 3 options specified in the scope.
       expect(element.find('select.oscHost option').length).toEqual(3);
-      expect(element.find('select.oscHost option').first().text()).toBe('host 1');
-      expect(element.find('select.oscHost option').last().text()).toBe('host 3');
+      expect(element.find('select.oscHost option').first().text()).toBe('a');
+      expect(element.find('select.oscHost option').last().text()).toBe('c');
       expect(element.find('select.oscHost option').first().next().attr('selected')).toBe('selected');
     });
   });
@@ -305,7 +308,7 @@ describe('Directive: oscOutput', function () {
     expect(element.find('input[name=oscPath]').val()).toBe('/my/second/path');
   }));
 
-  it('should reset the OSC Host if the configured host was removed.', inject(function($compile, $rootScope){
+  xit('should reset the OSC Host if the configured host was removed.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'b';
@@ -388,31 +391,39 @@ describe('Directive: oscOutput', function () {
     expect(isolatedScope.valid).toBe(false, 'The scope should be invalid if the host is emptied.');
   }));
 
-  it('should send remove events when it becomes invalid.', inject(function($compile, $rootScope){
+  it('should send disable events when it becomes invalid.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
 
     setupEventListeners(parentScope);
 
     spyOn(parentScope, 'remove');
+    spyOn(parentScope, 'update');
+    spyOn(parentScope, 'disable');
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
+    expect(parentScope.update).not.toHaveBeenCalled();
     expect(parentScope.remove).not.toHaveBeenCalled();
+    expect(parentScope.disable).not.toHaveBeenCalled();
 
     isolatedScope.config.path = '/path';
     isolatedScope.config.host = 'a';
     isolatedScope.$apply();
 
+    expect(parentScope.update.calls.length).toBe(1);
     expect(parentScope.remove).not.toHaveBeenCalled();
+    expect(parentScope.disable).not.toHaveBeenCalled();
 
     isolatedScope.config.path = null;
     isolatedScope.$apply();
 
-    expect(parentScope.remove).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.update.calls.length).toBe(1);
+    expect(parentScope.remove).not.toHaveBeenCalled();
+    expect(parentScope.disable).toHaveBeenCalled();
   }));
 
   it('should send remove events when the remove button is pressed.', inject(function($rootScope, $compile){

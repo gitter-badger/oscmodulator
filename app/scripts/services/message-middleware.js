@@ -6,7 +6,7 @@ angular.module('oscmodulatorApp')
   .factory('messageMiddleware', function($rootScope, legato, $log) {
     'use strict';
 
-    var service, config, inputsCreated, outputsCreated, outputHostsCreated, outputHosts;
+    var service, config, inputsCreated, outputHostsCreated, outputHosts;
 
     service = $rootScope.$new();
 
@@ -24,10 +24,6 @@ angular.module('oscmodulatorApp')
 
     // Used to create ids for input objects.
     inputsCreated = 0;
-
-    // Used to create ids for output objects. outputHostsCreated is always <= outputsCreated
-    // since multiple outputs can use the same output host.
-    outputsCreated = 0;
 
     /**
      * The list of configurations that match the valid configurations from the UI.
@@ -104,8 +100,6 @@ angular.module('oscmodulatorApp')
      * @param noteType {string} either 'All', 'Note' or 'CC'
      * @param channel {string} The channel number to listen to or 'All' for all channels.
      * @returns {number} The id of the newly created input.
-     * TODO Pass through appropriate types instead of strings for everything.
-     * TODO Pass through ':' for channel in order to match the note parameter.
      */
     service.setMidiInput = function(port, note, noteType, channel){
       channel = channel === 'All' ? ':' : channel;
@@ -159,6 +153,7 @@ angular.module('oscmodulatorApp')
      */
     service.removeInput = function(id){
       legato.removeRoute(config[id].routeId);
+
       delete config[id];
     };
 
@@ -166,11 +161,29 @@ angular.module('oscmodulatorApp')
      * Add an OSC Output host.
      * @param address {String} The address to which OSC messages will be sent.
      * @param port {String} The port of the OSC Host to which messages will be sent.
+     * @return {int} The id of the newly created OSC Host.
      */
     service.addOSCOutputHost = function(address, port){
       ++outputHostsCreated;
       outputHosts[outputHostsCreated] = legato.osc.Out(address, port);
       return outputHostsCreated;
+    };
+
+    /**
+     * Update the properties of an existing OSC output host.
+     * @param id {int} The id of the host to modify.
+     * @param address {String} The new address of the host.
+     * @param port {String} The new port of the host.
+     */
+    service.updateOSCOutputHost = function(id, address, port){
+      var removed = this.removeOSCOutputHost(id);
+      if( removed ){
+        outputHosts[id] = legato.osc.Out(address, port);
+        return true;
+      }
+      else{
+        return false;
+      }
     };
 
     /**
@@ -183,6 +196,7 @@ angular.module('oscmodulatorApp')
       if(outputHosts[id] !== undefined){
         $log.info('Removing OSC Output Host ' + id);
         delete outputHosts[id];
+
         return true;
       }
       else{
@@ -192,68 +206,60 @@ angular.module('oscmodulatorApp')
 
     /**
      * Add/update an OSC output.
-     * @param inputId The id of the input that will trigger this output (returned from listenToMidiPort)
-     * @param outputHostId The output host to which to send messages (retrieved from oscHostConfig)
-     * @param path The OSC path to send to.
-     * @param parameters The list of parameters to send.
+     * @param inputId {int} The id of the input that will trigger this output (returned from listenToMidiPort)
+     * @param outputId {int} The id of the output that will send this message.
+     * @param outputHostId {int} The output host to which to send messages (retrieved from oscHostConfig)
+     * @param path {String} The OSC path to send to.
+     * @param parameters {String} The list of parameters to send.
      * @returns {number} The id of this OSC output object for later removal.
      */
-    service.setOSCOutput = function(inputId, outputHostId, path, parameters){
-      ++outputsCreated;
-
+    service.setOSCOutput = function(inputId, outputId, outputHostId, path, parameters){
       $log.info('Set OSC Output: ' + inputId + '|' + outputHostId + '|' + path + '|' + parameters);
 
-      config[inputId].outputs[outputsCreated] = {
+      // TODO Should we be storing a reference to the output host rather than the id?
+      config[inputId].outputs[outputId] = {
         hostId: outputHostId,
         path: path,
         parameters: parameters
       };
 
-      return outputsCreated;
+      return outputId;
+    };
+
+    /**
+     * Update the properties of an OSC output.
+     * @param inputId The id of the input who's output will be modified.
+     * @param outputId The id of the output to modify.
+     * @param outputHostId The updated outputHostId to use to send output messages.
+     * @param path The updated path to send output messages on.
+     * @param parameters The list of parameters to send in the output message.
+     * @returns {boolean} True = the output was updated. False = the output doesn't exist or couldn't be updated.
+     */
+    service.updateOSCOutput = function(inputId, outputId, outputHostId, path, parameters){
+      if(config[inputId].outputs[outputId]){
+        this.setOSCOutput(inputId, outputId, outputHostId, path, parameters);
+        return true;
+      }
+      else{
+        return false;
+      }
     };
 
     /**
      * Remove an OSC output configuration.
      * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
      */
-    service.removeOSCOutput = function(id){
-      // TODO Test this method.
-      $log.info('Remove OSC Output: ' + id.input + '|' + id.output);
+    service.removeOSCOutput = function(inputId, outputId){
+      $log.info('Remove OSC Output: ' + inputId + '|' + outputId);
+
+      if(config[inputId].outputs[outputId]){
+        delete config[inputId].outputs[outputId];
+        return true;
+      }
+      else {
+        return false;
+      }
     };
-
-    /**
-     * Update the OSC path for an existing output object.
-     * TODO Remove the set path and set host methods. They feel like pre-mature optimization. The set osc parameters
-     * method may also be pre-mature optimization.
-     * @param path {String} The path to set.
-     */
-//    service.setOSCPath = function(id, path){
-//      // TODO Test this method.
-//      // TODO Should we just pass the id into this method and do a direct lookup?
-//      $log.info('Set OSC Path: ' + id.input + '|' + id.output + ', path: ' + path);
-//    };
-
-    /**
-     * Update the OSC host for an existing output object.
-     * @param id {Object} The id of the output to set/add. ex: {input:1, output:1}
-     * @param host {String} The id of the host to use with this output.
-     */
-//    service.setOSCHost = function(id, host){
-//      // TODO Test this method.
-//      // TODO Should we just pass the id into this method and do a direct lookup?
-//      $log.info('Set OSC Host: ' + id.input + '|' + id.output + ', host: ' + host);
-//    };
-//
-//    /**
-//     * Set the OSC parameters for the specified OSC output.
-//     * @param id The id of the output to modify. {input:x, output:y}
-//     * @param params The list of parameters to send with the specified output.
-//     */
-//    service.setOSCParameters = function(id, params){
-//      // TODO Test this method.
-//      // TODO Should we just pass the id into this method and do a direct lookup?
-//      $log.info('Set OSC Parameters: ' + id.input + '|' + id.output + ', params: ' + params);
-//    };
 
     return service;
   }

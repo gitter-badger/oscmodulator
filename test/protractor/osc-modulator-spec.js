@@ -29,7 +29,8 @@ describe('angularjs homepage', function() {
     mockDebugPanelOutput = '#mock-debug-panel .output',
     openOSCPanel,
     addOSCPort,
-    openMidiPanel;
+    openMidiPanel,
+    basicSetup;
 
   openMidiPanel = function(){
     $(midiConfigPanelButton).click();
@@ -48,12 +49,36 @@ describe('angularjs homepage', function() {
   };
 
   addOSCPort = function(name, address, port){
-//    $(oscConfigPanelAddHostButton).click();
-
     var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
     hostRow.$(oscConfigHostName).sendKeys(name);
     hostRow.$(oscConfigHostAddress).sendKeys(address);
     hostRow.$(oscConfigHostPort).sendKeys(port);
+  };
+
+  basicSetup = function(){
+    var inputObject;
+
+    openMidiPanel();
+
+    // turn on the first midi input port
+    $(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
+
+    // open the osc panel
+    openOSCPanel();
+
+    // add an osc output port
+    addOSCPort('live', 'localhost', '9090');
+
+    inputObject = $$(midiInputRow).first();
+
+    // specify a midi note
+    inputObject.$(midiInputNote).sendKeys(':');
+
+    // select the osc output port
+    inputObject.$$(midiInputOSCHost + ' option').last().click();
+
+    // set an osc output path
+    inputObject.$(midiInputOSCPath).sendKeys('/');
   };
 
   beforeEach(function(){
@@ -110,27 +135,9 @@ describe('angularjs homepage', function() {
   it('should be able to receive midi events.', function(){
     var inputObject, outputNodes;
 
-    openMidiPanel();
-
-    // turn on the first midi input port
-    $(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
-
-    // open the osc panel
-    openOSCPanel();
-
-    // add an osc output port
-    addOSCPort('live', 'localhost', '9');
+    basicSetup();
 
     inputObject = $$(midiInputRow).first();
-
-    // specify a midi note
-    inputObject.$(midiInputNote).sendKeys(':');
-
-    // select the osc output port
-    inputObject.$$(midiInputOSCHost + ' option').last().click();
-
-    // set an osc output path
-    inputObject.$(midiInputOSCPath).sendKeys('/');
 
     outputNodes = mockDebugPanelOutput + ' p';
     expect($$(outputNodes).count()).toBe(0);
@@ -139,5 +146,78 @@ describe('angularjs homepage', function() {
 
     expect($$(outputNodes).count()).toBe(1);
     expect($(outputNodes).getText()).toEqual('OSC -> /?');
+
+    inputObject.$(midiInputOSCPath).clear();
+
+    var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
+    hostRow.$(oscConfigHostPort).sendKeys('33');
+
+    inputObject.$(midiInputOSCPath).sendKeys('/some/path');
+
+    $(mockDebugPanelSendMidi).click();
+
+    expect($$(outputNodes).count()).toBe(2);
+    expect($$(outputNodes).last().getText()).toBe('OSC -> /some/path?');
+  });
+
+  xit('should be able to send osc messages if the osc host is removed and re-added.', function(){
+    var inputObject, outputNodes;
+
+    basicSetup();
+
+    inputObject = $$(midiInputRow).first();
+
+    // Make sure no messages have been sent yet.
+    outputNodes = mockDebugPanelOutput + ' p';
+    expect($$(outputNodes).count()).toBe(0);
+
+    $(mockDebugPanelSendMidi).click();
+
+    // Make sure we can send messages.
+    expect($$(outputNodes).count()).toBe(1);
+    expect($(outputNodes).getText()).toEqual('OSC -> /?');
+
+    browser.debugger();
+
+    // Remove the current host.
+    var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
+    hostRow.$(oscConfigHostPort).sendKeys('\b', '\b', '\b', '\b');
+
+    browser.debugger();
+
+    // Try to send another message.
+    $(mockDebugPanelSendMidi).click();
+
+    browser.debugger();
+
+    // Make sure no new messages were sent since we don't have a host configured.
+    expect($$(outputNodes).count()).toBe(1);
+
+    // Make sure the osc output row host was updated and is now empty.
+    var hostSelect = inputObject.$$(midiInputOSCHost + ' option');
+    expect(hostSelect.count()).toBe(1);
+    expect(hostSelect.last().getText()).toBe('');
+
+    browser.debugger();
+
+    // Fix the osc port.
+    hostRow.$(oscConfigHostPort).sendKeys('8989');
+
+    // Try to send another message.
+    $(mockDebugPanelSendMidi).click();
+
+    // Make sure nothing new was sent.
+    expect($$(outputNodes).count()).toBe(1);
+
+    // Select the updated host and change the path.
+
+    // Send another message.
+
+    // Make sure the message was sent this time.
+  });
+
+  it('should be able to send osc messages if the output hosts are configured before' +
+    'the midi input is configured.', function(){
+    // TODO
   });
 });

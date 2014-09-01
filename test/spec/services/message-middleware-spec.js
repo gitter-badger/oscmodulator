@@ -7,9 +7,15 @@ describe('Service: messageMiddleware', function () {
 
   beforeEach(function(){
     legatoMock = {
+      config: {},
       init: function(){},
-      in: function(){},
-      on: function(){},
+      in: function(){
+        return '/1';
+      },
+      on: function(path, callback){
+        this.config[path] = callback;
+        return path;
+      },
       removeInput: function(){},
       removeRoute: function(){},
       midi:{
@@ -22,7 +28,10 @@ describe('Service: messageMiddleware', function () {
         }
       },
       osc:{
-        Out:function(){return function(){};}
+        fakeOutput: function(){},
+        Out:function(){
+          return this.fakeOutput;
+        }
       }
     };
 
@@ -157,6 +166,23 @@ describe('Service: messageMiddleware', function () {
     expect(outputId).toBe(1, 'An id should have been returned to access the new output.');
   });
 
+  it('should be able to update an existing OSC output host.', function(){
+    spyOn(legatoMock.osc, 'Out').andReturn(function(){});
+
+    var removed = messageMiddleware.updateOSCOutputHost(1, 'localhost', '9000');
+
+    expect(removed).toBe(false, 'An output cannot be removed if there are no outputs yet.');
+
+    var outputId = messageMiddleware.addOSCOutputHost('localhost', '9000');
+
+    expect(outputId).toBe(1, 'An output host should have been created.');
+
+    var updated = messageMiddleware.updateOSCOutputHost(outputId, 'newhost', '8080');
+
+    expect(updated).toBe(true, 'The output host should have been updated.');
+    expect(legatoMock.osc.Out).toHaveBeenCalledWith('newhost', '8080');
+  });
+
   it('should be able to remove an existing OSC output host.', function(){
     var result1, id1, result2, result3;
     result1 = messageMiddleware.removeOSCOutputHost(1);
@@ -178,12 +204,76 @@ describe('Service: messageMiddleware', function () {
     inputPortId = messageMiddleware.listenToMidiPort(0);
     inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
     outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
-    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, 1, '/path', ['foo','bar']);
+    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
 
     expect(outputId).not.toBeNull();
   });
 
+  it('should be able to update an osc output.', function(){
+    var inputPortId, outputHostId, inputId, outputId, updated;
+    inputPortId = messageMiddleware.listenToMidiPort(0);
+    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
+    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
+
+    expect(outputId).not.toBeNull();
+
+    updated = messageMiddleware.updateOSCOutput(inputId, outputId, outputHostId, '/path2', ['baz']);
+
+    expect(updated).toBe(true);
+
+    updated = messageMiddleware.updateOSCOutput(inputId, outputId + 1, outputHostId, '/path2', ['baz']);
+
+    expect(updated).toBe(false);
+  });
+
+  it('should be able to remove an osc output.', function(){
+    var inputPortId, outputHostId, inputId, outputId, removed;
+
+    spyOn(legatoMock.osc, 'fakeOutput');
+
+    inputPortId = messageMiddleware.listenToMidiPort(0);
+    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
+    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
+
+    expect(outputId).not.toBeNull();
+
+    removed = messageMiddleware.removeOSCOutput(inputId, outputId);
+
+    expect(removed).toBe(true);
+
+    legatoMock.config['/1/:/note/:']();
+
+    expect(legatoMock.osc.fakeOutput).not.toHaveBeenCalled();
+  });
+
   it('should send to all outputs on input events.', function(){
-    // TODO
+    var inputPortId, outputHostId, inputId, outputId1, outputId2,
+      path = '/path',
+      parameters = ['foo','bar'],
+      path2 = '/path/2',
+      parameters2 = ['baz'];
+
+    spyOn(legatoMock.osc, 'fakeOutput');
+
+    inputPortId = messageMiddleware.listenToMidiPort(0);
+    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
+    outputId1 = messageMiddleware.setOSCOutput(inputId, 1, outputHostId, path, parameters);
+
+    expect(outputId1).not.toBeNull();
+
+    legatoMock.config['/1/:/note/:']();
+
+    expect(legatoMock.osc.fakeOutput.calls.length).toBe(1);
+    expect(legatoMock.osc.fakeOutput).toHaveBeenCalledWith(path, parameters);
+
+    outputId2 = messageMiddleware.setOSCOutput(inputId, 2, outputHostId, path2, parameters2);
+
+    legatoMock.config['/1/:/note/:']();
+
+    expect(legatoMock.osc.fakeOutput.calls.length).toBe(3);
+    expect(legatoMock.osc.fakeOutput).toHaveBeenCalledWith(path2, parameters2);
   });
 });

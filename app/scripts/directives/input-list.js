@@ -59,7 +59,6 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
 
       /**
        * Handle output create events when an input asks to create a new output.
-       * TODO I don't think this ever gets triggered.
        */
       $scope.$on('output:osc:create', function(event, id){
         // No need to tell the messageMiddleware as it will be notified once the output becomes valid.
@@ -75,7 +74,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
         // If the output's parent input is valid, tell the messageMiddleware.
         if($scope.inputConfig.inputs[id.input].valid){
           output = $scope.inputConfig.inputs[id.input].outputs[id.output];
-          messageMiddleware.setOSCOutput(id.input, id.output, output.path, output.parameters);
+          messageMiddleware.setOSCOutput(id.input, id.output, output.host.id, output.path, output.parameters);
         }
       });
 
@@ -87,8 +86,23 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
 
         if($scope.inputConfig.inputs[id.input].valid){
           output = $scope.inputConfig.inputs[id.input].outputs[id.output];
-          messageMiddleware.removeOSCOutput(id.output);
-          messageMiddleware.setOSCOutput(id.input, id.output, output.path, output.parameters);
+
+          messageMiddleware.updateOSCOutput(
+            id.input, id.output,
+            output.host.id, output.path, output.parameters);
+        }
+      });
+
+      /**
+       * Handle output disable events when the output is disabled (invalidated).
+       */
+      $scope.$on('output:osc:disable', function(event, id){
+        var output;
+
+        if($scope.inputConfig.inputs[id.input].valid){
+          output = $scope.inputConfig.inputs[id.input].outputs[id.output];
+
+          messageMiddleware.removeOSCOutput(id.input, id.output);
         }
       });
 
@@ -98,7 +112,7 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       $scope.$on('output:osc:remove', function(event, id){
         if($scope.inputConfig.inputs[id.input].valid){
           // Remove from the messageMiddleware before removing it from config.
-          messageMiddleware.removeOSCOutput(id.output);
+          messageMiddleware.removeOSCOutput(id.input, id.output);
         }
 
         $scope.inputConfig.removeOutput(id);
