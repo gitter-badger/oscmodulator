@@ -40,7 +40,7 @@ Install the Node Version Manager (nvm) via Homebrew.
 To activate nvm, you need to source it from your shell.
 
     source $(brew --prefix nvm)/nvm.sh
-    
+
 For example, add this line to your `~/.bashrc`, `~/.profile`, or `~/.zshrc` file to have it automatically sourced upon login.
 
 ##### Install Node.js via nvm
@@ -63,7 +63,7 @@ Run the following lines from within the root directory of the project before sta
 
     >npm install
     >grunt init
-    
+
 ## Create a build (to be distributed)
 
     > grunt
@@ -74,22 +74,22 @@ These are the various tasks available for doing local development and testing in
 
 Run and serve the development build at `localhost:9000`.
 
-    >grunt serve    
+    >grunt serve
 
 `note: This also watches for files changes to update the build, run tests, and livereload the app.`
 
 Open the development build in your default browser. Depends on `grunt serve`.
 
-    >grunt open:serve
+    >grunt open:server
 
 Run and serve the production build at `localhost:9000`.
 
     >grunt serve:dist
-    
+
 Open the production build in your default browser. Depends on `grunt serve:dist`.
 
-    >grunt open:serve
-    
+    >grunt open:server
+
 ### Running Tests
 
 Run all unit tests and report.
@@ -99,7 +99,7 @@ Run all unit tests and report.
 or
 
     grunt test:unit
-    
+
 Run end to end tests and report.
 Depends on `grunt serve` or `grunt serve:dist`.
 
@@ -109,27 +109,27 @@ Run end to end tests, watch for changes, and report.
 Depends on `grunt serve` or `grunt serve:dist`.
 
     grunt test:e2e:dev
-    
+
 Open the Karma test runner in your default browser. Depends on `grunt serve`.
 
     >grunt open:test
-    
+
 ### Node Webkit
 
 Run the node-webkit app against the local web server.
 Depends on `grunt serve` or `grunt serve:dist`.
 
-	grunt nw-dev
-	
+    grunt nw-dev
+
 Runs the packaged node-webkit application.
 Depends on `grunt` or `grunt default`
-	
-	grunt nw-open
-    
+
+  grunt nw-open
+
 ## Continuous Integration
 
 Run the continuous integration build. This runs linting, build, unit tests, e2e tests, and generates code coverage reports.
 
     >grunt ci
-    
+
 `note: This would be run on a continuous integration service such as Travis or Jenkins.`

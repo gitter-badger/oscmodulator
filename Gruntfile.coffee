@@ -142,7 +142,7 @@ module.exports = (grunt) ->
 
 
     open:
-      serve:
+      server:
         path: 'http://localhost:<%= connect.options.port %>'
 
       test:
@@ -157,6 +157,7 @@ module.exports = (grunt) ->
           src: [
             '.tmp'
             '<%= yeoman.dist %>/*'
+            '<%= nodewebkit.options.buildDir %>'
             '!<%= yeoman.dist %>/.git*'
           ]
         ]
@@ -484,7 +485,7 @@ module.exports = (grunt) ->
         configFile: 'test/karma-e2e.conf.coffee'
         singleRun: true
         proxies:
-          '/':  '<%= open.serve.path %>'
+          '/':  '<%= open.server.path %>'
       'e2e-watch':
         configFile: 'test/karma-e2e.conf.coffee'
         autoWatch: true
@@ -509,11 +510,6 @@ module.exports = (grunt) ->
           args:
             browser: 'chrome'
 
-    protractor_webdriver:
-      start:
-        options:
-          path: 'node_modules/protractor/bin/'
-
     shell:
       options:
         stderr: true
@@ -528,13 +524,13 @@ module.exports = (grunt) ->
         command: "open #{appDirectory}.app"
 
       'nw-dev':
-        command: "#{appDirectory}.app/Contents/MacOS/node-webkit --url=http://localhost:9000"
+        command: "#{appDirectory}.app/Contents/MacOS/node-webkit --url=<%= open.server.path %>"
 
       'stop-selenium':
         command:'curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer'
 
       'start-element-finder':
-        command:'node node_modules/protractor/bin/elementexplorer.js http://localhost:9001'
+        command:'node node_modules/protractor/bin/elementexplorer.js <%= open.server.path %>'
 
     replace:
       dist:
@@ -595,24 +591,14 @@ module.exports = (grunt) ->
       grunt.task.run 'shell:nwgyp'
 
   grunt.registerTask 'e2e-protractor', [
-#    'build'
-    'concurrent:server'
-    'autoprefixer'
-    'connect:livereload'
     'protractor:ci'
   ]
 
   grunt.registerTask 'e2e-protractor-debug', [
-#    'build'
-    'concurrent:server'
-    'autoprefixer'
-    'connect:livereload'
     'protractor:debug'
   ]
 
   grunt.registerTask 'e2e-protractor-element-finder', [
-    'build'
-    'connect:dist'
     'protractor_webdriver:start'
     'shell:start-element-finder'
   ]
