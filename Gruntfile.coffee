@@ -47,6 +47,7 @@ module.exports = (grunt) ->
     osx:
       nwpath: 'node-webkit.app/Contents/MacOS/node-webkit'
 
+  appDirectory = "#{nwConfig.root}/releases/#{appPkg.name}/osx/#{appPkg.name}"
 
   grunt.initConfig
 
@@ -505,7 +506,10 @@ module.exports = (grunt) ->
         ].join '&&'
 
       'nw-open-mac':
-        command: "open #{nwConfig.root}/releases/#{appPkg.name}/osx/#{appPkg.name}.app"
+        command: "open #{appDirectory}.app"
+
+      'nw-run':
+        command: "#{appDirectory}.app/Contents/MacOS/node-webkit --url=http://localhost:9000"
 
     replace:
       dist:
@@ -547,6 +551,12 @@ module.exports = (grunt) ->
   #TODO Add support for running on Windows and Linux
   grunt.registerTask 'nw-open', ['shell:nw-open-mac']
 
+  grunt.registerTask 'nw-run', ->
+    grunt.task.run [
+      'nodewebkit'
+      'shell:nw-run'
+    ]
+
   grunt.registerTask 'nw-prep', ->
     # Recompile any native Node modules to run in Node Webkit.
     grunt.file.expand('app/node_modules/**/package.json').forEach (filePath) ->
@@ -576,16 +586,15 @@ module.exports = (grunt) ->
       'karma:unit-watch:start'
       'watch'
     ]
-    tasks.splice 4, 0, 'replace:dev' if grunt.option 'no-mocks'
+    tasks.splice 4, 0, 'replace:dev' if grunt.option 'nomocks'
     grunt.task.run tasks
 
-  grunt.registerTask 'test', (target='unit', env='dev') ->
+  grunt.registerTask 'test', (target='unit', env='') ->
     if target is 'e2e'
       watch = ''
       if env is 'dev'
         watch = '-watch'
       tasks = [
-        "connect:#{env}"
         "karma:e2e#{watch}"
       ]
     else
