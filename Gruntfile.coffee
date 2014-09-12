@@ -623,10 +623,9 @@ module.exports = (grunt) ->
     tasks.splice 4, 0, 'replace:dev' if grunt.option 'nomocks'
     grunt.task.run tasks
 
-  grunt.registerTask 'test', (target='unit', env='') ->
+  grunt.registerTask 'test', (target='unit', watch='') ->
     if target is 'e2e'
-      watch = ''
-      if env is 'dev'
+      if watch is 'watch'
         watch = '-watch'
       tasks = [
         "karma:e2e#{watch}"
@@ -661,7 +660,9 @@ module.exports = (grunt) ->
     'lint'
     'test:unit-ci'
     'build'
-    'test:e2e:dist'
+    'connect:dev'
+    'test:e2e'
+    'protractor:ci'
   ]
 
   grunt.registerTask 'ci-init', [
