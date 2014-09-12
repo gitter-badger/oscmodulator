@@ -508,7 +508,7 @@ module.exports = (grunt) ->
       'nw-open-mac':
         command: "open #{appDirectory}.app"
 
-      'nw-run':
+      'nw-dev':
         command: "#{appDirectory}.app/Contents/MacOS/node-webkit --url=http://localhost:9000"
 
     replace:
@@ -551,10 +551,10 @@ module.exports = (grunt) ->
   #TODO Add support for running on Windows and Linux
   grunt.registerTask 'nw-open', ['shell:nw-open-mac']
 
-  grunt.registerTask 'nw-run', ->
+  grunt.registerTask 'nw-dev', ->
     grunt.task.run [
       'nodewebkit'
-      'shell:nw-run'
+      'shell:nw-dev'
     ]
 
   grunt.registerTask 'nw-prep', ->

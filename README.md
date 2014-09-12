@@ -114,6 +114,18 @@ Open the Karma test runner in your default browser. Depends on `grunt serve`.
 
     >grunt open:test
     
+### Node Webkit
+
+Run the node-webkit app against the local web server.
+Depends on `grunt serve` or `grunt serve:dist`.
+
+	grunt nw-dev
+	
+Runs the packaged node-webkit application.
+Depends on `grunt` or `grunt default`
+	
+	grunt nw-open
+    
 ## Continuous Integration
 
 Run the continuous integration build. This runs linting, build, unit tests, e2e tests, and generates code coverage reports.
