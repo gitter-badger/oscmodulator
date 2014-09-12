@@ -64,7 +64,7 @@ Run the following lines from within the root directory of the project before sta
     >npm install
     >grunt init
     
-## Create a build
+## Create a build (to be distributed)
 
     > grunt
 
@@ -99,10 +99,20 @@ Run all unit tests and report.
 or
 
     grunt test:unit
-
-Run end to end tests (e2e) and report. Depends on `grunt serve` or `grunt serve:dist`.
+    
+Run end to end tests and report.
+Depends on `grunt serve` or `grunt serve:dist`.
 
     grunt test:e2e
+
+Run end to end tests, watch for changes, and report.
+Depends on `grunt serve` or `grunt serve:dist`.
+
+    grunt test:e2e:dev
+    
+Open the Karma test runner in your default browser. Depends on `grunt serve`.
+
+    >grunt open:test
     
 ## Continuous Integration
 
