@@ -590,15 +590,15 @@ module.exports = (grunt) ->
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
 
-  grunt.registerTask 'e2e-protractor', [
+  grunt.registerTask 'pro', [
     'protractor:ci'
   ]
 
-  grunt.registerTask 'e2e-protractor-debug', [
+  grunt.registerTask 'pro-debug', [
     'protractor:debug'
   ]
 
-  grunt.registerTask 'e2e-protractor-element-finder', [
+  grunt.registerTask 'pro-element-finder', [
     'protractor_webdriver:start'
     'shell:start-element-finder'
   ]
