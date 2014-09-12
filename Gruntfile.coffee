@@ -148,6 +148,9 @@ module.exports = (grunt) ->
       test:
         path: 'http://localhost:9876'
 
+      coverage:
+        path: "file://#{__dirname}/.tmp/coverage/PhantomJS\ 1.9.7\ \(Mac\ OS\ X\)/lcov-report/index.html"
+
 
     # Empties folders to start fresh
     clean:
