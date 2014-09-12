@@ -495,6 +495,25 @@ module.exports = (grunt) ->
         options:
           targetDir: bowerrc.directory
 
+    protractor:
+      options:
+        keepAlive: true
+        configFile: 'test/protractor.conf.js'
+        debug: false
+        args:
+          baseUrl: '<%= open.server.path %>'
+      ci:{}
+      debug:
+        options:
+          debug: true
+          args:
+            browser: 'chrome'
+
+    protractor_webdriver:
+      start:
+        options:
+          path: 'node_modules/protractor/bin/'
+
     shell:
       options:
         stderr: true
@@ -510,6 +529,12 @@ module.exports = (grunt) ->
 
       'nw-dev':
         command: "#{appDirectory}.app/Contents/MacOS/node-webkit --url=http://localhost:9000"
+
+      'stop-selenium':
+        command:'curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer'
+
+      'start-element-finder':
+        command:'node node_modules/protractor/bin/elementexplorer.js http://localhost:9001'
 
     replace:
       dist:
@@ -568,6 +593,29 @@ module.exports = (grunt) ->
         "#{path.resolve('./node_modules/.bin/nw-gyp')} rebuild --target=#{nwConfig.version}"
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
+
+  grunt.registerTask 'e2e-protractor', [
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'protractor:ci'
+  ]
+
+  grunt.registerTask 'e2e-protractor-debug', [
+#    'build'
+    'concurrent:server'
+    'autoprefixer'
+    'connect:livereload'
+    'protractor:debug'
+  ]
+
+  grunt.registerTask 'e2e-protractor-element-finder', [
+    'build'
+    'connect:dist'
+    'protractor_webdriver:start'
+    'shell:start-element-finder'
+  ]
 
   grunt.registerTask 'serve', (target) ->
     if target is 'dist'

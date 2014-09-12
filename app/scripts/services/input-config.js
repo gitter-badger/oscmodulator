@@ -113,12 +113,15 @@ angular.module('oscmodulatorApp').factory('inputConfig', function($rootScope, jq
       }
       // If we are not forcing the value of this property, then test to see if the configured
       // property is of the correct type and if it is not, then use the default.
-      else if(typeof(input[prop]) !== useType){
+//      else if(typeof(input[prop]) !== useType){
+        else if(typeof(input[prop]) !== useType ||
+          (rules[prop].type === 'array' &&
+            Object.prototype.toString.call(input[prop]) !== '[object Array]')){
         $log.warn( prop + ' ' + input[prop] + ' is not a ' + rules[prop].type);
 
         if(rules[prop].type === 'array'){
           if(Object.prototype.toString.call(input[prop]) !== '[object Array]'){
-            input[prop] = jq.extend({}, rules[prop].default);
+            input[prop] = jq.extend([], rules[prop].default);
           }
         }
         else{

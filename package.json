@@ -54,11 +54,15 @@
     "load-grunt-tasks": "^0.6.0",
     "nw-gyp": "^0.12.2",
     "time-grunt": "^0.4.0"
+    "protractor": "~1.0.0",
+    "grunt-protractor-runner": "~1.1.0",
+    "grunt-protractor-webdriver": "~0.1.8"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "install": "node node_modules/protractor/bin/webdriver-manager update"
   }
 }

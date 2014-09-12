@@ -51,6 +51,7 @@ describe('Service: inputConfig', function () {
     expect(invalidInput.boolean).toBe(true);
     expect(invalidInput.object).toEqual({});
     expect(invalidInput.array).toEqual([]);
+    expect(Object.prototype.toString.call(invalidInput.array)).toEqual('[object Array]');
 
     inputConfig.validate(validInput, rules);
 

@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('oscmodulatorApp').config(function($provide){
-  $provide.factory('legato', function ($log) {
+  $provide.factory('legato', function ($log, jq) {
     var inputsCreated = 0,
-      routesCreated = 0;
+      routesCreated = 0,
+      paths = {},
+      legato;
 
-    return {
+    legato = {
       init: function() {
         $log.info('MOCK legato.init called.');
       },
@@ -14,9 +16,20 @@ angular.module('oscmodulatorApp').config(function($provide){
         ++inputsCreated;
         return '/' + inputsCreated;
       },
-      on: function(){
+      on: function(path, callback){
         $log.info('MOCK legato.on called.');
+        paths[path] = {};
+        paths[path].callback = callback;
         return ++routesCreated;
+      },
+      receiveMidi: function(path, value){
+        $log.info('MOCK Midi sending ' + value + ' to ' + path);
+        if(!paths[path]){
+          $log.warn('MOCK legato could not find path ' + path);
+        }
+        else {
+          paths[path].callback();
+        }
       },
       removeInput: function(){
         $log.info('MOCK legato.removeInput called.');
@@ -43,9 +56,16 @@ angular.module('oscmodulatorApp').config(function($provide){
         },
         Out: function(){
           $log.info('MOCK legato.osc.Out called');
-          return function(){};
+          return function(path, parameters){
+            $log.info('MOCK legato.osc.Out sending OSC message to ' + path);
+            // Find the debug panel and append output text?
+            jq('#mock-debug-panel div.output')
+              .append('<p>OSC -> ' + path + '?' + parameters.join('&') + '</p>');
+          };
         }
       }
     };
+
+    return legato;
   });
 });
