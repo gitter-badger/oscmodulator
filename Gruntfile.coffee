@@ -16,6 +16,7 @@ module.exports = (grunt) ->
 
   # Load grunt tasks JIT(Just In Time)
   require('jit-grunt') grunt,
+    bower: 'grunt-bower-task'
     configureRewriteRules: 'grunt-connect-rewrite'
     nodewebkit: 'grunt-node-webkit-builder'
     protractor: 'grunt-protractor-runner'
