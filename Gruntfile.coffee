@@ -13,8 +13,11 @@ mountFolder = (connect, dir) ->
 # 'test/spec/**/*.js'
 module.exports = (grunt) ->
 
-  # Load grunt tasks automatically
-  require('load-grunt-tasks') grunt
+  # Load grunt tasks JIT(Just In Time)
+  require('jit-grunt') grunt,
+    useminPrepare: 'grunt-usemin'
+    nodewebkit: 'grunt-node-webkit-builder'
+    protractor: 'grunt-protractor-runner'
 
   # Time how long tasks take. Can help when optimizing build times
   require('time-grunt') grunt

@@ -35,12 +35,14 @@
     "grunt-node-webkit-builder": "^0.2.0",
     "grunt-notify": "^0.3.0",
     "grunt-open": "^0.2.3",
+    "grunt-protractor-runner": "~1.1.0",
     "grunt-replace": "^0.7.8",
     "grunt-rev": "^0.1.0",
     "grunt-shell": "^0.7.0",
     "grunt-svgmin": "^0.4.0",
     "grunt-usemin": "^2.3.0",
     "grunt-wiredep": "^1.8.0",
+    "jit-grunt": "^0.8.0",
     "jshint-stylish": "^0.4.0",
     "karma-chrome-launcher": "^0.1.4",
     "karma-coverage": "^0.2.5",
@@ -53,9 +55,8 @@
     "karma-spec-reporter": "^0.0.13",
     "load-grunt-tasks": "^0.6.0",
     "nw-gyp": "^0.12.2",
-    "time-grunt": "^0.4.0",
     "protractor": "~1.0.0",
-    "grunt-protractor-runner": "~1.1.0"
+    "time-grunt": "^0.4.0"
   },
   "engines": {
     "node": ">=0.10.0"
