@@ -3,6 +3,7 @@
 LIVERELOAD_PORT = 35729
 SERVER_PORT = 9000
 lrSnippet = require('connect-livereload')(port: LIVERELOAD_PORT)
+rewriteRulesSnippet = require('grunt-connect-rewrite/lib/utils').rewriteRequest
 mountFolder = (connect, dir) ->
   connect.static require('path').resolve(dir)
 
@@ -15,9 +16,10 @@ module.exports = (grunt) ->
 
   # Load grunt tasks JIT(Just In Time)
   require('jit-grunt') grunt,
-    useminPrepare: 'grunt-usemin'
+    configureRewriteRules: 'grunt-connect-rewrite'
     nodewebkit: 'grunt-node-webkit-builder'
     protractor: 'grunt-protractor-runner'
+    useminPrepare: 'grunt-usemin'
 
   # Time how long tasks take. Can help when optimizing build times
   require('time-grunt') grunt
@@ -93,13 +95,12 @@ module.exports = (grunt) ->
 
       less:
         files: ['<%= yeoman.app %>/styles/{,*/}*.less']
-        tasks: ['less', 'autoprefixer']
+        tasks: ['less']
 
       styles:
         files: ['<%= yeoman.app %>/styles/{,*/}*.css']
         tasks: [
           'newer:copy:styles'
-          'autoprefixer'
         ]
 
       gruntfile:
@@ -127,20 +128,25 @@ module.exports = (grunt) ->
         # Change this to '0.0.0.0' to access the server from outside.
         hostname: '0.0.0.0'
 
+      rules: [
+        from: '^/app/(.*)$', to: '/$1'
+      ]
+
       dev:
         options:
           middleware: (connect) -> [
               lrSnippet
+              rewriteRulesSnippet
               mountFolder connect, '.tmp'
               mountFolder connect, yeomanConfig.app
-              mountFolder(connect, 'test')
+              mountFolder connect, 'test'
             ]
 
       dist:
         options:
           middleware: (connect) -> [
               mountFolder connect, yeomanConfig.dist
-              mountFolder(connect, 'test')
+              mountFolder connect, 'test'
             ]
 
 
@@ -169,21 +175,6 @@ module.exports = (grunt) ->
         ]
 
       server: '.tmp'
-
-
-    # Add vendor prefixed styles
-    # see here: http://caniuse.com/#search
-    autoprefixer:
-      options:
-        browsers: ['last 1 version']
-
-      dist:
-        files: [
-          expand: true
-          cwd: '.tmp/styles/'
-          src: '{,*/}*.css'
-          dest: '.tmp/styles/'
-        ]
 
 
     # Automatically inject Bower components into the app
@@ -254,7 +245,20 @@ module.exports = (grunt) ->
 
 
     less:
-      dist:
+      bootstrap:
+        options:
+          sourceMap: true
+          sourceMapFilename: '.tmp/styles/bootstrap.css.map'
+          sourceMapBasepath: '.tmp/'
+          sourceMapRootpath: '/'
+        files: [
+          expand: true,
+          cwd: '<%= yeoman.app %>/styles'
+          src: ['**/bootstrap.less']
+          dest: '.tmp/styles'
+          ext: '.css'
+        ]
+      main:
         options:
           sourceMap: true
           sourceMapFilename: '.tmp/styles/main.css.map'
@@ -263,7 +267,7 @@ module.exports = (grunt) ->
         files: [
           expand: true,
           cwd: '<%= yeoman.app %>/styles'
-          src: ['**/*.less']
+          src: ['**/main.less']
           dest: '.tmp/styles'
           ext: '.css'
         ]
@@ -451,7 +455,7 @@ module.exports = (grunt) ->
     concurrent:
       server: [
         'coffee:dist'
-        'less:dist'
+        'less'
         'copy:styles'
       ]
       test: [
@@ -461,7 +465,7 @@ module.exports = (grunt) ->
       ]
       dist: [
         'coffee'
-        'less:dist'
+        'less'
         'copy:styles'
         'imagemin'
         'svgmin'
@@ -615,13 +619,14 @@ module.exports = (grunt) ->
         'clean:dist'
         'build'
         'replace:dist'
+        'configureRewriteRules'
         'connect:dist:keepalive'
       ]
     tasks = [
       'clean:server'
       'copy:fonts'
       'concurrent:server'
-      'autoprefixer'
+      'configureRewriteRules'
       'connect:dev'
       'karma:unit-watch:start'
       'watch'
@@ -654,7 +659,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'build', [
     'useminPrepare'
     'concurrent:dist'
-    'autoprefixer'
     'concat'
     'cssmin'
     'copy:dist'
@@ -666,6 +670,7 @@ module.exports = (grunt) ->
     'lint'
     'test:unit-ci'
     'build'
+    'configureRewriteRules'
     'connect:dev'
     'test:e2e'
     'protractor:ci'
