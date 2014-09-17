@@ -18,8 +18,16 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        * Handle midi input add events when an input becomes valid.
        */
       $scope.$on('input:midi:add', function(event, id){
-        var midi = $scope.inputConfig.inputs[id.input].midi;
+        var input = $scope.inputConfig.inputs[id.input],
+          midi = input.midi,
+          index;
         messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
+
+        for(index in input.outputs){
+          if(input.outputs[index].valid){
+            $scope.addOSCOutput(input.outputs[index].id);
+          }
+        }
       });
 
       /**
@@ -66,9 +74,10 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       });
 
       /**
-       * Handle output add events when an output becomes valid.
+       * Add an OSC output to the message middleware.
+       * @param id The id of the input to add to.
        */
-      $scope.$on('output:osc:add', function(event, id){
+      $scope.addOSCOutput = function(id){
         var output;
 
         // If the output's parent input is valid, tell the messageMiddleware.
@@ -76,6 +85,13 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
           output = $scope.inputConfig.inputs[id.input].outputs[id.output];
           messageMiddleware.setOSCOutput(id.input, id.output, output.host.id, output.path, output.parameters);
         }
+      };
+
+      /**
+       * Handle output add events when an output becomes valid.
+       */
+      $scope.$on('output:osc:add', function(event, id){
+        $scope.addOSCOutput(id);
       });
 
       /**

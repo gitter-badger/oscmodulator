@@ -215,7 +215,7 @@ describe('e2e: OSC Modulator', function () {
     expect(element('div.midiInputConfig select[name=midiPort] option').count()).toBe(2);
   });
 
-  xit('should show available osc output servers in osc output forms.', function(){
+  it('should show available osc output servers in osc output forms.', function(){
     expect(element('div.oscOutputItem select.oscHost option').count()).toBe(1);
     expect(element('div.oscOutputItem select.oscHost option').val()).toBe('');
     input('host.name').enter('live');

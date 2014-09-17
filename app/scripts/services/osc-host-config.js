@@ -50,7 +50,8 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, 
    * @param index {int} The index of the host that was updated.
    */
   service.updateOSCHost = function(index){
-    var host = service.hosts[index];
+    var host = service.hosts[index],
+        removed = null;
 
     if(host.name && host.address && host.port){
       if(host.id){
@@ -62,10 +63,17 @@ angular.module('oscmodulatorApp').factory('oscHostConfig', function($rootScope, 
     }
     else if(host.id){
       messageMiddleware.removeOSCOutputHost(host.id);
+      removed = host.name;
       host.id = null;
     }
 
     service.updateHostIds();
+
+    if(removed){
+      // For some reason the osc-output directive is not notified when items are removed
+      // from the ids model. For this reason, we force a remove event.
+      $rootScope.$broadcast('oscHostConfig:remove', removed);
+    }
   };
 
   /**

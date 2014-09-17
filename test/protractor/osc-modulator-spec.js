@@ -22,6 +22,8 @@ describe('angularjs homepage', function() {
     midiInputRow = 'div.midiInput',
     midiInputPortSelect = 'select[name=midiPort]',
     midiInputNote = 'input[name=midiInNote]',
+    midiInputNoteTypeSelect = 'select[name=midiNoteType]',
+    midiInputChannelSelect = 'select[name=midiChannel]',
     midiInputOSCHost = 'select.oscHost',
     midiInputOSCPath = 'input[name=oscPath]',
     // Mock Output Debug
@@ -30,6 +32,11 @@ describe('angularjs homepage', function() {
     openOSCPanel,
     addOSCPort,
     openMidiPanel,
+    setupMidiRow,
+    setupOSCRow,
+    setupMidiToOSC,
+    basicMidiHostSetup,
+    basicOSCHostSetup,
     basicSetup;
 
   openMidiPanel = function(){
@@ -55,30 +62,59 @@ describe('angularjs homepage', function() {
     hostRow.$(oscConfigHostPort).sendKeys(port);
   };
 
-  basicSetup = function(){
-    var inputObject;
+  setupMidiToOSC = function(row, midiHost, midiChannel, midiNote, midiNoteType, oscHost, oscPath, oscParams){
+    setupMidiRow(row, midiHost, midiChannel, midiNote, midiNoteType);
+    setupOSCRow(row, oscHost, oscPath, oscParams);
+  };
 
+  setupMidiRow = function(row, host, channel, note, type){
+    // specify a midi note
+    row.$(midiInputNote).sendKeys(note);
+
+    // Specify the host.
+    row.element(by.cssContainingText(midiInputPortSelect + ' option', host)).click();
+
+    // Specify the channel.
+    row.element(by.cssContainingText(midiInputChannelSelect + ' option', channel)).click();
+
+    // Specify the note type.
+    row.element(by.cssContainingText(midiInputNoteTypeSelect + ' option', type)).click();
+  };
+
+  setupOSCRow = function(row, host, path, parameters){
+    // select the osc output port
+    row.element(by.cssContainingText(midiInputOSCHost + ' option', host)).click();
+
+    // set an osc output path
+    row.$(midiInputOSCPath).sendKeys(path);
+
+    // TODO Handle parameter lists.
+  };
+
+  basicMidiHostSetup = function(){
     openMidiPanel();
 
     // turn on the first midi input port
     $(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
+  };
 
+  basicOSCHostSetup = function(){
     // open the osc panel
     openOSCPanel();
 
     // add an osc output port
     addOSCPort('live', 'localhost', '9090');
+  }
+
+  basicSetup = function(){
+    var inputObject;
+
+    basicMidiHostSetup();
+    basicOSCHostSetup();
 
     inputObject = $$(midiInputRow).first();
 
-    // specify a midi note
-    inputObject.$(midiInputNote).sendKeys(':');
-
-    // select the osc output port
-    inputObject.$$(midiInputOSCHost + ' option').last().click();
-
-    // set an osc output path
-    inputObject.$(midiInputOSCPath).sendKeys('/');
+    setupMidiToOSC(inputObject, 'All', 'All', ':', 'All', 'live', '/', []);
   };
 
   beforeEach(function(){
@@ -160,7 +196,7 @@ describe('angularjs homepage', function() {
     expect($$(outputNodes).last().getText()).toBe('OSC -> /some/path?');
   });
 
-  xit('should be able to send osc messages if the osc host is removed and re-added.', function(){
+  it('should be able to send osc messages if the osc host is removed and re-added.', function(){
     var inputObject, outputNodes;
 
     basicSetup();
@@ -177,18 +213,12 @@ describe('angularjs homepage', function() {
     expect($$(outputNodes).count()).toBe(1);
     expect($(outputNodes).getText()).toEqual('OSC -> /?');
 
-    browser.debugger();
-
     // Remove the current host.
     var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
     hostRow.$(oscConfigHostPort).sendKeys('\b', '\b', '\b', '\b');
 
-    browser.debugger();
-
     // Try to send another message.
     $(mockDebugPanelSendMidi).click();
-
-    browser.debugger();
 
     // Make sure no new messages were sent since we don't have a host configured.
     expect($$(outputNodes).count()).toBe(1);
@@ -197,8 +227,6 @@ describe('angularjs homepage', function() {
     var hostSelect = inputObject.$$(midiInputOSCHost + ' option');
     expect(hostSelect.count()).toBe(1);
     expect(hostSelect.last().getText()).toBe('');
-
-    browser.debugger();
 
     // Fix the osc port.
     hostRow.$(oscConfigHostPort).sendKeys('8989');
@@ -210,14 +238,65 @@ describe('angularjs homepage', function() {
     expect($$(outputNodes).count()).toBe(1);
 
     // Select the updated host and change the path.
+    hostSelect.last().click();
 
     // Send another message.
+    $(mockDebugPanelSendMidi).click();
 
     // Make sure the message was sent this time.
+    expect($$(outputNodes).count()).toBe(2);
+    expect($$(outputNodes).last().getText()).toEqual('OSC -> /?');
   });
 
   it('should be able to send osc messages if the output hosts are configured before' +
     'the midi input is configured.', function(){
-    // TODO
+    var inputObject, outputNodes;
+
+    basicMidiHostSetup();
+    basicOSCHostSetup();
+
+    inputObject = $$(midiInputRow).first();
+
+    // Setup midi to OSC.
+    setupOSCRow(inputObject, 'live', '/', []);
+
+    // Make sure no messages have been sent yet.
+    outputNodes = mockDebugPanelOutput + ' p';
+    expect($$(outputNodes).count()).toBe(0);
+
+    // Send a fake midi message
+    $(mockDebugPanelSendMidi).click();
+
+    // Make sure we can send messages.
+    expect($$(outputNodes).count()).toBe(0);
+
+    // Activate a midi host.
+    setupMidiRow(inputObject, 'All', 'All', ':', 'All');
+
+    // Send a fake midi message
+    $(mockDebugPanelSendMidi).click();
+
+    // Make sure we can send messages.
+    expect($$(outputNodes).count()).toBe(1);
+    expect($$(outputNodes).last().getText()).toEqual('OSC -> /?');
   });
+
+  it('should be able to disable the midi input row when a midi host is removed.', function(){
+     // Basic setup
+     // Disable the midi host
+     // Make sure midi messages are nolonger handled and that no errors occur.
+
+      // TODO Mock out the midi and osc ends of legato rather than legato itself so
+      // we don't need to re-implement the routing aspects of legato.
+  });
+
+  it('should be able to trigger multiple OSC outputs from a single midi event.', function(){});
+
+  it('should be able to route the correct midi input to the correct OSC output.', function(){});
+
+  it('should be able to automatically re-select an OSC output host if the OSC host becomes invalid and then valid again.',
+    function(){});
+
+  it('should be able to automatically re-select a midi input host if the midi host is de-selected and then reselected.',
+    function(){});
 });

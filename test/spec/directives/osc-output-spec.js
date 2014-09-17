@@ -18,7 +18,8 @@ describe('Directive: oscOutput', function () {
       id: {input:1, output:1},
       host: null,
       path: null,
-      parameters: []
+      parameters: [],
+      valid: false
     };
 
     backendMock = {
@@ -34,17 +35,34 @@ describe('Directive: oscOutput', function () {
         {
           name:'a',
           address: 'localhost',
-          port: 9000
+          port: 9000,
+          id:0
         },
         {
           name: 'b',
           address: 'localhost',
-          port: 9001
+          port: 9001,
+          id:1
         },
         {
           name: 'c',
           address: 'localhost',
-          port: 9002
+          port: 9002,
+          id:2
+        }
+      ],
+      ids:[
+        {
+          name:'a',
+          id:0
+        },
+        {
+          name:'b',
+          id:1
+        },
+        {
+          name:'c',
+          id:2
         }
       ]
     };
@@ -240,14 +258,14 @@ describe('Directive: oscOutput', function () {
       parentScope = $rootScope.$new();
       parentScope.osc = defaultOSC;
       parentScope.hosts = oscHostConfigMock;
-      parentScope.osc.host = oscHostConfigMock.hosts[1];
+      parentScope.osc.host = oscHostConfigMock.ids[1];
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
       isolatedScope = element.scope();
       isolatedScope.$apply();
 
-      expect(isolatedScope.config.host).toBe(oscHostConfigMock.hosts[1]);
+      expect(isolatedScope.config.host).toBe(oscHostConfigMock.ids[1]);
 
       // Should only have the 3 options specified in the scope.
       expect(element.find('select.oscHost option').length).toEqual(3);
@@ -308,10 +326,10 @@ describe('Directive: oscOutput', function () {
     expect(element.find('input[name=oscPath]').val()).toBe('/my/second/path');
   }));
 
-  xit('should reset the OSC Host if the configured host was removed.', inject(function($compile, $rootScope){
+  it('should reset the OSC Host if the configured host was removed.', inject(function($compile, $rootScope){
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
-    parentScope.osc.host = 'b';
+    parentScope.osc.host = oscHostConfigMock.ids[1];
     parentScope.osc.path = '/path';
 
     // Compile the DOM into an Angular view using using our test scope.
@@ -319,13 +337,13 @@ describe('Directive: oscOutput', function () {
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.config.host).toBe('b', 'The output should be configured with the b host to start.');
-    expect(isolatedScope.valid).toBe(true, 'The output should be considered valid to start with.');
+    expect(isolatedScope.config.host).toBe(oscHostConfigMock.ids[1], 'The output should be configured with the b host to start.');
+    expect(isolatedScope.config.valid).toBe(true, 'The output should be considered valid to start with.');
 
     $rootScope.$broadcast('oscHostConfig:remove', 'b');
 
     expect(isolatedScope.config.host).toBeNull('The host should have been reset.');
-    expect(isolatedScope.valid).toBe(false, 'The output should not be valid without a valid host.');
+    expect(isolatedScope.config.valid).toBe(false, 'The output should not be valid without a valid host.');
   }));
 
   it('should be considered valid if it has a path and host.', inject(function($compile, $rootScope){
@@ -339,7 +357,7 @@ describe('Directive: oscOutput', function () {
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(true, 'The scope should be valid if it has a path and a host.');
+    expect(isolatedScope.config.valid).toBe(true, 'The scope should be valid if it has a path and a host.');
     expect(isolatedScope.save()).toBe(true, 'The scope save method should return the valid property value.');
   }));
 
@@ -353,18 +371,18 @@ describe('Directive: oscOutput', function () {
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(false, 'The output should not be valid without a path.');
+    expect(isolatedScope.config.valid).toBe(false, 'The output should not be valid without a path.');
     expect(isolatedScope.save()).toBe(false, 'The output save method should return the valid property value.');
 
     isolatedScope.config.path = '/path';
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(true, 'The output should be valid once a path is set.');
+    expect(isolatedScope.config.valid).toBe(true, 'The output should be valid once a path is set.');
 
     isolatedScope.config.path = '';
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(false, 'The output should be invalid if the path is emptied.');
+    expect(isolatedScope.config.valid).toBe(false, 'The output should be invalid if the path is emptied.');
   }));
 
   it('should not be considered valid if it is missing the host.', inject(function($compile, $rootScope){
@@ -377,18 +395,18 @@ describe('Directive: oscOutput', function () {
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(false, 'The scope should not be valid without a host.');
+    expect(isolatedScope.config.valid).toBe(false, 'The scope should not be valid without a host.');
     expect(isolatedScope.save()).toBe(false, 'The scope save method should return the valid property value.');
 
     isolatedScope.config.host = 'a';
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(true, 'The scope should be valid once a host is set.');
+    expect(isolatedScope.config.valid).toBe(true, 'The scope should be valid once a host is set.');
 
     isolatedScope.config.host = null;
     isolatedScope.$apply();
 
-    expect(isolatedScope.valid).toBe(false, 'The scope should be invalid if the host is emptied.');
+    expect(isolatedScope.config.valid).toBe(false, 'The scope should be invalid if the host is emptied.');
   }));
 
   it('should send disable events when it becomes invalid.', inject(function($compile, $rootScope){

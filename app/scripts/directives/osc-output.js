@@ -23,13 +23,6 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
         };
 
         /**
-         * True = This output has enough information to send messages.
-         * False = This output is missing required information for sending messages.
-         * @type {boolean}
-         */
-        $scope.valid = false;
-
-        /**
          * Expose the host config so that the DOM can call it directly.
          * @type {oscHostConfig}
          */
@@ -128,23 +121,23 @@ angular.module('oscmodulatorApp').directive('oscOutput', function () {
         $scope.save = function(){
           if($scope.config.path && $scope.config.host){
             // If it just became valid, emit an add event.
-            if(!$scope.valid){
-              $scope.valid = true;
+            if(!$scope.config.valid){
+              $scope.config.valid = true;
               $scope.$emit(eventNames.add, $scope.config.id);
             }
             // If it was previously valid, emit an update event.
             else{
-              $scope.valid = true;
+              $scope.config.valid = true;
               $scope.$emit(eventNames.update, $scope.config.id);
             }
           }
           // If the scope was previously valid and just became invalid, emit an update event.
-          else if($scope.valid){
-            $scope.valid = false;
+          else if($scope.config.valid){
+            $scope.config.valid = false;
             $scope.$emit(eventNames.disable, $scope.config.id);
           }
 
-          return $scope.valid;
+          return $scope.config.valid;
         };
 
         /**

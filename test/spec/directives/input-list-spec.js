@@ -77,7 +77,7 @@ describe('Directive: inputList', function () {
           collapsed:false,
           mute:false,
           solo:false,
-          valid: true,
+          valid: false,
           midi:{
             name: 'c3',
             note: 36,
@@ -104,7 +104,7 @@ describe('Directive: inputList', function () {
               },
               path:'/path',
               parameters:[],
-              valid: true
+              valid: false
             }
           }
         }
@@ -378,6 +378,45 @@ describe('Directive: inputList', function () {
       expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(1);
       expect(messageMiddlewareMock.removeOSCOutput).toHaveBeenCalledWith(1, 1);
       expect(inputConfigMock.removeOutput).not.toHaveBeenCalled();
+    })
+  );
+
+  it('should setup osc outputs if there are valid outputs when an input becomes valid.',
+    inject(function($compile, $rootScope){
+      inputConfigMock.inputs[1].midi.note = null;
+      inputConfigMock.inputs[1].midi.name = null;
+      inputConfigMock.inputs[1].outputs[2] = {
+        id:{input:1, output:2},
+        host:{
+          id:2,
+          name:'foo',
+          port:9090,
+          address:'localhost'
+        },
+        path:'/some/other/path',
+        parameters:[]
+      };
+
+      parentScope = $rootScope.$new();
+
+      spyOn(messageMiddlewareMock, 'setMidiInput');
+      spyOn(messageMiddlewareMock, 'setOSCOutput');
+
+      element = $compile(template)(parentScope);
+      isolatedScope = element.scope();
+      isolatedScope.$apply();
+
+      expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
+      expect(messageMiddlewareMock.setOSCOutput).not.toHaveBeenCalled();
+
+      inputConfigMock.inputs[1].midi.note = 36;
+      inputConfigMock.inputs[1].midi.name = 'c3';
+      $rootScope.$apply();
+
+      expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
+      expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(2);
+      expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith(1, 1, 1, '/path', []);
+      expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith(1, 2, 2, '/some/other/path', []);
     })
   );
 });
