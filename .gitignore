@@ -11,3 +11,4 @@ cache
 releases
 phantomjsdriver.log
 *.tasks
+.coveralls.yml

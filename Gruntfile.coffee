@@ -484,7 +484,7 @@ module.exports = (grunt) ->
         singleRun: false
       'unit-ci':
         singleRun: true
-        reporters: ['spec', 'coverage']
+        reporters: ['spec', 'coverage', 'coveralls']
         preprocessors:
           'app/views/*.html': 'ng-html2js'
           'app/scripts/**/*.js': ['coverage']

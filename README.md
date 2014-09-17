@@ -1,11 +1,12 @@
-oscmodulator
+OSC Modulator
 ============
 
 [![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator)
+[![Coverage Status](https://coveralls.io/repos/OSCModulator/oscmodulator/badge.png?branch=develop)](https://coveralls.io/r/OSCModulator/oscmodulator?branch=develop)
 
 Modulate Anything!
 
-# Getting Started
+# Getting Started for Devs
 
 ## Install Prerequisites
 
@@ -124,7 +125,7 @@ Depends on `grunt serve` or `grunt serve:dist`.
 Runs the packaged node-webkit application.
 Depends on `grunt` or `grunt default`
 
-  grunt nw-open
+  grunt nw-open    
 
 ## Continuous Integration
 
