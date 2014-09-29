@@ -471,6 +471,13 @@ module.exports = (grunt) ->
         'imagemin'
         'svgmin'
       ]
+      nw:
+        options:
+          logConcurrentOutput: true
+        tasks: [
+          'serve'
+          'nw-dev'
+        ]
 
 
     karma:
@@ -583,6 +590,9 @@ module.exports = (grunt) ->
   #TODO Add support for running on Windows and Linux
   grunt.registerTask 'nw-open', ['shell:nw-open-mac']
 
+  grunt.registerTask 'nw', ->
+    grunt.option 'nomocks', true
+    grunt.task.run ['concurrent:nw']
   grunt.registerTask 'nw-dev', ->
     grunt.task.run [
       'nodewebkit'

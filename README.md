@@ -122,7 +122,7 @@ Depends on `grunt serve` or `grunt serve:dist`.
 
     grunt nw-dev
 
-Runs the packaged node-webkit application.
+Run the packaged node-webkit application.
 Depends on `grunt` or `grunt default`
 
   grunt nw-open    
