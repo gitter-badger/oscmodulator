@@ -15,31 +15,31 @@ module.exports = (config) ->
     reporters: ['spec']
 
     # list of files / patterns to load in the browser
-    files: [{
+    files: [
       pattern: 'app/scripts/**/*.*'
       watched: true
       included: false
       served: false
-    },{
+    ,
       pattern: 'app/views/**/*.html'
       watched: true
       included: false
       served: false
-    },{
+    ,
       pattern: 'test/mock/**/*.js'
       watched: true
       included: false
       served: false
-    },
-    'test/e2e/**/*.js'
-    'test/mock/**/*.js'
+    ,
+      'test/e2e/**/*.js'
+      'test/mock/**/*.js'
     ]
 
     # list of files / patterns to exclude
     exclude: []
 
     # web server port
-    port: 8080
+    port: 9876
 
     # level of logging
     # possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG

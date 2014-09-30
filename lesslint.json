@@ -1,0 +1,15 @@
+{
+  "adjoining-classes": false,
+  "box-model": false,
+  "box-sizing": false,
+  "compatible-vendor-prefixes": false,
+  "display-property-grouping": false,
+  "fallback-colors": false,
+  "gradients": false,
+  "important": false,
+  "outline-none": false,
+  "qualified-headings": false,
+  "vendor-prefix": false,
+  "universal-selector": false,
+  "zero-units": false
+}

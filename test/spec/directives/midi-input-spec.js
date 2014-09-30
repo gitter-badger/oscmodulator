@@ -1,3 +1,4 @@
+/*jshint unused:false */
 'use strict';
 
 describe('Directive: midiInput', function (){

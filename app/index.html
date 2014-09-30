@@ -7,22 +7,22 @@
         <meta name="description" content=""/>
         <meta name="viewport" content="width=device-width"/>
 
-        <!-- build:css(.tmp) styles/main.css -->
-        <link rel="stylesheet" href="components/bootstrap/docs/assets/css/bootstrap.css"/>
+        <link rel="stylesheet" href="styles/bootstrap.css">
         <link rel="stylesheet" href="styles/main.css">
-        <!-- endbuild -->
     </head>
     <body data-ng-app="oscmodulatorApp">
 
         <!-- Add your site or application content here -->
         <div ng-view></div>
 
-        <!-- vendor frameworks -->
+        <!-- build:js scripts/vendor.js -->
+        <!-- bower:js -->
         <script src="components/jquery/jquery.js"></script>
         <script src="components/angular/angular.js"></script>
         <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <!-- endbower -->
+        <!-- endbuild -->
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/services/jq.js"></script>
         <script src="scripts/services/node.js"></script>
@@ -38,7 +38,6 @@
         <script src="scripts/services/input-config.js"></script>
         <script src="scripts/directives/midi-form.js"></script>
         <script src="scripts/services/midi-port-config.js"></script>
-        <!-- endbuild -->
 
         <!-- MOCKS -->
         <script src="mock/service/legato-mock.js"></script>
