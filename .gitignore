@@ -12,3 +12,4 @@ releases
 phantomjsdriver.log
 *.tasks
 .coveralls.yml
+.ctagsignore
