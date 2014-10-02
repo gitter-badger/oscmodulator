@@ -2,6 +2,7 @@ OSC Modulator
 ============
 
 [![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator)
+[![Code Climate](https://codeclimate.com/github/OSCModulator/oscmodulator/badges/gpa.svg)](https://codeclimate.com/github/OSCModulator/oscmodulator)
 [![Coverage Status](https://coveralls.io/repos/OSCModulator/oscmodulator/badge.png?branch=develop)](https://coveralls.io/r/OSCModulator/oscmodulator?branch=develop)
 
 Modulate Anything!
