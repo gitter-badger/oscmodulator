@@ -80,7 +80,9 @@ module.exports = (grunt) ->
         ]
 
       coffee:
-        files: ['<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}']
+        files: [
+          '<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}'
+        ]
         tasks: ['newer:coffeelint:dist', 'newer:coffee:dist']
 
       coffeeTest:
@@ -222,6 +224,14 @@ module.exports = (grunt) ->
           cwd: '<%= yeoman.app %>/scripts'
           src: '**/*.coffee'
           dest: '.tmp/scripts'
+          ext: '.js'
+        ]
+      legato:
+        files: [
+          expand: true
+          cwd: '<%= yeoman.app %>/node_modules/legato/lib'
+          src: ['**/{legatoRouter,legatoUtils}.coffee']
+          dest: '.tmp/scripts/'
           ext: '.js'
         ]
       test:
@@ -456,6 +466,7 @@ module.exports = (grunt) ->
     concurrent:
       server: [
         'coffee:dist'
+        'coffee:legato'
         'less'
         'copy:styles'
       ]
