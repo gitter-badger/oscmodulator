@@ -73,7 +73,7 @@ module.exports = (grunt) ->
           livereload: '<%= connect.options.dev %>'
 
       jsTest:
-        files: ['test/spec/**/*.js'],
+        files: ['test/spec/**/*.js', 'test/mock/**/*.js'],
         tasks: [
           'newer:jshint:test'
           'karma:unit-watch:run'
