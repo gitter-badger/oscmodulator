@@ -14,6 +14,9 @@ mountFolder = (connect, dir) ->
 # 'test/spec/**/*.js'
 module.exports = (grunt) ->
 
+  # This is not loaded by jit-grunt because it has no explicit task being called.
+  grunt.loadNpmTasks 'grunt-notify'
+
   # Load grunt tasks JIT(Just In Time)
   require('jit-grunt') grunt,
     bower: 'grunt-bower-task'
@@ -68,7 +71,7 @@ module.exports = (grunt) ->
 
       js:
         files: ['<%= yeoman.app %>/scripts/**/*.js']
-        tasks: ['newer:jshint:dist']
+        tasks: ['newer:jshint:dist', 'karma:unit-watch:run']
         options:
           livereload: '<%= connect.options.dev %>'
 
@@ -123,6 +126,15 @@ module.exports = (grunt) ->
           '<%= yeoman.app %>/img/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
 
+      protractor:
+        options:
+          debounceDelay: 5000
+        files: [
+          '<%= yeoman.app %>/scripts/**/*.js'
+          '<%= yeoman.app %>/scripts/**/*.coffee'
+          'test/protractor/**/*spec.{js,coffee}'
+        ]
+        tasks: ['protractor:ci']
 
     # The actual grunt server settings
     connect:
@@ -489,6 +501,21 @@ module.exports = (grunt) ->
           'serve'
           'nw-dev'
         ]
+      watch:
+        options:
+          limit: 10
+          logConcurrentOutput: true
+        tasks: [
+          'watch:bower',
+          'watch:js',
+          'watch:jsTest',
+          'watch:coffee',
+          'watch:coffeeTest',
+          'watch:less',
+          'watch:styles',
+          'watch:gruntfile',
+          'watch:livereload'
+        ]
 
 
     karma:
@@ -597,6 +624,11 @@ module.exports = (grunt) ->
         platforms: ['osx']
       src: ["#{yeomanConfig.dist}/**/*"]
 
+    notify:
+      default:
+        options:
+          message: 'Build finished successfully!'
+
 
   #TODO Add support for running on Windows and Linux
   grunt.registerTask 'nw-open', ['shell:nw-open-mac']
@@ -622,9 +654,13 @@ module.exports = (grunt) ->
       ].join('&&')
       grunt.task.run 'shell:nwgyp'
 
-  grunt.registerTask 'pro', [
-    'protractor:ci'
-  ]
+  grunt.registerTask 'pro', (watch) ->
+    tasks = [
+      'protractor:ci'
+    ]
+    if watch is 'watch'
+      tasks.push 'watch:protractor'
+    grunt.task.run tasks
 
   grunt.registerTask 'pro-debug', [
     'protractor:debug'
@@ -651,7 +687,7 @@ module.exports = (grunt) ->
       'configureRewriteRules'
       'connect:dev'
       'karma:unit-watch:start'
-      'watch'
+      'concurrent:watch'
     ]
     tasks.splice 4, 0, 'replace:dev' if grunt.option 'nomocks'
     grunt.task.run tasks
@@ -709,6 +745,7 @@ module.exports = (grunt) ->
     'build'
     'replace:dist'
     'nodewebkit'
+    'notify:default'
   ]
 
   grunt.registerTask 'init', [
