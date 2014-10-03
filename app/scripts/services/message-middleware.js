@@ -51,7 +51,7 @@ angular.module('oscmodulatorApp')
      * Initialize the messageMiddleware and any services used by the messageMiddleware.
      */
     service.init = function(){
-      legato.init();
+      legato.reinit();
       // Initialize the midi ports
       service.updateAvailableMidiPorts();
     };

@@ -1,4 +1,25 @@
+<div>
+<style>
+    #mock-debug-panel{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #B7B5D7;
+        padding: 10px;
+    }
+</style>
 <div id="mock-debug-panel">
-  <button type="button" class="btn btn-default" ng-click="fakeMidiEvent('/:/:/:/:', 5)">Send Midi</button>
-  <div class="output"></div>
+  <form class="form-inline" role="form">
+    <div class="form-group">
+      <input type='text' placeholder="input id">
+      <input type='text' placeholder="channel">
+      <input type='text' placeholder="note">
+      <input type='text' placeholder="note type">
+      <input type='text' placeholder="value">
+    </div>
+    <button type="button" class="btn btn-primary" ng-click="fakeMidiEvent('/1/note/1', 5)">Send Midi</button>
+    <div class="output"></div>
+  </form>
+</div>
 </div>

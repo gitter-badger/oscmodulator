@@ -151,6 +151,7 @@ describe('angularjs homepage', function() {
 
     // Check that the first midi input object includes this port in the midi drop down.
     options = $$(midiInputRow).first().$$(midiInputPortSelect + ' option');
+
     expect(options.count()).toBe(2);
     expect(options.first().getText()).toBe('All');
     expect(options.last().getText()).toBe(firstMidiPortName);
@@ -177,6 +178,8 @@ describe('angularjs homepage', function() {
 
     outputNodes = mockDebugPanelOutput + ' p';
     expect($$(outputNodes).count()).toBe(0);
+
+		browser.debugger();
 
     $(mockDebugPanelSendMidi).click();
 
