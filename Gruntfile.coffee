@@ -128,7 +128,7 @@ module.exports = (grunt) ->
 
       protractor:
         options:
-          debounceDelay: 5000
+          debounceDelay: 15000
         files: [
           '<%= yeoman.app %>/scripts/**/*.js'
           '<%= yeoman.app %>/scripts/**/*.coffee'
@@ -242,7 +242,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd: '<%= yeoman.app %>/node_modules/legato/lib'
-          src: ['**/{legatoRouter,legatoUtils}.coffee']
+          src: ['**/{router,utils}.coffee']
           dest: '.tmp/scripts/'
           ext: '.js'
         ]
@@ -753,3 +753,8 @@ module.exports = (grunt) ->
     'shell:init-nw'
     'nw-prep'
   ]
+
+# TODO The protractor watch task is impossible to kill.
+# TODO nw-debug is causing an EMFILE error and never succeeds.
+# TODO Source maps for the compiled legato coffee files are 404-ing and we can't debug
+# the legato code as a result.

@@ -8,7 +8,7 @@ exports.config = {
 
   onPrepare: function() {
     require('jasmine-spec-reporter');
-    jasmine.getEnv().addReporter(new jasmine.SpecReporter({displayStacktrace: true}));
+    jasmine.getEnv().addReporter(new jasmine.SpecReporter({displayStacktrace: false}));
   }
 
 };

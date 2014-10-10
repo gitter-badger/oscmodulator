@@ -8,6 +8,7 @@ describe('Service: messageMiddleware', function () {
   beforeEach(function(){
     legatoMock = {
       config: {},
+			inject: function(){},
       init: function(){},
       in: function(){
         return '/1';

@@ -20,8 +20,11 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
       $scope.$on('input:midi:add', function(event, id){
         var input = $scope.inputConfig.inputs[id.input],
           midi = input.midi,
-          index;
+					index;
+
         messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
+
+				// TODO Store the input id on the input row configuration.
 
         for(index in input.outputs){
           if(input.outputs[index].valid){
@@ -43,7 +46,12 @@ angular.module('oscmodulatorApp').directive('inputList', function (){
        */
       $scope.$on('input:midi:update', function(event, id){
         var midi = $scope.inputConfig.inputs[id.input].midi;
-        messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
+
+				// TODO Pass the input id through to messageMiddleware so we update the existing
+				// input rather than creating a new one.
+
+				messageMiddleware.setMidiInput(midi.port.id, midi.note, midi.type, midi.channel);
+//				messageMiddleware.updateMidiInput(inputId, midi.port.id, midi.note, midi.type, midi.channel);
       });
 
       /**

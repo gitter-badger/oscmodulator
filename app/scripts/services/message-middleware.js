@@ -51,7 +51,7 @@ angular.module('oscmodulatorApp')
      * Initialize the messageMiddleware and any services used by the messageMiddleware.
      */
     service.init = function(){
-      legato.reinit();
+      legato.init();
       // Initialize the midi ports
       service.updateAvailableMidiPorts();
     };
@@ -90,6 +90,11 @@ angular.module('oscmodulatorApp')
      * @param note {String} The note name to listen for. ex: c3
      */
     service.getPath = function(portId, channel, noteType, note){
+			portId = portId === 'All' ? ':' : portId;
+			channel = channel === 'All' ? ':' : channel;
+			note = note === 'All' ? ':' : note;
+			noteType = noteType === 'All' ? ':' : noteType.toLowerCase();
+
       return [portId, channel, noteType, note].join('/');
     };
 
@@ -102,30 +107,34 @@ angular.module('oscmodulatorApp')
      * @returns {number} The id of the newly created input.
      */
     service.setMidiInput = function(port, note, noteType, channel){
-      channel = channel === 'All' ? ':' : channel;
-      note = note === 'All' ? ':' : note;
-      noteType = noteType === 'All' ? ':' : noteType.toLowerCase();
-
-      var path = service.getPath(port, channel, noteType, note);
+			var path = service.getPath(port, channel, noteType, note);
 
       ++inputsCreated;
-      config[inputsCreated] = {routeId:null, outputs:{}};
-
-      // Configure a new note listener for the specified config.
-      config[inputsCreated].routeId = legato.on(path, function(){
-        var output, property;
-
-        $log.info('Backend midi input callback, Jack!');
-
-        for(property in config[inputsCreated].outputs){
-          output = config[inputsCreated].outputs[property];
-
-          outputHosts[output.hostId](output.path, output.parameters);
-        }
-      });
-
+			config[inputsCreated] = {routeId:null, outputs:{}};
+			service.createRoute(path, inputsCreated);
       return inputsCreated;
     };
+
+		service.createRoute = function(path, id){
+			// Configure a new note listener for the specified config.
+			config[id].routeId = legato.on(path, function(){
+				var output, property;
+
+				$log.info('Backend midi input callback, Jack!');
+
+				for(property in config[id].outputs){
+					output = config[id].outputs[property];
+
+					outputHosts[output.hostId](output.path, output.parameters);
+				}
+			});
+		};
+
+		service.updateMidiInput = function(id, port, note, noteType, channel){
+			var path = service.getPath(port, channel, noteType, note);
+			service.removeInput(id);
+			service.createRoute(path, id);
+		};
 
     /**
      * Change the mute setting of a midi input.

@@ -1,24 +1,38 @@
 <div>
 <style>
-    #mock-debug-panel{
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: #B7B5D7;
-        padding: 10px;
-    }
+  #mock-debug-panel{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #B7B5D7;
+    padding: 10px;
+  }
+
+  #mock-debug-panel .form-inline{
+    margin: 0;
+  }
+
+  #mock-debug-panel input{
+    margin: 0;
+  }
 </style>
 <div id="mock-debug-panel">
+  <form class="form-inlne" role="form">
+    <div class="form-group">
+      <input class="midi-inputs" type="text" placeholder="Fake midi inputs" data-ng-model="midi_inputs">
+      <button type="button" class="btn btn-primary setMidiInputs" ng-click="setMidiInputs()">Set Inputs</button>
+    </div>
+  </form>
   <form class="form-inline" role="form">
     <div class="form-group">
-      <input type='text' placeholder="input id">
-      <input type='text' placeholder="channel">
-      <input type='text' placeholder="note">
-      <input type='text' placeholder="note type">
-      <input type='text' placeholder="value">
+      <input class='input-id' type='text' placeholder="input id" data-ng-model="input_id">
+      <input class='channel' type='text' placeholder="channel" data-ng-model="channel">
+      <input class='note-type' type='text' placeholder="note type" data-ng-model="note_type">
+      <input class='note' type='text' placeholder="note" data-ng-model="note">
+      <input class='value' type='text' placeholder="value" data-ng-model="value">
+      <button type="button" class="btn btn-primary fakeMidiEvent" ng-click="fakeMidiEvent()">Send Midi</button>
     </div>
-    <button type="button" class="btn btn-primary" ng-click="fakeMidiEvent('/1/note/1', 5)">Send Midi</button>
     <div class="output"></div>
   </form>
 </div>
