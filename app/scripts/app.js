@@ -1,4 +1,4 @@
-angular.module('oscmodulatorApp', ['ui.bootstrap']).config(function ($routeProvider) {
+angular.module('oscmodulatorApp', ['lodash', 'ui.bootstrap']).config(function ($routeProvider) {
   'use strict';
 
   $routeProvider.when('/', {

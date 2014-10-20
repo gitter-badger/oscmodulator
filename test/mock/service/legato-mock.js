@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oscmodulatorApp').config(function($provide){
-  $provide.factory('legato', function ($log, jq) {
+  $provide.factory('legato', function ($log, jq, _) {
     var inputsCreated = 0,
       routesCreated = 0,
       paths = {},
@@ -18,8 +18,14 @@ angular.module('oscmodulatorApp').config(function($provide){
       },
       on: function(path, callback){
         $log.info('MOCK legato.on called.');
-        paths[path] = {};
-        paths[path].callback = callback;
+        if (paths[path]) {
+          paths[path].callbacks.push(callback);
+        }
+        else {
+          paths[path] = {
+            callbacks: [callback]
+          };
+        }
         return ++routesCreated;
       },
       receiveMidi: function(path, value){
@@ -28,7 +34,9 @@ angular.module('oscmodulatorApp').config(function($provide){
           $log.warn('MOCK legato could not find path ' + path);
         }
         else {
-          paths[path].callback();
+          _.forEach(paths[path].callbacks, function(cb) {
+            (_.bind(cb, {path:path, val:value}))(value);
+          });
         }
       },
       removeInput: function(){
