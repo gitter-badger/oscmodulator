@@ -68,12 +68,13 @@ module.exports = (grunt) ->
 
       js:
         files: ['<%= yeoman.app %>/scripts/**/*.js']
-        tasks: ['newer:jshint:dist']
-        options:
-          livereload: '<%= connect.options.dev %>'
+        tasks: [
+          'newer:jshint:dist'
+          'karma:unit-watch:run'
+        ]
 
       jsTest:
-        files: ['test/spec/**/*.js'],
+        files: ['test/{spec,mock}/**/*.js'],
         tasks: [
           'newer:jshint:test'
           'karma:unit-watch:run'
@@ -81,12 +82,15 @@ module.exports = (grunt) ->
 
       coffee:
         files: ['<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}']
-        tasks: ['newer:coffeelint:dist', 'newer:coffee:dist']
+        tasks: [
+          'newer:coffeelint:dist'
+          'newer:coffee:dist'
+          'karma:unit-watch:run'
+        ]
 
       coffeeTest:
         files: [
-          '.tmp/scripts/**/*.js'
-          'test/spec/**/*.{coffee,litcoffee,coffee.md}'
+          'test/{spec,mock}/**/*.{coffee,litcoffee,coffee.md}'
         ]
         tasks: [
           'newer:coffeelint:test'
@@ -111,12 +115,12 @@ module.exports = (grunt) ->
       livereload:
         options:
           livereload: LIVERELOAD_PORT
-          spawn: false
 
         files: [
           '<%= yeoman.app %>/{,*/}*.html'
           '.tmp/styles/**/*.css'
           '.tmp/scripts/**/*.js'
+          'test/mock/**/*.js'
           '<%= yeoman.app %>/scripts/**/*.js'
           '<%= yeoman.app %>/img/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
