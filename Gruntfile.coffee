@@ -582,10 +582,16 @@ module.exports = (grunt) ->
       options:
         stderr: true
         stdout: true
-      'init-app':
+      'init-nw':
         command: [
           'cd app'
           'npm install --arch=ia32' # Force 32 bit until Chromium supports 64 bit.
+        ].join '&&'
+
+      'init-ci':
+        command: [
+          'cd app'
+          "npm install #{appPkg.devDependencies.legato}"
         ].join '&&'
 
       'nw-open-mac':
@@ -795,7 +801,7 @@ module.exports = (grunt) ->
     '''
     [
       'bower:install',
-      'shell:init-app'
+      'shell:init-ci'
     ]
 
   @registerTask 'default',
@@ -817,6 +823,6 @@ module.exports = (grunt) ->
     '''
     [
       'bower:install'
-      'shell:init-app'
+      'shell:init-nw'
       'nw-prep'
     ]
