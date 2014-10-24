@@ -6,9 +6,9 @@ app/components
 *.DS_Store
 .idea/*
 .vimrc
-npm-debug.log
+*.log
 cache
 releases
-phantomjsdriver.log
 *.tasks
 .coveralls.yml
+.ctagsignore

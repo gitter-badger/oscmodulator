@@ -8,7 +8,6 @@ angular.module('oscmodulatorApp').config(function ($provide) {
       inputsCreated = 0;
 
     // Configure dependencies.
-    // TODO Get lodash as a service?
     utils.inject(_);
     legato.inject(utils);
 
@@ -64,8 +63,6 @@ angular.module('oscmodulatorApp').config(function ($provide) {
       else {
         $log.error('MOCK input ' + input + ' could not be found on window.inputs.');
       }
-
-//			window.messageRouter(path, value);
     };
 
     return legato;

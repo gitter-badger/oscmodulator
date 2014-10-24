@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 
   path = require 'path'
   appPkg = require './app/package.json'
-  bowerrc = grunt.file.readJSON './.bowerrc' #rc name breaks require
+  bowerrc = @file.readJSON './.bowerrc' #rc name breaks require
 
   # Define the configuration for all the tasks
   yeomanConfig =
@@ -58,7 +58,7 @@ module.exports = (grunt) ->
 
   appDirectory = "#{nwConfig.root}/releases/#{appPkg.name}/osx/#{appPkg.name}"
 
-  grunt.initConfig
+  @initConfig
 
     # Project settings
     yeoman: yeomanConfig
@@ -71,27 +71,29 @@ module.exports = (grunt) ->
 
       js:
         files: ['<%= yeoman.app %>/scripts/**/*.js']
-        tasks: ['newer:jshint:dist', 'karma:unit-watch:run']
-        options:
-          livereload: '<%= connect.options.dev %>'
+        tasks: [
+          'newer:jshint:dist'
+          'karma:unit-watch:run'
+        ]
 
       jsTest:
-        files: ['test/spec/**/*.js', 'test/mock/**/*.js'],
+        files: ['test/{spec,mock}/**/*.js']
         tasks: [
           'newer:jshint:test'
           'karma:unit-watch:run'
         ]
 
       coffee:
-        files: [
-          '<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}'
+        files: ['<%= yeoman.app %>/scripts/**/*.{coffee,litcoffee,coffee.md}']
+        tasks: [
+          'newer:coffeelint:dist'
+          'newer:coffee:dist'
+          'karma:unit-watch:run'
         ]
-        tasks: ['newer:coffeelint:dist', 'newer:coffee:dist']
 
       coffeeTest:
         files: [
-          '.tmp/scripts/**/*.js'
-          'test/spec/**/*.{coffee,litcoffee,coffee.md}'
+          'test/{spec,mock}/**/*.{coffee,litcoffee,coffee.md}'
         ]
         tasks: [
           'newer:coffeelint:test'
@@ -116,12 +118,12 @@ module.exports = (grunt) ->
       livereload:
         options:
           livereload: LIVERELOAD_PORT
-          spawn: false
 
         files: [
           '<%= yeoman.app %>/{,*/}*.html'
           '.tmp/styles/**/*.css'
           '.tmp/scripts/**/*.js'
+          'test/mock/**/*.js'
           '<%= yeoman.app %>/scripts/**/*.js'
           '<%= yeoman.app %>/img/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -139,7 +141,7 @@ module.exports = (grunt) ->
     # The actual grunt server settings
     connect:
       options:
-        port: grunt.option('port') or SERVER_PORT
+        port: @option('port') or SERVER_PORT
         # Change this to '0.0.0.0' to access the server from outside.
         hostname: '0.0.0.0'
 
@@ -633,130 +635,179 @@ module.exports = (grunt) ->
 
 
   #TODO Add support for running on Windows and Linux
-  grunt.registerTask 'nw-open', ['shell:nw-open-mac']
+  @registerTask 'nw-open',
+    '''
+    Opens the fully packaged OSCModulator app.
+    (Depends on having run `grunt`)
+    '''
+    ['shell:nw-open-mac']
 
-  grunt.registerTask 'nw', ->
-    grunt.option 'nomocks', true
-    grunt.task.run ['concurrent:nw']
-  grunt.registerTask 'nw-dev', ->
-    grunt.task.run [
-      'nodewebkit'
-      'shell:nw-dev'
-    ]
+  @registerTask 'nw',
+    '''
+    Run node-webkit in development mode, but with no mocks in place.
+    '''
+    =>
+      @option 'nomocks', true
+      @task.run ['concurrent:nw']
 
-  grunt.registerTask 'nw-prep', ->
-    # Recompile any native Node modules to run in Node Webkit.
-    grunt.file.expand('app/node_modules/**/package.json').forEach (filePath) ->
-      config = grunt.file.readJSON filePath
-      return if not config?.gypfile
-      dir = path.dirname filePath
-      grunt.config 'shell.nwgyp.command', [
-        "cd #{dir}"
-        "#{path.resolve('./node_modules/.bin/nw-gyp')} rebuild --target=#{nwConfig.version}"
-      ].join('&&')
-      grunt.task.run 'shell:nwgyp'
-
-  grunt.registerTask 'pro', (watch) ->
-    tasks = [
-      'protractor:ci'
-    ]
-    if watch is 'watch'
-      tasks.push 'watch:protractor'
-    grunt.task.run tasks
-
-  grunt.registerTask 'pro-debug', [
-    'protractor:debug'
-  ]
-
-  grunt.registerTask 'pro-element-finder', [
-    'protractor_webdriver:start'
-    'shell:start-element-finder'
-  ]
-
-  grunt.registerTask 'serve', (target) ->
-    if target is 'dist'
-      return grunt.task.run [
-        'clean:dist'
-        'build'
-        'replace:dist'
-        'configureRewriteRules'
-        'connect:dist:keepalive'
+  @registerTask 'nw-dev',
+    '''
+      Download and run node-webkit configured to use the local web server.
+      (Depends on having run `grunt serve` or `grunt serve:dist`)
+    '''
+    =>
+      @task.run [
+        'nodewebkit'
+        'shell:nw-dev'
       ]
-    tasks = [
-      'clean:server'
-      'copy:fonts'
-      'concurrent:server'
-      'configureRewriteRules'
-      'connect:dev'
-      'karma:unit-watch:start'
-      'concurrent:watch'
-    ]
-    tasks.splice 4, 0, 'replace:dev' if grunt.option 'nomocks'
-    grunt.task.run tasks
 
-  grunt.registerTask 'test', (target='unit', watch='') ->
-    if target is 'e2e'
-      if watch is 'watch'
-        watch = '-watch'
-      tasks = [
-        "karma:e2e#{watch}"
-      ]
-    else
+  @registerTask 'nw-prep',
+    '''
+    (internal use only)
+    Recompiles native Node modules to run in Node Webkit.
+    '''
+    =>
+      @file.expand('app/node_modules/**/package.json').forEach (filePath) =>
+        config = @file.readJSON filePath
+        return if not config?.gypfile
+        dir = path.dirname filePath
+        @config 'shell.nwgyp.command', [
+          "cd #{dir}"
+          "#{path.resolve('./node_modules/.bin/nw-gyp')} rebuild --target=#{nwConfig.version}"
+        ].join('&&')
+        @task.run 'shell:nwgyp'
+
+  @registerTask 'pro',
+    '''
+    Run Protractor e2e tests against PhantomJS.
+    '''
+    ['protractor:ci']
+
+  @registerTask 'pro-debug',
+    '''
+    Run Protractor e2e tests in debug mode against Chrome.
+    '''
+    ['protractor:debug']
+
+  @registerTask 'pro-element-finder',
+    '''
+    Runs the Protractor element finder.
+    '''
+    [
+      'protractor_webdriver:start'
+      'shell:start-element-finder'
+    ]
+
+  @registerTask 'serve',
+    '''
+    Run and serve the development build at localhost:9000.
+    '''
+    (target) =>
+      if target is 'dist'
+        return @task.run [
+          'clean:dist'
+          'build'
+          'replace:dist'
+          'configureRewriteRules'
+          'connect:dist:keepalive'
+        ]
       tasks = [
         'clean:server'
-        'concurrent:test'
-        "karma:#{target}"
+        'copy:fonts'
+        'concurrent:server'
+        'configureRewriteRules'
+        'connect:dev'
+        'karma:unit-watch:start'
+        'watch'
       ]
+      tasks.splice 4, 0, 'replace:dev' if @option 'nomocks'
+      @task.run tasks
 
-    grunt.task.run tasks
+  @registerTask 'test',
+    '''
+    Run unit or e2e tests.
+    '''
+    (target='unit', watch='') =>
+      if target is 'e2e'
+        if watch is 'watch'
+          watch = '-watch'
+        tasks = [
+          "karma:e2e#{watch}"
+        ]
+      else
+        tasks = [
+          'clean:server'
+          'concurrent:test'
+          "karma:#{target}"
+        ]
 
-  grunt.registerTask 'lint', [
-    'jshint'
-    'coffeelint'
-    'lesslint'
-  ]
+      @task.run tasks
 
-  grunt.registerTask 'build', [
-    'useminPrepare'
-    'concurrent:dist'
-    'concat'
-    'cssmin'
-    'copy:dist'
-    'usemin'
-  ]
+  @registerTask 'lint',
+    '''
+    Run in code linting tasks.
+    '''
+    [
+      'jshint'
+      'coffeelint'
+      'lesslint'
+    ]
 
-  grunt.registerTask 'ci', [
-    'clean:dist'
-    'lint'
-    'test:unit-ci'
-    'build'
-    'configureRewriteRules'
-    'connect:dev'
-    'test:e2e'
-    'protractor:ci'
-  ]
+  @registerTask 'build',
+    '''
+    Create the "web app" build for packaging into node-webkit.
+    '''
+    [
+      'useminPrepare'
+      'concurrent:dist'
+      'concat'
+      'cssmin'
+      'copy:dist'
+      'usemin'
+    ]
 
-  grunt.registerTask 'ci-init', [
-    'bower:install'
-  ]
+  @registerTask 'ci',
+    '''
+    Run the Continuous Integration(CI) build.
+    '''
+    [
+      'clean:dist'
+      'lint'
+      'test:unit-ci'
+      'build'
+      'configureRewriteRules'
+      'connect:dev'
+      'test:e2e'
+      'protractor:ci'
+    ]
 
-  grunt.registerTask 'default', [
-    'clean:dist'
-    'lint'
-    'test'
-    'build'
-    'replace:dist'
-    'nodewebkit'
-    'notify:default'
-  ]
+  @registerTask 'ci-init',
+    '''
+    Initialize the project for a CI build.
+    '''
+    [
+      'bower:install'
+    ]
 
-  grunt.registerTask 'init', [
-    'bower:install'
-    'shell:init-nw'
-    'nw-prep'
-  ]
+  @registerTask 'default',
+    '''
+    Create the fully packaged build ready for distribution.
+    '''
+    [
+      'clean:dist'
+      'lint'
+      'test'
+      'build'
+      'replace:dist'
+      'nodewebkit'
+    ]
 
-# TODO The protractor watch task is impossible to kill.
-# TODO nw-debug is causing an EMFILE error and never succeeds.
-# TODO Source maps for the compiled legato coffee files are 404-ing and we can't debug
-# the legato code as a result.
+  @registerTask 'init',
+    '''
+    Initialize the project for development after checkout.
+    '''
+    [
+      'bower:install'
+      'shell:init-nw'
+      'nw-prep'
+    ]
