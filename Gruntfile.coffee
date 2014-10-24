@@ -506,7 +506,6 @@ module.exports = (grunt) ->
         'coffee'
         'less'
         'copy:styles'
-        'imagemin'
         'svgmin'
       ]
       nw:
