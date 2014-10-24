@@ -192,6 +192,14 @@ module.exports = (grunt) ->
         ]
 
       server: '.tmp'
+      modules:
+        files:[
+          dot: true
+          src:[
+            'node_modules'
+            '<%= yeoman.app %>/node_modules'
+          ]
+        ]
 
 
     # Automatically inject Bower components into the app

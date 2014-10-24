@@ -6,6 +6,10 @@ exports.config = {
 
   specs: ["protractor/*spec.coffee","protractor/*spec.js"],
 
+  jasmineNodeOpts: {
+      silent: true
+  },
+
   onPrepare: function() {
     require('jasmine-spec-reporter');
     jasmine.getEnv().addReporter(new jasmine.SpecReporter({displayStacktrace: false}));
