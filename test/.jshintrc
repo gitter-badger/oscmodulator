@@ -31,6 +31,8 @@
     "describe": false,
     "expect": false,
     "it": false,
+    "iit": false,
+    "xit": false,
     "jasmine": false,
     "runs": false,
     "spyOn": false,

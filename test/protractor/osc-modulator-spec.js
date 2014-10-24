@@ -1,371 +1,252 @@
 describe('angularjs homepage', function() {
   'use strict';
 
-  var homepage = 'http://localhost:9000',
-    // TODO Convert these into PageObjects
-    // http://www.thoughtworks.com/insights/blog/using-page-objects-overcome-protractors-shortcomings
-    // Config Panels
-    configPanelRow = '.configRow',
-    midiConfigPanel = '.midiPanel',
-    midiConfigPanelHeader = '.midiPanel h2',
-    midiConfigPanelButton = 'button[name=showMidiPanel]',
-    midiConfigPortToggle = 'input[name=midiPortEnabled]',
-    firstMidiPortName = 'USB Trigger Finger',
-    oscConfigPanel = '.oscPanel',
-    oscConfigPanelHeader = '.oscPanel h2',
-    oscConfigPanelButton = 'button[name=showOSCPanel]',
-    oscConfigPanelAddHostButton = 'button[name=addOSCHost]',
-    oscConfigHostName = 'input[name=oscHostName]',
-    oscConfigHostAddress = 'input[name=oscHostAddress]',
-    oscConfigHostPort = 'input[name=oscHostPort]',
-    // Midi Input rows
-    midiInputRow = 'div.midiInput',
-    midiInputPortSelect = 'select[name=midiPort]',
-    midiInputNote = 'input[name=midiInNote]',
-    midiInputNoteTypeSelect = 'select[name=midiNoteType]',
-    midiInputChannelSelect = 'select[name=midiChannel]',
-    midiInputOSCHost = 'select.oscHost',
-    midiInputOSCPath = 'input[name=oscPath]',
-    // Mock Output Debug
-		mockDebugPanelSetMidiInputs = '#mock-debug-panel button.setMidiInputs',
-		mockDebugPanelMidiInputs = '#mock-debug-panel .midi-inputs',
-    mockDebugPanelSendMidi = '#mock-debug-panel button.fakeMidiEvent',
-    mockDebugPanelOutput = '#mock-debug-panel .output',
-		mockDebugPanelInputId = '#mock-debug-panel .input-id',
-		mockDebugPanelChannel = '#mock-debug-panel .channel',
-		mockDebugPanelNoteType = '#mock-debug-panel .note-type',
-		mockDebugPanelNote = '#mock-debug-panel .note',
-		mockDebugPanelValue = '#mock-debug-panel .value',
-		// Helper methods
-		setMidiInputs,
-		sendFakeMidiMessageParams,
-    openOSCPanel,
-    addOSCPort,
-    openMidiPanel,
-    setupMidiRow,
-    setupOSCRow,
-    setupMidiToOSC,
-    basicMidiHostSetup,
-    basicOSCHostSetup,
-    basicSetup;
-
-	setMidiInputs = function(inputs){
-		var string = inputs.join(',');
-		$(mockDebugPanelMidiInputs).sendKeys(string);
-		$(mockDebugPanelSetMidiInputs).click();
-	};
-
-	sendFakeMidiMessageParams = function(input, channel, type, note, value ){
-		$(mockDebugPanelInputId).sendKeys(input);
-		$(mockDebugPanelChannel).sendKeys(channel);
-		$(mockDebugPanelNoteType).sendKeys(type);
-		$(mockDebugPanelNote).sendKeys(note);
-		$(mockDebugPanelValue).sendKeys(value);
-		$(mockDebugPanelSendMidi).click();
-	};
-
-  openMidiPanel = function(){
-    $(midiConfigPanelButton).click();
-
-    browser.wait(function(){
-      return $(midiConfigPanelHeader).isDisplayed();
-    }, 1000, 'Failed to find the open midi port form.');
-  };
-
-  openOSCPanel = function(){
-    $(oscConfigPanelButton).click();
-
-    browser.wait(function(){
-      return $(oscConfigPanelHeader).isDisplayed();
-    }, 1000, 'Failed to find the open osc port form.');
-  };
-
-  addOSCPort = function(name, address, port){
-    var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
-    hostRow.$(oscConfigHostName).sendKeys(name);
-    hostRow.$(oscConfigHostAddress).sendKeys(address);
-    hostRow.$(oscConfigHostPort).sendKeys(port);
-  };
-
-  setupMidiToOSC = function(row, midiHost, midiChannel, midiNote, midiNoteType, oscHost, oscPath, oscParams){
-    setupMidiRow(row, midiHost, midiChannel, midiNote, midiNoteType);
-    setupOSCRow(row, oscHost, oscPath, oscParams);
-  };
-
-  setupMidiRow = function(row, host, channel, note, type){
-    // specify a midi note
-    row.$(midiInputNote).sendKeys(note);
-
-    // Specify the host.
-    row.element(by.cssContainingText(midiInputPortSelect + ' option', host)).click();
-
-    // Specify the channel.
-    row.element(by.cssContainingText(midiInputChannelSelect + ' option', channel)).click();
-
-    // Specify the note type.
-    row.element(by.cssContainingText(midiInputNoteTypeSelect + ' option', type)).click();
-  };
-
-  setupOSCRow = function(row, host, path, parameters){
-    // select the osc output port
-    row.element(by.cssContainingText(midiInputOSCHost + ' option', host)).click();
-
-    // set an osc output path
-    row.$(midiInputOSCPath).sendKeys(path);
-
-    // TODO Handle parameter lists.
-  };
-
-  basicMidiHostSetup = function(){
-    openMidiPanel();
-
-    // turn on the first midi input port
-    $(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
-  };
-
-  basicOSCHostSetup = function(){
-    // open the osc panel
-    openOSCPanel();
-
-    // add an osc output port
-    addOSCPort('live', 'localhost', '9090');
-  }
-
-  basicSetup = function(){
-    var inputObject;
-
-    basicMidiHostSetup();
-    basicOSCHostSetup();
-
-    inputObject = $$(midiInputRow).first();
-
-    setupMidiToOSC(inputObject, 'All', 'All', ':', 'All', 'live', '/', []);
-  };
+  var
+    modulator = require('./page-objects/modulator'),
+    debugPanel = require('./page-objects/debug-panel'),
+    midiConfigPanel = require('./page-objects/midi-config-panel'),
+    oscConfigPanel = require('./page-objects/osc-config-panel'),
+    inputs = require('./page-objects/input'),
+    homepage = 'http://localhost:9000';
 
   beforeEach(function(){
     browser.get(homepage);
   });
 
 	it('should start with one midi input.', function () {
-    expect($$(midiInputRow).count()).toBe(1);
+    expect(inputs.getRows().count()).toBe(1);
   });
 
   it('should be able to open the midi panel.', function(){
-    expect($(midiConfigPanelHeader).isDisplayed()).toBe(false);
+    expect(midiConfigPanel.isOpen()).toBe(false);
 
-    openMidiPanel();
+    midiConfigPanel.open();
 
-    expect($(midiConfigPanelHeader).isDisplayed()).toBe(true);
+    expect(midiConfigPanel.isOpen()).toBe(true);
   });
 
 	it('should be possible to open the midi configuration window before there are available ' +
 		'midi hosts', function(){
-		setMidiInputs([]);
+		debugPanel.setMidiInputPorts([]);
 
-		openMidiPanel();
+		midiConfigPanel.open();
 
-		browser.debugger();
-
-		expect($(midiConfigPanelHeader).isDisplayed()).toBe(true);
-		expect($$(midiConfigPortToggle).count()).toBe(0);
+		expect(midiConfigPanel.isOpen()).toBe(true);
+		expect(midiConfigPanel.getAvailablePorts().count()).toBe(0);
 	});
 
   it('should be able to open the osc panel.', function(){
-    expect($(oscConfigPanelHeader).isDisplayed()).toBe(false);
+    expect(oscConfigPanel.isOpen()).toBe(false);
 
-    openOSCPanel();
+    oscConfigPanel.open();
 
-    expect($(oscConfigPanelHeader).isDisplayed()).toBe(true);
+    expect(oscConfigPanel.isOpen()).toBe(true);
   });
 
   it('should be able to select a midi input port.', function(){
-    var options;
+    var name = 'Foo Bar';
 
-    openMidiPanel();
+    debugPanel.setMidiInputPorts([name]);
+    midiConfigPanel.open();
 
     // Turn on the first midi input
-    $(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
+    midiConfigPanel.selectPort(0);
 
-    // Check that the first midi input object includes this port in the midi drop down.
-    options = $$(midiInputRow).first().$$(midiInputPortSelect + ' option');
-
-    expect(options.count()).toBe(2);
-    expect(options.first().getText()).toBe('All');
-    expect(options.last().getText()).toBe(firstMidiPortName);
+    expect(inputs.getPortOptions(0).count()).toBe(2);
+    expect(inputs.getPortOption(0, 0).getText()).toBe('All');
+    expect(inputs.getPortOption(0, -1).getText()).toBe(name);
   });
 
   it('should be able to setup an osc port.', function(){
-    var options;
+    oscConfigPanel.open();
 
-    openOSCPanel();
+    oscConfigPanel.addPort('name', 'localhost', '9050');
 
-    addOSCPort('name', 'localhost', '9050');
-
-    options = $(midiInputRow).$$('.oscHost option');
-    expect(options.count()).toBe(2);
-    expect(options.last().getText()).toBe('name');
+    expect(inputs.getOSCHostOptions(0, 0).count()).toBe(2);
+    expect(inputs.getOSCHostOption(0, 0, -1).getText()).toBe('name');
   });
 
   it('should be able to receive midi events.', function(){
-    var inputObject, outputNodes;
+    modulator.basicSetup();
 
-    basicSetup();
+    expect(debugPanel.getOutputs().count()).toBe(0);
 
-    inputObject = $$(midiInputRow).first();
+    debugPanel.sendMidiMessage(1, ':', ':', ':', 50);
 
-    outputNodes = mockDebugPanelOutput + ' p';
-    expect($$(outputNodes).count()).toBe(0);
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(0).getText()).toEqual('OSC -> /?');
 
-		sendFakeMidiMessageParams(1, ':', ':', ':', 50);
+    inputs.getOSCPath(0, 0).clear();
+    oscConfigPanel.setPort(0, '33');
 
-    expect($$(outputNodes).count()).toBe(1);
-    expect($(outputNodes).getText()).toEqual('OSC -> /?');
+    inputs.setOSCPath(0, 0, '/some/path');
 
-    inputObject.$(midiInputOSCPath).clear();
+    debugPanel.sendMidiMessage();
 
-    var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
-    hostRow.$(oscConfigHostPort).sendKeys('33');
-
-    inputObject.$(midiInputOSCPath).sendKeys('/some/path');
-
-    $(mockDebugPanelSendMidi).click();
-
-    expect($$(outputNodes).count()).toBe(2);
-    expect($$(outputNodes).last().getText()).toBe('OSC -> /some/path?');
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(-1).getText()).toBe('OSC -> /some/path?');
   });
 
-	// TODO Why is this failing?
-  xit('should be able to send osc messages if the osc host is removed and re-added.', function(){
-    var inputObject, outputNodes;
-
-    basicSetup();
-
-    inputObject = $$(midiInputRow).first();
+  it('should be able to send osc messages if the osc host is removed and re-added.', function(){
+    modulator.basicSetup();
 
     // Make sure no messages have been sent yet.
-    outputNodes = mockDebugPanelOutput + ' p';
-    expect($$(outputNodes).count()).toBe(0);
+    expect(debugPanel.getOutputs().count()).toBe(0);
 
-		sendFakeMidiMessageParams(1, ':', ':', ':', 50);
+    debugPanel.sendMidiMessage(1, ':', ':', ':', 50);
 
     // Make sure we can send messages.
-    expect($$(outputNodes).count()).toBe(1);
-    expect($(outputNodes).getText()).toEqual('OSC -> /?');
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(0).getText()).toEqual('OSC -> /?');
 
     // Remove the current host.
-    var hostRow = $(oscConfigPanel).$$(configPanelRow).last();
-    hostRow.$(oscConfigHostPort).sendKeys('\b', '\b', '\b', '\b');
+    oscConfigPanel.setPort(0, '\b\b\b\b');
 
     // Try to send another message.
-		$(mockDebugPanelSendMidi).click();
+    debugPanel.sendMidiMessage();
 
     // Make sure no new messages were sent since we don't have a host configured.
-    expect($$(outputNodes).count()).toBe(1);
+    expect(debugPanel.getOutputs().count()).toBe(1);
 
     // Make sure the osc output row host was updated and is now empty.
-    var hostSelect = inputObject.$$(midiInputOSCHost + ' option');
-    expect(hostSelect.count()).toBe(1);
-    expect(hostSelect.last().getText()).toBe('');
+    expect(inputs.getOSCHostOptions().count()).toBe(1);
+    expect(inputs.getOSCHostOption(0, 0, -1).getText()).toBe('');
 
     // Fix the osc port.
-    hostRow.$(oscConfigHostPort).sendKeys('8989');
+    oscConfigPanel.setPort(0, '8989');
 
     // Try to send another message.
-		$(mockDebugPanelSendMidi).click();
+		debugPanel.sendMidiMessage();
 
     // Make sure nothing new was sent.
-    expect($$(outputNodes).count()).toBe(1);
+    expect(debugPanel.getOutputs().count()).toBe(1);
 
     // Select the updated host and change the path.
-    hostSelect.last().click();
+    inputs.setOSCHostOption(0, 0, -1);
 
     // Send another message.
-		$(mockDebugPanelSendMidi).click();
+		debugPanel.sendMidiMessage();
 
     // Make sure the message was sent this time.
-    expect($$(outputNodes).count()).toBe(2);
-    expect($$(outputNodes).last().getText()).toEqual('OSC -> /?');
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(-1).getText()).toEqual('OSC -> /?');
   });
 
   it('should be able to send osc messages if the output hosts are configured before' +
     'the midi input is configured.', function(){
-    var inputObject, outputNodes;
-
-    basicMidiHostSetup();
-    basicOSCHostSetup();
-
-    inputObject = $$(midiInputRow).first();
+    modulator.basicMidiHostSetup();
+    modulator.basicOSCHostSetup();
 
     // Setup midi to OSC.
-    setupOSCRow(inputObject, 'live', '/', []);
+    modulator.setupOSCRow(0, 0, 'live', '/', []);
 
     // Make sure no messages have been sent yet.
-    outputNodes = mockDebugPanelOutput + ' p';
-    expect($$(outputNodes).count()).toBe(0);
+    expect(debugPanel.getOutputs().count()).toBe(0);
 
     // Send a fake midi message
-		sendFakeMidiMessageParams(1, ':', ':', ':', 50);
+		debugPanel.sendMidiMessage(1, ':', ':', ':', 50);
 
     // Make sure we can send messages.
-    expect($$(outputNodes).count()).toBe(0);
+    expect(debugPanel.getOutputs().count()).toBe(0);
 
     // Activate a midi host.
-    setupMidiRow(inputObject, 'All', 'All', ':', 'All');
+    modulator.setupMidiRow(0, 'All', 'All', ':', 'All');
 
     // Send a fake midi message
-		$(mockDebugPanelSendMidi).click();
+		debugPanel.sendMidiMessage();
 
     // Make sure we can send messages.
-    expect($$(outputNodes).count()).toBe(1);
-    expect($$(outputNodes).last().getText()).toEqual('OSC -> /?');
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(-1).getText()).toEqual('OSC -> /?');
   });
 
-  it('should be able to disable the midi input row when a midi host is removed.', function(){
-		basicSetup();
+  it('should disable the midi input row when a midi host is removed.', function(){
+    var name = 'Foo Bar';
 
-		var row = $$(midiInputRow).first();
-		row.element(by.cssContainingText(midiInputPortSelect + ' option', firstMidiPortName))
-			.click();
+    debugPanel.setMidiInputPorts([name]);
+
+		modulator.basicSetup();
 
 		// Make sure no messages have been sent yet.
-		var outputNodes = mockDebugPanelOutput + ' p';
-		expect($$(outputNodes).count()).toBe(0);
+		expect(debugPanel.getOutputs().count()).toBe(0);
 
 		// Send a fake midi message
-		sendFakeMidiMessageParams(1, ':', ':', ':', 50);
+		debugPanel.sendMidiMessage(1, ':', ':', ':', 50);
 
-		browser.debugger();
-
-		expect($$(outputNodes).count()).toBe(1);
+		expect(debugPanel.getOutputs().count()).toBe(1);
 
 		// Disable the input
-//		$(midiConfigPanel).$$(configPanelRow).first().$(midiConfigPortToggle).click();
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(0);
 
     // Make sure midi messages are nolonger handled and that no errors occur.
-		expect(true).toBe(true);
+		expect(inputs.getPortOptions().count()).toBe(1);
   });
 
-	it('should be able to reset the midi input port for a midi input row multiples times.', function(){
-		// TODO Running into an issue where resetting the midi port for an input row
-		// breaks the input row's ability to route midi input messages.
-		expect(true).toBe(true);
+	it('should be able to change the midi input port for a midi input row multiples times.', function(){
+    var name1 = 'Baz',
+      name2 = 'Foo',
+      name3 = 'Fighter';
+
+    debugPanel.setMidiInputPorts([name1, name2, name3]);
+
+    modulator.basicSetup();
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(1);
+    midiConfigPanel.selectPort(2);
+
+    // Make sure we can receive messages.
+    debugPanel.sendMidiMessage(2, ':', ':', ':', 90);
+    expect(debugPanel.getOutputs().count()).toBe(1);
+
+    inputs.setPortByName(0, name2);
+
+    // Make sure we still receive messages.
+    debugPanel.sendMidiMessage();
+    expect(debugPanel.getOutputs().count()).toBe(2);
+
+    inputs.setPortByName(0, name3);
+
+    // Make sure we don't receive any messages since we're not listening for Fighter
+    debugPanel.sendMidiMessage();
+    expect(debugPanel.getOutputs().count()).toBe(2);
+
+    // Sending on the Fighter port should work.
+    debugPanel.sendMidiMessage(3, ':', ':', ':', 80);
+    expect(debugPanel.getOutputs().count()).toBe(3);
+
+    inputs.setPortByName(0, name1);
+    debugPanel.sendMidiMessage(1, ':', ':', ':', 70);
+    expect(debugPanel.getOutputs().count()).toBe(4);
 	});
 
   it('should be able to trigger multiple OSC outputs from a single midi event.', function(){
-		expect(true).toBe(true);
+    var name1 = 'Bar',
+      name2 = 'Boo',
+      name3 = 'Bell';
+
+    modulator.basicSetup();
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(1);
+
+    inputs.addOutput(0);
+    modulator.setupOSCRow(0, 1, 1, '/some/other/path', []);
+
+    debugPanel.sendMidiMessage(1, '1', 'note', ':', 50);
+
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /?');
+    expect(debugPanel.getOutput(-1).getText()).toBe('OSC -> /some/other/path?');
 	});
 
-  it('should be able to route the correct midi input to the correct OSC output.', function(){
-		expect(true).toBe(true);
-	});
-
-  it('should be able to automatically re-select an OSC output host if the OSC host becomes invalid and then valid again.',
-    function(){
-			expect(true).toBe(true);
-		});
-
-  it('should be able to automatically re-select a midi input host if the midi host is de-selected and then reselected.',
-    function(){
-			expect(true).toBe(true);
-		});
+  // TODO:
+//  it('should be able to automatically re-select an OSC output host if the OSC host becomes invalid and then valid again.',
+//    function(){
+//			expect(true).toBe(true);
+//		});
+//
+//  it('should be able to automatically re-select a midi input host if the midi host is de-selected and then reselected.',
+//    function(){
+//			expect(true).toBe(true);
+//		});
 });

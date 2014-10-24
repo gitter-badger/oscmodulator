@@ -527,6 +527,8 @@ module.exports = (grunt) ->
         reporters: ['progress']
         background: true
         singleRun: false
+      'unit-chrome':
+        browsers: ['Chrome']
       'unit-ci':
         singleRun: true
         reporters: ['spec', 'coverage', 'coveralls']

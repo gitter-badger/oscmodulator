@@ -18,7 +18,9 @@ describe('Service: messageMiddleware', function () {
         return path;
       },
       removeInput: function(){},
-      removeRoute: function(){},
+      removeRoute: function(path){
+        delete this.config[path];
+      },
       midi:{
         In:function(){},
         ins:function(){
@@ -134,14 +136,14 @@ describe('Service: messageMiddleware', function () {
   it('should be able to set a midi input.', function(){
     spyOn(legatoMock, 'on').andReturn(22);
 
-    messageMiddleware.setMidiInput('/:', '63', 'note', ':');
+    messageMiddleware.setMidiInput(1, '/:', '63', 'note', ':');
 
     expect(legatoMock.on).toHaveBeenCalled();
     expect(legatoMock.on.calls[0].args[0])
       .toBe('/:/:/note/63', 'The path should have been called correctly.');
 
     inputConfigMock.inputs[1].midi.note = '64';
-    messageMiddleware.setMidiInput('/:', '64', 'note', ':');
+    messageMiddleware.setMidiInput(1, '/:', '64', 'note', ':');
 
     expect(legatoMock.on.calls.length).toBe(2, 'The legato routes should have been updated.');
   });
@@ -201,21 +203,21 @@ describe('Service: messageMiddleware', function () {
   });
 
   it('should be able to add an osc output.', function(){
-    var inputPortId, outputHostId, inputId, outputId;
+    var inputPortId, outputHostId, inputId = 1, outputId = 1;
     inputPortId = messageMiddleware.listenToMidiPort(0);
-    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    messageMiddleware.setMidiInput(inputId, inputPortId, ':', 'note', ':');
     outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
-    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
+    outputId = messageMiddleware.setOSCOutput(inputId, outputId, outputHostId, '/path', ['foo','bar']);
 
     expect(outputId).not.toBeNull();
   });
 
   it('should be able to update an osc output.', function(){
-    var inputPortId, outputHostId, inputId, outputId, updated;
+    var inputPortId, outputHostId, inputId = 1, outputId = 1, updated;
     inputPortId = messageMiddleware.listenToMidiPort(0);
-    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    messageMiddleware.setMidiInput(inputId, inputPortId, ':', 'note', ':');
     outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
-    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
+    messageMiddleware.setOSCOutput(inputId, outputId, outputHostId, '/path', ['foo','bar']);
 
     expect(outputId).not.toBeNull();
 
@@ -229,14 +231,14 @@ describe('Service: messageMiddleware', function () {
   });
 
   it('should be able to remove an osc output.', function(){
-    var inputPortId, outputHostId, inputId, outputId, removed;
+    var inputPortId, outputHostId, inputId = 1, outputId = 1, removed;
 
     spyOn(legatoMock.osc, 'fakeOutput');
 
     inputPortId = messageMiddleware.listenToMidiPort(0);
-    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    messageMiddleware.setMidiInput(inputId, inputPortId, ':', 'note', ':');
     outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
-    outputId = messageMiddleware.setOSCOutput(inputId, outputHostId, '/path', ['foo','bar']);
+    messageMiddleware.setOSCOutput(inputId, outputId, outputHostId, '/path', ['foo','bar']);
 
     expect(outputId).not.toBeNull();
 
@@ -249,8 +251,36 @@ describe('Service: messageMiddleware', function () {
     expect(legatoMock.osc.fakeOutput).not.toHaveBeenCalled();
   });
 
+  // TODO We need a test to verify similar update functionality for the osc outputs.
+  it('should be able to update a midi input.', function(){
+    var inputPortId, inputId = 1, outputHostId, outputId = 1;
+
+    spyOn(legatoMock, 'removeRoute').andCallThrough();
+    spyOn(legatoMock, 'on').andCallThrough();
+    spyOn(legatoMock.osc, 'fakeOutput');
+
+    inputPortId = messageMiddleware.listenToMidiPort(0);
+    messageMiddleware.setMidiInput(inputId, inputPortId, ':', 'note', ':');
+    outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
+    messageMiddleware.setOSCOutput(inputId, outputId, outputHostId, '/path', ['foo','bar']);
+
+    expect(legatoMock.removeRoute).not.toHaveBeenCalled();
+    expect(legatoMock.on).toHaveBeenCalled();
+
+    messageMiddleware.updateMidiInput(inputId, '/:', ':', 'note', ':');
+
+    expect(legatoMock.removeRoute).toHaveBeenCalled();
+    expect(legatoMock.on.calls.length).toBe(2);
+    expect(Object.keys(legatoMock.config).length).toBe(1);
+    expect(legatoMock.config[inputPortId + '/:/note/:']).not.toBeDefined();
+
+    legatoMock.config['/:/:/note/:']();
+
+    expect(legatoMock.osc.fakeOutput).toHaveBeenCalled();
+  });
+
   it('should send to all outputs on input events.', function(){
-    var inputPortId, outputHostId, inputId, outputId1, outputId2,
+    var inputPortId, outputHostId, inputId = 1, outputId1 = 1, outputId2 = 2,
       path = '/path',
       parameters = ['foo','bar'],
       path2 = '/path/2',
@@ -259,9 +289,9 @@ describe('Service: messageMiddleware', function () {
     spyOn(legatoMock.osc, 'fakeOutput');
 
     inputPortId = messageMiddleware.listenToMidiPort(0);
-    inputId = messageMiddleware.setMidiInput(inputPortId, ':', 'note', ':');
+    messageMiddleware.setMidiInput(inputId, inputPortId, ':', 'note', ':');
     outputHostId = messageMiddleware.addOSCOutputHost('localhost','9000');
-    outputId1 = messageMiddleware.setOSCOutput(inputId, 1, outputHostId, path, parameters);
+    messageMiddleware.setOSCOutput(inputId, outputId1, outputHostId, path, parameters);
 
     expect(outputId1).not.toBeNull();
 
@@ -270,7 +300,7 @@ describe('Service: messageMiddleware', function () {
     expect(legatoMock.osc.fakeOutput.calls.length).toBe(1);
     expect(legatoMock.osc.fakeOutput).toHaveBeenCalledWith(path, parameters);
 
-    outputId2 = messageMiddleware.setOSCOutput(inputId, 2, outputHostId, path2, parameters2);
+    messageMiddleware.setOSCOutput(inputId, outputId2, outputHostId, path2, parameters2);
 
     legatoMock.config['/1/:/note/:']();
 
