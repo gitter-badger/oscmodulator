@@ -32,6 +32,11 @@ module.exports = (grunt) ->
   appPkg = require './app/package.json'
   bowerrc = @file.readJSON './.bowerrc' #rc name breaks require
 
+  # Define legato info for CI checkouts
+  legatoPackage = "#{appPkg.devDependencies.legato}".replace('git+https', 'https').split('#')
+  legatoURL = legatoPackage[0]
+  legatoTag = legatoPackage[1]
+
   # Define the configuration for all the tasks
   yeomanConfig =
     app: require('./bower.json').appPath or 'app'
@@ -589,10 +594,7 @@ module.exports = (grunt) ->
         ].join '&&'
 
       'init-ci':
-        command: [
-          'cd app'
-          "npm install #{appPkg.devDependencies.legato}"
-        ].join '&&'
+        command: "git clone --branch #{legatoTag} #{legatoURL} ./#{yeomanConfig.app}/node_modules/legato"
 
       'nw-open-mac':
         command: "open #{appDirectory}.app"
