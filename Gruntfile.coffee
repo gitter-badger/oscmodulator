@@ -582,7 +582,7 @@ module.exports = (grunt) ->
       options:
         stderr: true
         stdout: true
-      'init-nw':
+      'init-app':
         command: [
           'cd app'
           'npm install --arch=ia32' # Force 32 bit until Chromium supports 64 bit.
@@ -794,7 +794,8 @@ module.exports = (grunt) ->
     Initialize the project for a CI build.
     '''
     [
-      'bower:install'
+      'bower:install',
+      'shell:init-app'
     ]
 
   @registerTask 'default',
@@ -816,6 +817,6 @@ module.exports = (grunt) ->
     '''
     [
       'bower:install'
-      'shell:init-nw'
+      'shell:init-app'
       'nw-prep'
     ]

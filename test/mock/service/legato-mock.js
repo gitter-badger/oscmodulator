@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oscmodulatorApp').config(function ($provide) {
-  $provide.factory('legato', function ($log, jq) {
+  $provide.factory('legato', function ($log, jq, _) {
     var legato = window.router,
       utils = window.utils,
       inputs = window.inputs = {},
