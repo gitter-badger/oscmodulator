@@ -14,6 +14,9 @@ mountFolder = (connect, dir) ->
 # 'test/spec/**/*.js'
 module.exports = (grunt) ->
 
+  # This is not loaded by jit-grunt because it has no explicit task being called.
+  grunt.loadNpmTasks 'grunt-notify'
+
   # Load grunt tasks JIT(Just In Time)
   require('jit-grunt') grunt,
     bower: 'grunt-bower-task'
@@ -28,6 +31,11 @@ module.exports = (grunt) ->
   path = require 'path'
   appPkg = require './app/package.json'
   bowerrc = @file.readJSON './.bowerrc' #rc name breaks require
+
+  # Define legato info for CI checkouts
+  legatoPackage = "#{appPkg.devDependencies.legato}".replace('git+https', 'https').split('#')
+  legatoURL = legatoPackage[0]
+  legatoTag = legatoPackage[1]
 
   # Define the configuration for all the tasks
   yeomanConfig =
@@ -74,7 +82,7 @@ module.exports = (grunt) ->
         ]
 
       jsTest:
-        files: ['test/{spec,mock}/**/*.js'],
+        files: ['test/{spec,mock}/**/*.js']
         tasks: [
           'newer:jshint:test'
           'karma:unit-watch:run'
@@ -125,6 +133,15 @@ module.exports = (grunt) ->
           '<%= yeoman.app %>/img/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
 
+      protractor:
+        options:
+          debounceDelay: 15000
+        files: [
+          '<%= yeoman.app %>/scripts/**/*.js'
+          '<%= yeoman.app %>/scripts/**/*.coffee'
+          'test/protractor/**/*spec.{js,coffee}'
+        ]
+        tasks: ['protractor:ci']
 
     # The actual grunt server settings
     connect:
@@ -180,6 +197,14 @@ module.exports = (grunt) ->
         ]
 
       server: '.tmp'
+      modules:
+        files:[
+          dot: true
+          src:[
+            'node_modules'
+            '<%= yeoman.app %>/node_modules'
+          ]
+        ]
 
 
     # Automatically inject Bower components into the app
@@ -226,6 +251,14 @@ module.exports = (grunt) ->
           cwd: '<%= yeoman.app %>/scripts'
           src: '**/*.coffee'
           dest: '.tmp/scripts'
+          ext: '.js'
+        ]
+      legato:
+        files: [
+          expand: true
+          cwd: '<%= yeoman.app %>/node_modules/legato/lib'
+          src: ['**/{router,utils}.coffee']
+          dest: '.tmp/scripts/'
           ext: '.js'
         ]
       test:
@@ -460,6 +493,7 @@ module.exports = (grunt) ->
     concurrent:
       server: [
         'coffee:dist'
+        'coffee:legato'
         'less'
         'copy:styles'
       ]
@@ -472,7 +506,6 @@ module.exports = (grunt) ->
         'coffee'
         'less'
         'copy:styles'
-        'imagemin'
         'svgmin'
       ]
       nw:
@@ -481,6 +514,21 @@ module.exports = (grunt) ->
         tasks: [
           'serve'
           'nw-dev'
+        ]
+      watch:
+        options:
+          limit: 10
+          logConcurrentOutput: true
+        tasks: [
+          'watch:bower',
+          'watch:js',
+          'watch:jsTest',
+          'watch:coffee',
+          'watch:coffeeTest',
+          'watch:less',
+          'watch:styles',
+          'watch:gruntfile',
+          'watch:livereload'
         ]
 
 
@@ -493,6 +541,8 @@ module.exports = (grunt) ->
         reporters: ['progress']
         background: true
         singleRun: false
+      'unit-chrome':
+        browsers: ['Chrome']
       'unit-ci':
         singleRun: true
         reporters: ['spec', 'coverage', 'coveralls']
@@ -542,6 +592,9 @@ module.exports = (grunt) ->
           'npm install --arch=ia32' # Force 32 bit until Chromium supports 64 bit.
         ].join '&&'
 
+      'init-ci':
+        command: "git clone --branch #{legatoTag} #{legatoURL} ./#{yeomanConfig.app}/node_modules/legato"
+
       'nw-open-mac':
         command: "open #{appDirectory}.app"
 
@@ -589,6 +642,11 @@ module.exports = (grunt) ->
         cacheDir: "#{nwConfig.root}/cache"
         platforms: ['osx']
       src: ["#{yeomanConfig.dist}/**/*"]
+
+    notify:
+      default:
+        options:
+          message: 'Build finished successfully!'
 
 
   #TODO Add support for running on Windows and Linux
@@ -743,7 +801,8 @@ module.exports = (grunt) ->
     Initialize the project for a CI build.
     '''
     [
-      'bower:install'
+      'bower:install',
+      'shell:init-ci'
     ]
 
   @registerTask 'default',

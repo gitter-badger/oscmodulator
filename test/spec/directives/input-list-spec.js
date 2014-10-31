@@ -22,6 +22,7 @@ describe('Directive: inputList', function () {
         inputs: ['a','b']
       },
       setMidiInput: function(){},
+      updateMidiInput: function(){},
       removeInput: function(){},
       setOSCOutput: function(){},
       removeOSCOutput: function(){},
@@ -145,27 +146,28 @@ describe('Directive: inputList', function () {
     inputConfigMock.inputs[1].valid = true;
     parentScope.$broadcast('input:midi:add', {input:1});
 
-    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
+    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith(1, '/:', 36, 'All', 'All');
   }));
 
   it('should update the messageMiddleware when an input changes.', inject(function($rootScope, $compile){
-    inputConfigMock.inputs[1].midi.name = null;
     parentScope = $rootScope.$new();
 
     spyOn(messageMiddlewareMock, 'setMidiInput');
+    spyOn(messageMiddlewareMock, 'updateMidiInput');
 
     element = $compile(template)(parentScope);
     isolatedScope = element.scope();
     isolatedScope.$apply();
 
-    expect(messageMiddlewareMock.setMidiInput).not.toHaveBeenCalled();
+    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalled();
 
-    inputConfigMock.inputs[1].midi.name = 'c3';
-    inputConfigMock.inputs[1].midi.note = 36;
+    inputConfigMock.inputs[1].midi.name = 'c2';
+    inputConfigMock.inputs[1].midi.note = 21;
     inputConfigMock.inputs[1].valid = true;
     parentScope.$broadcast('input:midi:update', {input:1});
 
-    expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
+    expect(messageMiddlewareMock.setMidiInput.calls.length).toBe(1);
+    expect(messageMiddlewareMock.updateMidiInput).toHaveBeenCalledWith(1, '/:', 21, 'All', 'All');
   }));
 
   it('should be able to delete midi inputs.', inject(function($rootScope, $compile){
@@ -413,7 +415,7 @@ describe('Directive: inputList', function () {
       inputConfigMock.inputs[1].midi.name = 'c3';
       $rootScope.$apply();
 
-      expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith('/:', 36, 'All', 'All');
+      expect(messageMiddlewareMock.setMidiInput).toHaveBeenCalledWith(1, '/:', 36, 'All', 'All');
       expect(messageMiddlewareMock.setOSCOutput.calls.length).toBe(2);
       expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith(1, 1, 1, '/path', []);
       expect(messageMiddlewareMock.setOSCOutput).toHaveBeenCalledWith(1, 2, 2, '/some/other/path', []);
