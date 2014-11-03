@@ -26,6 +26,10 @@ output = {
     }, 1000, 'Failed to find the open osc port form.');
   },
 
+  addRow: function(){
+    $(selectors.addHostButton).click();
+  },
+
   getRows:function(){
     return $(selectors.panel).$$(selectors.configPanelRow);
   },
@@ -37,6 +41,13 @@ output = {
     else{
       return output.getRows().last();
     }
+  },
+
+  addOutput: function(name, address, port){
+    output.addRow();
+    output.setName(-1, name);
+    output.setAddress(-1, address);
+    output.setPort(-1, port);
   },
 
   getPort: function(index){
@@ -51,14 +62,8 @@ output = {
     return output.getRow(index).$(selectors.hostName);
   },
 
-  addPort: function(name, address, port){
-    output.setName(-1, name);
-    output.setAddress(-1, address);
-    output.setPort(-1, port);
-  },
-
   setName: function(index, name){
-    output.getName(-1).sendKeys(name);
+    output.getName(index).sendKeys(name);
   },
 
   setPort: function(index, port){
@@ -66,7 +71,7 @@ output = {
   },
 
   setAddress: function(index, address){
-    output.getAddress(-1).sendKeys(address);
+    output.getAddress(index).sendKeys(address);
   }
 };
 

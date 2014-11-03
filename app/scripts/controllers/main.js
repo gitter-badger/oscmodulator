@@ -29,15 +29,17 @@ angular.module('oscmodulatorApp')
      * Change the open/closed state of the MIDI panel.
      */
     $scope.toggleMIDIPanel = function(){
-      $scope.hideMIDIPanel = !$scope.hideMIDIPanel;
-
-      if(!$scope.hideMIDIPanel){
+      if($scope.hideMIDIPanel){
         messageMiddleware.updateAvailableMidiPorts();
       }
 
-      if(!$scope.hideOSCPanel){
-        $scope.hideOSCPanel = true;
-      }
+      $timeout(function(){
+        $scope.hideMIDIPanel = !$scope.hideMIDIPanel;
+
+        if(!$scope.hideOSCPanel){
+          $scope.hideOSCPanel = true;
+        }
+      });
     };
 
     //TODO This will be moving to a directive

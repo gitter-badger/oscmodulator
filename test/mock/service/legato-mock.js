@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('oscmodulatorApp').config(function ($provide) {
-  $provide.factory('legato', function ($log, jq, _) {
+  $provide.factory('legato', function ($log, _) {
     var legato = window.router,
       utils = window.utils,
       inputs = window.inputs = {},
@@ -10,6 +10,9 @@ angular.module('oscmodulatorApp').config(function ($provide) {
     // Configure dependencies.
     utils.inject(_);
     legato.inject(utils);
+
+    // Stores all of the output messages that have been sent.
+    legato.messages = [];
 
     // Mock the midi interface.
     legato.midi = {
@@ -48,9 +51,10 @@ angular.module('oscmodulatorApp').config(function ($provide) {
         $log.info('MOCK legato.osc.Out called');
         return function (path, parameters) {
           $log.info('MOCK legato.osc.Out sending OSC message to ' + path);
-          // Find the debug panel and append output text?
-          jq('#mock-debug-panel div.output')
-            .append('<p>OSC -> ' + path + '?' + parameters.join('&') + '</p>');
+          legato.messages.push({
+            path:path,
+            parameters:parameters
+          });
         };
       }
     };

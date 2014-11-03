@@ -8,17 +8,24 @@ var
       note:'input[name=midiInNote]',
       noteTypeSelect:'select[name=midiNoteType]',
       channelSelect:'select[name=midiChannel]',
-      add:'button[name=addOSCOutput]'
+      add: 'button[name=addInput]',
+      addOutput:'button[name=addOSCOutput]'
     },
     oscOutputs:{
       host:'select.oscHost',
       path:'input[name=oscPath]',
-      row:'.oscOutputItem'
+      row:'.oscOutputItem',
+      addParam:'button[name=addOSCParam]',
+      param:'input.oscParamInput'
     }
   },
   output;
 
 output = {
+  addRow:function(){
+    return $(selectors.midiInputs.add).click();
+  },
+
   getRows:function(){
     return $$(selectors.midiInputs.row);
   },
@@ -132,7 +139,7 @@ output = {
   },
 
   addOutput:function(input){
-    output.getRow(input).$(selectors.midiInputs.add).click();
+    output.getRow(input).$(selectors.midiInputs.addOutput).click();
   },
 
   getOSCHostOptions:function(input, index){
@@ -166,6 +173,13 @@ output = {
 
   setOSCPath:function(input, index, path){
     output.getOSCPath(input, index).sendKeys(path);
+  },
+
+  addOSCParameter:function(input, index, parameter){
+    var row = output.getRow(input);
+
+    row.$(selectors.oscOutputs.addParam).click();
+    row.$$(selectors.oscOutputs.param).last(); // TODO Figure out how to set this correctly.
   }
 };
 

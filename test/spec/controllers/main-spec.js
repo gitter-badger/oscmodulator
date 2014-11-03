@@ -33,30 +33,33 @@ describe('Controller: MainCtrl', function () {
     expect(scope.hideOSCPanel).toBe(true);
   });
 
-  it('should toggle the MIDI Port panel.', function(){
+  it('should toggle the MIDI Port panel.', inject(function($timeout){
     spyOn(messageMiddleware, 'updateAvailableMidiPorts');
 
     expect(scope.hideMIDIPanel).toBe(true);
     expect(messageMiddleware.updateAvailableMidiPorts).not.toHaveBeenCalled();
 
     scope.toggleMIDIPanel();
+    $timeout.flush();
 
     expect(scope.hideMIDIPanel).toBe(false);
     expect(messageMiddleware.updateAvailableMidiPorts).toHaveBeenCalled();
 
     scope.toggleMIDIPanel();
+    $timeout.flush();
 
     expect(scope.hideMIDIPanel).toBe(true);
     expect(messageMiddleware.updateAvailableMidiPorts.calls.length)
       .toBe(1, 'The available ports should only be updated when opening the midi port config form.');
-  });
+  }));
 
-  it('should swap the OSC Host and MIDI panels when opening both.', function(){
+  it('should swap the OSC Host and MIDI panels when opening both.', inject(function($timeout){
     expect(scope.hideMIDIPanel).toBe(true);
     expect(scope.hideOSCPanel).toBe(true);
 
     scope.toggleOSCPanel();
     scope.toggleMIDIPanel();
+    $timeout.flush();
 
     expect(scope.hideOSCPanel).toBe(true, 'The OSC panel should be closed when the MIDI panel is open.');
     expect(scope.hideMIDIPanel).toBe(false);
@@ -65,5 +68,5 @@ describe('Controller: MainCtrl', function () {
 
     expect(scope.hideOSCPanel).toBe(false);
     expect(scope.hideMIDIPanel).toBe(true, 'The MIDI panel should be closed when the OSC panel is open.');
-  });
+  }));
 });

@@ -1,7 +1,7 @@
 <div>
 <style>
   #mock-debug-panel{
-    position: absolute;
+    position: static;
     bottom: 0;
     left: 0;
     right: 0;
@@ -32,8 +32,11 @@
       <input class='note' type='text' placeholder="note" data-ng-model="note">
       <input class='value' type='text' placeholder="value" data-ng-model="value">
       <button type="button" class="btn btn-primary fakeMidiEvent" ng-click="fakeMidiEvent()">Send Midi</button>
+      <button type="button" class="btn btn-primary clearOutput" ng-click="clearOutput()">Clear Output</button>
     </div>
-    <div class="output"></div>
+    <div class="output">
+      <p data-ng-repeat="message in messages">OSC -> {{message.path}}?{{message.parameters.join(',')}}</p>
+    </div>
   </form>
 </div>
 </div>

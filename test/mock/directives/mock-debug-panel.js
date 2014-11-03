@@ -7,8 +7,15 @@ angular.module('oscmodulatorApp')
       restrict: 'A',
       replace: true,
       scope: true,
-      controller: function($scope, legato, $log){
+      controller: function($scope, legato){
 				$scope.midi_inputs = '';
+
+        $scope.messages = legato.messages;
+
+        $scope.clearOutput = function(){
+          legato.messages.length = 0;
+        };
+
 				$scope.setMidiInputs = function(){
 					var inputs = [];
 
@@ -35,6 +42,8 @@ angular.module('oscmodulatorApp')
 						if(route.indexOf('/') > 0){
 							route = '/' + route;
 						}
+
+            route = route.toLowerCase();
 
 						legato.receiveMidi(input, route, $scope.value);
 					}

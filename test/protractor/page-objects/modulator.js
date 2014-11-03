@@ -8,12 +8,18 @@ var
   modulator = {};
 
 modulator = {
+  firstUpper: function(string){
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  },
+
   setupMidiToOSC: function(midiRow, oscRow, midiHost, midiChannel, midiNote, midiNoteType, oscHost, oscPath, oscParams){
     modulator.setupMidiRow(midiRow, midiHost, midiChannel, midiNote, midiNoteType);
     modulator.setupOSCRow(midiRow, oscRow, oscHost, oscPath, oscParams);
   },
 
   setupMidiRow: function(index, host, channel, note, type){
+    type = modulator.firstUpper(type);
+
     inputs.setNote(index, note);
     inputs.setPortByName(index, host);
     inputs.setChannelByName(index, channel);
@@ -25,6 +31,9 @@ modulator = {
     inputs.setOSCPath(row, index, path);
 
     // TODO Handle parameter lists.
+    parameters.forEach(function(param){
+      inputs.addOSCParameter(row, index, param);
+    });
   },
 
   basicMidiHostSetup: function(){
@@ -34,7 +43,9 @@ modulator = {
 
   basicOSCHostSetup: function(){
     oscConfigPanel.open();
-    oscConfigPanel.addPort('live', 'localhost', '9090');
+    oscConfigPanel.setName(0, 'live');
+    oscConfigPanel.setAddress(0, 'localhost');
+    oscConfigPanel.setPort(0, '9090');
   },
 
   basicSetup: function(){

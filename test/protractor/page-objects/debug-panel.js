@@ -5,6 +5,7 @@ var
     setMidiInputs:'#mock-debug-panel button.setMidiInputs',
     midiInputs:'#mock-debug-panel .midi-inputs',
     sendMidi:'#mock-debug-panel button.fakeMidiEvent',
+    clearOutput: '#mock-debug-panel button.clearOutput',
     output:'#mock-debug-panel .output',
     inputId:'#mock-debug-panel .input-id',
     channel:'#mock-debug-panel .channel',
@@ -23,6 +24,7 @@ output = {
       $(selectors.note).clear().sendKeys(note);
       $(selectors.value).clear().sendKeys(value);
     }
+
     $(selectors.sendMidi).click();
   },
 
@@ -39,6 +41,10 @@ output = {
     else{
       return outputs.last();
     }
+  },
+
+  clearOutput:function(){
+    $(selectors.clearOutput).click();
   },
 
   setMidiInputPorts: function(inputs){

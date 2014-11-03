@@ -60,7 +60,7 @@ describe('angularjs homepage', function() {
   it('should be able to setup an osc port.', function(){
     oscConfigPanel.open();
 
-    oscConfigPanel.addPort('name', 'localhost', '9050');
+    oscConfigPanel.addOutput('name', 'localhost', '9050');
 
     expect(inputs.getOSCHostOptions(0, 0).count()).toBe(2);
     expect(inputs.getOSCHostOption(0, 0, -1).getText()).toBe('name');
@@ -105,6 +105,8 @@ describe('angularjs homepage', function() {
     // Try to send another message.
     debugPanel.sendMidiMessage();
 
+    browser.debugger();
+
     // Make sure no new messages were sent since we don't have a host configured.
     expect(debugPanel.getOutputs().count()).toBe(1);
 
@@ -118,6 +120,8 @@ describe('angularjs homepage', function() {
     // Try to send another message.
 		debugPanel.sendMidiMessage();
 
+    browser.debugger();
+
     // Make sure nothing new was sent.
     expect(debugPanel.getOutputs().count()).toBe(1);
 
@@ -126,6 +130,8 @@ describe('angularjs homepage', function() {
 
     // Send another message.
 		debugPanel.sendMidiMessage();
+
+    browser.debugger();
 
     // Make sure the message was sent this time.
     expect(debugPanel.getOutputs().count()).toBe(2);
@@ -221,10 +227,6 @@ describe('angularjs homepage', function() {
 	});
 
   it('should be able to trigger multiple OSC outputs from a single midi event.', function(){
-    var name1 = 'Bar',
-      name2 = 'Boo',
-      name3 = 'Bell';
-
     modulator.basicSetup();
     midiConfigPanel.open();
     midiConfigPanel.selectPort(1);
@@ -232,12 +234,256 @@ describe('angularjs homepage', function() {
     inputs.addOutput(0);
     modulator.setupOSCRow(0, 1, 1, '/some/other/path', []);
 
-    debugPanel.sendMidiMessage(1, '1', 'note', ':', 50);
+    debugPanel.sendMidiMessage(1, '1', 'Note', ':', 50);
 
     expect(debugPanel.getOutputs().count()).toBe(2);
     expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /?');
     expect(debugPanel.getOutput(-1).getText()).toBe('OSC -> /some/other/path?');
 	});
+
+  it('should be able to handle complex routing between multiple inputs and outputs.', function(){
+    var mi1 = 'In 1',
+      mi2 = 'In 2',
+      mi3 = 'In 3',
+      oo1 = 'Out 1',
+      oo2 = 'Out 2',
+      oo3 = 'Out 3';
+
+    // Listen to all midi ports
+    debugPanel.setMidiInputPorts([mi1, mi2, mi3]);
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(0);
+    midiConfigPanel.selectPort(1);
+    midiConfigPanel.selectPort(2);
+
+    // and add 3 more inputs.
+    inputs.addRow();
+    inputs.addRow();
+
+    // Add 3 output ports
+    oscConfigPanel.open();
+    oscConfigPanel.setName(0, oo1);
+    oscConfigPanel.setAddress(0, 'localhost');
+    oscConfigPanel.setPort(0, '1');
+    oscConfigPanel.addOutput(oo2, 'localhost', '2');
+    oscConfigPanel.addOutput(oo3, 'localhost', '3');
+
+    // Add an output to the 2nd input.
+    inputs.addOutput(1);
+
+    // Add two outputs to the 3rd input.
+    inputs.addOutput(2);
+    inputs.addOutput(2);
+
+    // We now have the following input structure:
+    // 1 -> 1
+    // 2 -> 1
+    // 2 -> 2
+    // 3 -> 1
+    // 3 -> 2
+    // 3 -> 3
+
+    modulator.setupMidiRow(0, mi1, 'All', ':', 'All');
+    modulator.setupOSCRow(0, 0, oo1, '/in/1/out/1', []);
+
+    modulator.setupMidiRow(1, mi2, 'All', ':', 'All');
+    modulator.setupOSCRow(1, 0, oo2, '/in/2/out/1', []);
+    modulator.setupOSCRow(1, 1, oo2, '/in/2/out/2', []);
+
+    modulator.setupMidiRow(2, mi3, 'All', ':', 'All');
+    modulator.setupOSCRow(2, 0, oo3, '/in/3/out/1', []);
+    modulator.setupOSCRow(2, 1, oo3, '/in/3/out/2', []);
+    modulator.setupOSCRow(2, 2, oo3, '/in/3/out/3', []);
+
+    debugPanel.sendMidiMessage(1, 1, 'Note', '22', 50);
+
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/1/out/1?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(2, 5, 'CC', '32', 78);
+
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/2/out/1?');
+    expect(debugPanel.getOutput(1).getText()).toBe('OSC -> /in/2/out/2?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(3, 1, 'Note', '22', 68);
+
+    expect(debugPanel.getOutputs().count()).toBe(3);
+  });
+
+  it('should be able to correctly route midi input notes and noteTypes.', function(){
+    var mi1 = 'In 1',
+      oo1 = 'Out 1';
+
+    // Listen to all midi ports
+    debugPanel.setMidiInputPorts([mi1]);
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(0);
+
+    // and add 3 more inputs.
+    inputs.addRow();
+    inputs.addRow();
+
+    // Add 3 output ports
+    oscConfigPanel.open();
+    oscConfigPanel.setName(0, oo1);
+    oscConfigPanel.setAddress(0, 'localhost');
+    oscConfigPanel.setPort(0, '1');
+
+    // Add an output to the 2nd input.
+    inputs.addOutput(1);
+
+    // Add two outputs to the 3rd input.
+    inputs.addOutput(2);
+    inputs.addOutput(2);
+
+    // We now have the following input structure:
+    // 1 -> 1
+    // 2 -> 1
+    // 2 -> 2
+    // 3 -> 1
+    // 3 -> 2
+    // 3 -> 3
+
+    modulator.setupMidiRow(0, mi1, 'All', '23', 'note');
+    modulator.setupOSCRow(0, 0, oo1, '/in/1/out/1', []);
+
+    modulator.setupMidiRow(1, mi1, 'All', '23', 'CC');
+    modulator.setupOSCRow(1, 0, oo1, '/in/2/out/1', []);
+    modulator.setupOSCRow(1, 1, oo1, '/in/2/out/2', []);
+
+    modulator.setupMidiRow(2, mi1, '3', '45', 'All');
+    modulator.setupOSCRow(2, 0, oo1, '/in/3/out/1', []);
+    modulator.setupOSCRow(2, 1, oo1, '/in/3/out/2', []);
+    modulator.setupOSCRow(2, 2, oo1, '/in/3/out/3', []);
+
+    debugPanel.sendMidiMessage(1, '1', 'note', '23', 50);
+
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/1/out/1?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(1, '2', 'CC', '23', 78);
+
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/2/out/1?');
+    expect(debugPanel.getOutput(1).getText()).toBe('OSC -> /in/2/out/2?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(1, '3', 'CC', '40', 87);
+
+    expect(debugPanel.getOutputs().count()).toBe(0);
+
+    debugPanel.sendMidiMessage(1, '3', 'CC', '45', 88);
+
+    expect(debugPanel.getOutputs().count()).toBe(3);
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(1, '3', 'note', '45', 90);
+
+    expect(debugPanel.getOutputs().count()).toBe(3);
+  });
+
+
+  it('should be able to route messages from specific midi input channels.', function(){
+    var mi1 = 'In 1',
+      oo1 = 'Out 1';
+
+    // Listen to all midi ports
+    debugPanel.setMidiInputPorts([mi1]);
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(0);
+
+    // and add 3 more inputs.
+    inputs.addRow();
+    inputs.addRow();
+
+    // Add 3 output ports
+    oscConfigPanel.open();
+    oscConfigPanel.setName(0, oo1);
+    oscConfigPanel.setAddress(0, 'localhost');
+    oscConfigPanel.setPort(0, '1');
+
+    // Add an output to the 2nd input.
+    inputs.addOutput(1);
+
+    // Add two outputs to the 3rd input.
+    inputs.addOutput(2);
+    inputs.addOutput(2);
+
+    // We now have the following input structure:
+    // 1 -> 1
+    // 2 -> 1
+    // 2 -> 2
+    // 3 -> 1
+    // 3 -> 2
+    // 3 -> 3
+
+    modulator.setupMidiRow(0, mi1, '1', ':', 'All');
+    modulator.setupOSCRow(0, 0, oo1, '/in/1/out/1', []);
+
+    modulator.setupMidiRow(1, mi1, '2', ':', 'All');
+    modulator.setupOSCRow(1, 0, oo1, '/in/2/out/1', []);
+    modulator.setupOSCRow(1, 1, oo1, '/in/2/out/2', []);
+
+    modulator.setupMidiRow(2, mi1, '3', ':', 'All');
+    modulator.setupOSCRow(2, 0, oo1, '/in/3/out/1', []);
+    modulator.setupOSCRow(2, 1, oo1, '/in/3/out/2', []);
+    modulator.setupOSCRow(2, 2, oo1, '/in/3/out/3', []);
+
+    debugPanel.sendMidiMessage(1, '1', 'note', '22', 50);
+
+    expect(debugPanel.getOutputs().count()).toBe(1);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/1/out/1?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(1, '2', 'CC', '32', 78);
+
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/2/out/1?');
+    expect(debugPanel.getOutput(1).getText()).toBe('OSC -> /in/2/out/2?');
+
+    debugPanel.clearOutput();
+    debugPanel.sendMidiMessage(1, '7', 'Note', '22', 68);
+
+    expect(debugPanel.getOutputs().count()).toBe(0);
+
+    debugPanel.sendMidiMessage(1, '3', 'Note', '22', 87);
+
+    expect(debugPanel.getOutputs().count()).toBe(3);
+  });
+
+  // TODO Complete once the interface is ready to send parameters.
+  xit('should be able to send OSC parameters.', function(){
+    var mi1 = 'In 1',
+      oo1 = 'Out 1';
+
+    // Listen to all midi ports
+    debugPanel.setMidiInputPorts([mi1]);
+    midiConfigPanel.open();
+    midiConfigPanel.selectPort(0);
+
+    // Add 3 output ports
+    oscConfigPanel.open();
+    oscConfigPanel.setName(0, oo1);
+    oscConfigPanel.setAddress(0, 'localhost');
+    oscConfigPanel.setPort(0, '1');
+
+    // Add an output to the 2nd input.
+    inputs.addOutput(0);
+
+    modulator.setupMidiRow(0, mi1, '1', ':', 'All');
+    modulator.setupOSCRow(0, 0, oo1, '/in/1/out/1', [{'a':'foo'}, {'b':'fighters'}]);
+    modulator.setupOSCRow(0, 1, oo1, '/in/1/out/2', [{'art':'blakey'}]);
+
+    debugPanel.sendMidiMessage(1, '1', 'note', '22', 50);
+
+    expect(debugPanel.getOutputs().count()).toBe(2);
+    expect(debugPanel.getOutput(0).getText()).toBe('OSC -> /in/1/out/1?a=foo&b=fighters');
+    expect(debugPanel.getOutput(1).getText()).toBe('OSC -> /in/1/out/2?art=blakey');
+  });
 
   // TODO:
 //  it('should be able to automatically re-select an OSC output host if the OSC host becomes invalid and then valid again.',
