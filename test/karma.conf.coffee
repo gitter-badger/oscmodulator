@@ -16,6 +16,7 @@ module.exports = (config) ->
       # vendor
       'app/components/jquery/jquery.js'
       'app/components/angular/angular.js'
+      'app/components/angular-route/angular-route.js'
       'app/components/angular-lodash-module/angular-lodash-module.js'
       'app/components/angular-mocks/angular-mocks.js'
       'app/components/angular-bootstrap/ui-bootstrap-tpls.js'
