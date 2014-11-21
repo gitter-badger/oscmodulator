@@ -1,13 +1,15 @@
 describe('Directive: oscOutput', function () {
   'use strict';
 
-  var element, parentScope, isolatedScope, template, defaultOSC, backendMock, oscHostConfigMock, setupEventListeners;
+  var element, parentScope, isolatedScope, template,
+    defaultOSC, backendMock, oscHostConfigMock, setupEventListeners,
+    getIsolatedScope;
 
   // load the directive's module
   beforeEach(module('oscmodulatorApp'));
   beforeEach(module('views/osc-output.html'));
 
-  beforeEach(function(){
+  beforeEach(function () {
     // Create a DOM fragment to turn into a directive instance.
     template = angular.element(
       '<div data-osc-output data-osc-output-config="osc"></div>'
@@ -15,7 +17,7 @@ describe('Directive: oscOutput', function () {
 
     // Create a fresh scope for this test.
     defaultOSC = {
-      id: {input:1, output:1},
+      id: {input: 1, output: 1},
       host: null,
       path: null,
       parameters: [],
@@ -23,100 +25,115 @@ describe('Directive: oscOutput', function () {
     };
 
     backendMock = {
-      setOSCOutput: function(){},
-      setOSCParameters: function(){},
-      setOSCPath: function(){},
-      setOSCHost: function(){},
-      removeOSCOutput: function(){}
+      setOSCOutput: function () {
+      },
+      setOSCParameters: function () {
+      },
+      setOSCPath: function () {
+      },
+      setOSCHost: function () {
+      },
+      removeOSCOutput: function () {
+      }
     };
 
     oscHostConfigMock = {
-      hosts:[
+      hosts: [
         {
-          name:'a',
+          name: 'a',
           address: 'localhost',
           port: 9000,
-          id:0
+          id: 0
         },
         {
           name: 'b',
           address: 'localhost',
           port: 9001,
-          id:1
+          id: 1
         },
         {
           name: 'c',
           address: 'localhost',
           port: 9002,
-          id:2
+          id: 2
         }
       ],
-      ids:[
+      ids: [
         {
-          name:'a',
-          id:0
+          name: 'a',
+          id: 0
         },
         {
-          name:'b',
-          id:1
+          name: 'b',
+          id: 1
         },
         {
-          name:'c',
-          id:2
+          name: 'c',
+          id: 2
         }
       ]
     };
 
     // Provide a mock version of the oscHostConfig service.
-    module(function($provide){
+    module(function ($provide) {
       $provide.value('oscHostConfig', oscHostConfigMock);
       $provide.value('messageMiddleware', backendMock);
     });
   });
 
   // Replicate the event listening that will happen in the app.
-  setupEventListeners = function(parentScope){
-    parentScope.add = function(){};
-    parentScope.update = function(){};
-    parentScope.remove = function(){};
-    parentScope.disable = function(){};
-    parentScope.$on('output:osc:add',function(event, id){
+  setupEventListeners = function (parentScope) {
+    parentScope.add = function () {
+    };
+    parentScope.update = function () {
+    };
+    parentScope.remove = function () {
+    };
+    parentScope.disable = function () {
+    };
+    parentScope.$on('output:osc:add', function (event, id) {
       parentScope.add(id);
     });
-    parentScope.$on('output:osc:update', function(event, id){
+    parentScope.$on('output:osc:update', function (event, id) {
       parentScope.update(id);
     });
-    parentScope.$on('output:osc:remove', function(event, id){
+    parentScope.$on('output:osc:remove', function (event, id) {
       parentScope.remove(id);
     });
-    parentScope.$on('output:osc:disable', function(event, id){
+    parentScope.$on('output:osc:disable', function (event, id) {
       parentScope.disable(id);
     });
   };
 
-  it('should default to having no osc parameters.', inject(function($compile, $rootScope){
+  getIsolatedScope = function (element) {
+    var localScope = element.scope();
+    localScope.$apply();
+    return element.isolateScope();
+  };
+
+  it('should default to having no osc parameters.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.parameters.length).toBe(0);
     expect(element.find('div[name=oscParam]').length).toBe(0);
   }));
 
-  it('should be able to remove osc parameters.', inject(function($compile, $rootScope){
+  it('should be able to remove osc parameters.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'a';
     parentScope.osc.path = '/path';
-    parentScope.osc.parameters = ['a','b','c'];
+    parentScope.osc.parameters = ['a', 'b', 'c'];
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.parameters.length).toBe(3, 'The output should have the parameters specified by the parent.');
@@ -134,14 +151,14 @@ describe('Directive: oscOutput', function () {
       .toBe('c', 'The last parameter input in the DOM should show the correct value.');
   }));
 
-  it('should be able to add osc parameters.', inject(function($compile, $rootScope){
+  it('should be able to add osc parameters.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
-    parentScope.osc.parameters = ['a','b'];
+    parentScope.osc.parameters = ['a', 'b'];
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.parameters.length).toBe(2, 'The parameters should be pre-configured.');
@@ -158,7 +175,7 @@ describe('Directive: oscOutput', function () {
       .toBe('', 'The last parameter in the DOM should be un-configured.');
   }));
 
-  it('should send an update event if one of the OSC parameters changed.', inject(function($compile, $rootScope){
+  it('should send an update event if one of the OSC parameters changed.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'a';
@@ -170,7 +187,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(parentScope.update).not.toHaveBeenCalled();
@@ -183,7 +200,7 @@ describe('Directive: oscOutput', function () {
     expect(isolatedScope.config.parameters.length)
       .toBe(1, 'The parameter list should have be updated with the value from the input.');
     expect(isolatedScope.config.parameters[0]).toBe('a', 'The first parameter should match the input value.');
-    expect(parentScope.update).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.update).toHaveBeenCalledWith({input: 1, output: 1});
 
     isolatedScope.addOSCParameter();
     isolatedScope.$apply();
@@ -198,19 +215,19 @@ describe('Directive: oscOutput', function () {
       .toBe(2, 'The messageMiddleware should be updated when the new parameter becomes valid.');
   }));
 
-  it('Should have an un-configured select object for setting the OSC hosts.', function(){
+  it('Should have an un-configured select object for setting the OSC hosts.', function () {
     // Pretend that we haven't setup any host configurations yet.
-    module(function($provide){
-      $provide.value('oscHostConfig', {hosts:[], ids:[]});
+    module(function ($provide) {
+      $provide.value('oscHostConfig', {hosts: [], ids: []});
     });
 
-    inject(function ($compile, $rootScope){
+    inject(function ($compile, $rootScope) {
       parentScope = $rootScope.$new();
       parentScope.osc = defaultOSC;
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
+      isolatedScope = getIsolatedScope(element);
       isolatedScope.$apply();
 
       expect(isolatedScope.config.host).toBeNull();
@@ -221,20 +238,20 @@ describe('Directive: oscOutput', function () {
     });
   });
 
-  it('Should be possible to configure the OSC host list but should not set a default.', function(){
+  it('Should be possible to configure the OSC host list but should not set a default.', function () {
       // Provide a mock version of the oscHostConfig service.
-      module(function($provide){
+      module(function ($provide) {
         $provide.value('oscHostConfig', oscHostConfigMock);
       });
 
       // Have to perform dependency injection after creating the mocks.
-      inject(function($compile, $rootScope){
+      inject(function ($compile, $rootScope) {
         parentScope = $rootScope.$new();
         parentScope.osc = defaultOSC;
 
         // Compile the DOM into an Angular view using using our test scope.
         element = $compile(template)(parentScope);
-        isolatedScope = element.scope();
+        isolatedScope = getIsolatedScope(element);
         isolatedScope.$apply();
 
         expect(isolatedScope.config.host).toBeNull();
@@ -248,13 +265,13 @@ describe('Directive: oscOutput', function () {
     }
   );
 
-  it('should be possible to set the default OSC host through config.', function() {
+  it('should be possible to set the default OSC host through config.', function () {
     // Provide a mock version of the oscHostConfig service.
-    module(function($provide){
+    module(function ($provide) {
       $provide.value('oscHostConfig', oscHostConfigMock);
     });
 
-    inject(function($compile, $rootScope){
+    inject(function ($compile, $rootScope) {
       parentScope = $rootScope.$new();
       parentScope.osc = defaultOSC;
       parentScope.hosts = oscHostConfigMock;
@@ -262,7 +279,7 @@ describe('Directive: oscOutput', function () {
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
+      isolatedScope = getIsolatedScope(element);
       isolatedScope.$apply();
 
       expect(isolatedScope.config.host).toBe(oscHostConfigMock.ids[1]);
@@ -275,7 +292,7 @@ describe('Directive: oscOutput', function () {
     });
   });
 
-  it('should default to an empty OSC path.', inject(function($compile, $rootScope){
+  it('should default to an empty OSC path.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
 
@@ -283,7 +300,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.path).toBeNull();
@@ -291,7 +308,7 @@ describe('Directive: oscOutput', function () {
     expect(backendMock.setOSCPath).not.toHaveBeenCalled();
   }));
 
-  it('should be possible to configure the OSC path.', inject(function($compile, $rootScope){
+  it('should be possible to configure the OSC path.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.path = '/path/to/object';
@@ -299,14 +316,14 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.path).toBe('/path/to/object');
     expect(element.find('input[name=oscPath]').val()).toBe('/path/to/object');
   }));
 
-  it('should update the parent OSC path.', inject(function($compile, $rootScope){
+  it('should update the parent OSC path.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.path = '/my/first/path';
@@ -314,7 +331,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.path).toBe('/my/first/path');
@@ -326,7 +343,7 @@ describe('Directive: oscOutput', function () {
     expect(element.find('input[name=oscPath]').val()).toBe('/my/second/path');
   }));
 
-  it('should reset the OSC Host if the configured host was removed.', inject(function($compile, $rootScope){
+  it('should reset the OSC Host if the configured host was removed.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = oscHostConfigMock.ids[1];
@@ -334,7 +351,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.host).toBe(oscHostConfigMock.ids[1], 'The output should be configured with the b host to start.');
@@ -346,7 +363,7 @@ describe('Directive: oscOutput', function () {
     expect(isolatedScope.config.valid).toBe(false, 'The output should not be valid without a valid host.');
   }));
 
-  it('should be considered valid if it has a path and host.', inject(function($compile, $rootScope){
+  it('should be considered valid if it has a path and host.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'b';
@@ -354,21 +371,22 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
+    ;
     isolatedScope.$apply();
 
     expect(isolatedScope.config.valid).toBe(true, 'The scope should be valid if it has a path and a host.');
     expect(isolatedScope.save()).toBe(true, 'The scope save method should return the valid property value.');
   }));
 
-  it('should not be considered valid if it is missing the path.', inject(function($compile, $rootScope){
+  it('should not be considered valid if it is missing the path.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'b';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.valid).toBe(false, 'The output should not be valid without a path.');
@@ -385,14 +403,14 @@ describe('Directive: oscOutput', function () {
     expect(isolatedScope.config.valid).toBe(false, 'The output should be invalid if the path is emptied.');
   }));
 
-  it('should not be considered valid if it is missing the host.', inject(function($compile, $rootScope){
+  it('should not be considered valid if it is missing the host.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.path = '/path';
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(isolatedScope.config.valid).toBe(false, 'The scope should not be valid without a host.');
@@ -409,7 +427,7 @@ describe('Directive: oscOutput', function () {
     expect(isolatedScope.config.valid).toBe(false, 'The scope should be invalid if the host is emptied.');
   }));
 
-  it('should send disable events when it becomes invalid.', inject(function($compile, $rootScope){
+  it('should send disable events when it becomes invalid.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
 
@@ -421,7 +439,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(parentScope.update).not.toHaveBeenCalled();
@@ -444,7 +462,7 @@ describe('Directive: oscOutput', function () {
     expect(parentScope.disable).toHaveBeenCalled();
   }));
 
-  it('should send remove events when the remove button is pressed.', inject(function($rootScope, $compile){
+  it('should send remove events when the remove button is pressed.', inject(function ($rootScope, $compile) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.path = '/path';
@@ -455,17 +473,17 @@ describe('Directive: oscOutput', function () {
     spyOn(parentScope, 'remove');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(parentScope.remove).not.toHaveBeenCalled();
 
     isolatedScope.removeMe();
 
-    expect(parentScope.remove).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.remove).toHaveBeenCalledWith({input: 1, output: 1});
   }));
 
-  it('should send add events when the output becomes valid.', inject(function($compile, $rootScope){
+  it('should send add events when the output becomes valid.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
 
@@ -477,7 +495,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(parentScope.add).not.toHaveBeenCalled();
@@ -490,7 +508,7 @@ describe('Directive: oscOutput', function () {
     isolatedScope.config.path = '/path';
     isolatedScope.$apply();
 
-    expect(parentScope.add).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.add).toHaveBeenCalledWith({input: 1, output: 1});
     expect(parentScope.remove).not.toHaveBeenCalled();
     expect(parentScope.update).not.toHaveBeenCalled();
 
@@ -511,7 +529,7 @@ describe('Directive: oscOutput', function () {
       .toBe(2, 'The add event should be sent again if the output becomes invalid and then valid.');
   }));
 
-  it('should send update events when it changes.', inject(function($compile, $rootScope){
+  it('should send update events when it changes.', inject(function ($compile, $rootScope) {
     parentScope = $rootScope.$new();
     parentScope.osc = defaultOSC;
     parentScope.osc.host = 'a';
@@ -523,7 +541,7 @@ describe('Directive: oscOutput', function () {
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
+    isolatedScope = getIsolatedScope(element);
     isolatedScope.$apply();
 
     expect(parentScope.update).not.toHaveBeenCalled();
@@ -532,12 +550,12 @@ describe('Directive: oscOutput', function () {
     isolatedScope.$apply();
 
     expect(parentScope.update.calls.length).toBe(1, 'The update event should only be sent once.');
-    expect(parentScope.update).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.update).toHaveBeenCalledWith({input: 1, output: 1});
 
     isolatedScope.config.path = '/path/2';
     isolatedScope.$apply();
 
     expect(parentScope.update.calls.length).toBe(2, 'The update event should have been sent after changing the path.');
-    expect(parentScope.update).toHaveBeenCalledWith({input:1, output:1});
+    expect(parentScope.update).toHaveBeenCalledWith({input: 1, output: 1});
   }));
 });

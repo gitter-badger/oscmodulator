@@ -125,8 +125,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.midiNoteMap.c0).toBe(0);
     expect(isolatedScope.midiNoteMap['c#0']).toBe(1);
@@ -143,8 +144,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.id).toBeDefined('The input should have an id property.');
     expect(isolatedScope.config.id.input).toBe(10, 'The input should use the id value specified by the parent.');
@@ -157,8 +159,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.port)
       .toBe(inputConfigMock.defaultMidiPort, 'The input needs to reference the default midi port on the inputConfig.');
@@ -176,8 +179,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.type)
       .toBe('note', 'The input should start with a midi note type of on.');
@@ -197,8 +201,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.name).toBeNull();
     expect(element.find('input[name=name]').val()).toBe('');
@@ -211,8 +216,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.name).toBe('James');
     expect(element.find('input[name=name]').val()).toBe('James');
@@ -224,8 +230,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.name).toBeNull();
     expect(isolatedScope.config.midi.note).toBeNull();
@@ -239,8 +246,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.name).toBe('c0');
     expect(isolatedScope.config.midi.note).toBe(0);
@@ -254,8 +262,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.name).toBe('c50');
     expect(isolatedScope.config.midi.note).toBeNull();
@@ -283,8 +292,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.note).toBe(0);
 
@@ -311,8 +321,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.note).toBe('All');
 
@@ -339,8 +350,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.midi.name).toBe('c7', 'The midi note should be set correctly to start.');
     expect(parentScope.add).toHaveBeenCalledWith({input:1});
@@ -362,8 +374,9 @@ describe('Directive: midiInput', function (){
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
-      isolatedScope.$apply();
+      var localScope = element.scope();
+      localScope.$apply();
+      isolatedScope = element.isolateScope();
 
       // The solo should be on and the mute off.
       expect(isolatedScope.config.solo).toBe(true);
@@ -382,8 +395,9 @@ describe('Directive: midiInput', function (){
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
-      isolatedScope.$apply();
+      var localScope = element.scope();
+      localScope.$apply();
+      isolatedScope = element.isolateScope();
 
       // The solo should be on and the mute off.
       expect(isolatedScope.config.mute).toBe(true);
@@ -400,8 +414,9 @@ describe('Directive: midiInput', function (){
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
-      isolatedScope.$apply();
+      var localScope = element.scope();
+      localScope.$apply();
+      isolatedScope = element.isolateScope();
 
       expect(isolatedScope.config.mute).toBe(false);
       expect(isolatedScope.config.solo).toBe(false);
@@ -419,8 +434,9 @@ describe('Directive: midiInput', function (){
 
       // Compile the DOM into an Angular view using using our test scope.
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
-      isolatedScope.$apply();
+      var localScope = element.scope();
+      localScope.$apply();
+      isolatedScope = element.isolateScope();
 
       // The solo should be on and the mute off.
       expect(isolatedScope.config.mute).not.toEqual(isolatedScope.config.solo, 'The mute and solo states should not match.');
@@ -435,8 +451,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     // The solo should be on and the mute off.
     expect(isolatedScope.config.mute).toBe(true);
@@ -459,8 +476,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     // The solo should be on and the mute off.
     expect(isolatedScope.config.solo).toBe(true);
@@ -481,8 +499,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.collapsed).toBe(false);
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-down')).toBe(true);
@@ -495,8 +514,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(isolatedScope.config.collapsed).toBe(true);
     expect(element.find('button.collapseButton i').hasClass('icon-chevron-right')).toBe(true);
@@ -508,8 +528,9 @@ describe('Directive: midiInput', function (){
 
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     // Expect it to start out expanded.
     expect(isolatedScope.config.collapsed).toBe(false);
@@ -543,8 +564,9 @@ describe('Directive: midiInput', function (){
       spyOn(parentScope, 'add');
 
       element = $compile(template)(parentScope);
-      isolatedScope = element.scope();
-      isolatedScope.$apply();
+        var localScope = element.scope();
+        localScope.$apply();
+        isolatedScope = element.isolateScope();
 
       expect(parentScope.add).not.toHaveBeenCalled();
 
@@ -576,8 +598,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'update');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(parentScope.add).toHaveBeenCalled();
     expect(parentScope.update).not.toHaveBeenCalled();
@@ -599,8 +622,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'update');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(parentScope.add).toHaveBeenCalled();
     expect(parentScope.update).not.toHaveBeenCalled();
@@ -621,8 +645,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'remove');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(parentScope.remove).not.toHaveBeenCalled();
 
@@ -646,8 +671,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'delete');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     isolatedScope.deleteMe();
     isolatedScope.$apply();
@@ -664,8 +690,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'duplicate');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     isolatedScope.duplicateMe();
     isolatedScope.$apply();
@@ -682,8 +709,9 @@ describe('Directive: midiInput', function (){
     spyOn(parentScope, 'create');
 
     element = $compile(template)(parentScope);
-    isolatedScope = element.scope();
-    isolatedScope.$apply();
+    var localScope = element.scope();
+    localScope.$apply();
+    isolatedScope = element.isolateScope();
 
     expect(parentScope.create).not.toHaveBeenCalled();
 
