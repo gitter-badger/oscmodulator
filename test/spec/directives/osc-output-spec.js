@@ -25,16 +25,11 @@ describe('Directive: oscOutput', function () {
     };
 
     backendMock = {
-      setOSCOutput: function () {
-      },
-      setOSCParameters: function () {
-      },
-      setOSCPath: function () {
-      },
-      setOSCHost: function () {
-      },
-      removeOSCOutput: function () {
-      }
+      setOSCOutput: function () {},
+      setOSCParameters: function () {},
+      setOSCPath: function () {},
+      setOSCHost: function () {},
+      removeOSCOutput: function () {}
     };
 
     oscHostConfigMock = {
@@ -83,14 +78,10 @@ describe('Directive: oscOutput', function () {
 
   // Replicate the event listening that will happen in the app.
   setupEventListeners = function (parentScope) {
-    parentScope.add = function () {
-    };
-    parentScope.update = function () {
-    };
-    parentScope.remove = function () {
-    };
-    parentScope.disable = function () {
-    };
+    parentScope.add = function () {};
+    parentScope.update = function () {};
+    parentScope.remove = function () {};
+    parentScope.disable = function () {};
     parentScope.$on('output:osc:add', function (event, id) {
       parentScope.add(id);
     });
@@ -372,7 +363,6 @@ describe('Directive: oscOutput', function () {
     // Compile the DOM into an Angular view using using our test scope.
     element = $compile(template)(parentScope);
     isolatedScope = getIsolatedScope(element);
-    ;
     isolatedScope.$apply();
 
     expect(isolatedScope.config.valid).toBe(true, 'The scope should be valid if it has a path and a host.');

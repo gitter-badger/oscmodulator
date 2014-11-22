@@ -229,6 +229,7 @@ module.exports = (grunt) ->
           src: [
             '<%= yeoman.app %>/scripts/**/*.js'
             '!<%= yeoman.app %>/scripts/lib/*.js'
+            '!<%= yeoman.app %>/scripts/directives/midi-activity.js'
           ]
 
       test:
