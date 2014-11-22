@@ -15,6 +15,7 @@ module.exports = (config) ->
     files: [
       # vendor
       'app/components/jquery/jquery.js'
+      'app/components/lodash/dist/lodash.js'
       'app/components/angular/angular.js'
       'app/components/angular-lodash-module/angular-lodash-module.js'
       'app/components/angular-mocks/angular-mocks.js'

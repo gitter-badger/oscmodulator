@@ -492,8 +492,7 @@ module.exports = (grunt) ->
 
     concurrent:
       server: [
-        'coffee:dist'
-        'coffee:legato'
+        'coffee'
         'less'
         'copy:styles'
       ]
@@ -726,6 +725,11 @@ module.exports = (grunt) ->
           'configureRewriteRules'
           'connect:dist:keepalive'
         ]
+
+      watch = @config 'watch'
+      delete watch.protractor
+      @config 'watch', watch
+
       tasks = [
         'clean:server'
         'copy:fonts'

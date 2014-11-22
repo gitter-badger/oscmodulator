@@ -10,6 +10,7 @@ angular.module('oscmodulatorApp').factory('node', function () {
   }
 
   return {
+    isNodeEnvironment: isNodeEnvironment,
     require: function(module) {
       // tell what happened?
       if (isNodeEnvironment) {
