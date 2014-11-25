@@ -1,5 +1,6 @@
 OSC Modulator
 ============
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/OSCModulator/oscmodulator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/OSCModulator/oscmodulator.png)](https://travis-ci.org/OSCModulator/oscmodulator)
 [![Code Climate](https://codeclimate.com/github/OSCModulator/oscmodulator/badges/gpa.svg)](https://codeclimate.com/github/OSCModulator/oscmodulator)
